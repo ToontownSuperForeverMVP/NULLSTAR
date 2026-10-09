@@ -1,0 +1,18 @@
+{
+  "id": "helios", "name": "HELIOS ANNIHILATOR", "behavior": "helios",
+  "targeting": {"range": 128, "groundRequired": true},
+  "phases": [
+    {"phase": "ACQUIRING", "ticks": 20, "camera": "none", "sound": "block.beacon.activate"},
+    {"phase": "CHARGING", "ticks": 60, "camera": "orbital", "sound": "block.beacon.ambient"},
+    {"phase": "ORBITAL_ALIGNMENT", "ticks": 40, "camera": "orbital", "sound": "block.respawn_anchor.charge"},
+    {"phase": "FIRING", "ticks": 20, "camera": "beam", "sound": "entity.warden.sonic_boom"},
+    {"phase": "ATMOSPHERIC_ENTRY", "ticks": 30, "camera": "beam", "sound": "entity.lightning_bolt.thunder"},
+    {"phase": "IMPACT", "ticks": 10, "camera": "impact", "sound": "entity.generic.explode"},
+    {"phase": "AFTERMATH", "ticks": 100, "camera": "impact", "sound": "block.fire.ambient"},
+    {"phase": "COOLDOWN", "ticks": 20, "camera": "none", "sound": "block.beacon.deactivate"}
+  ],
+  "events": [{"tick": 170, "effect": "impact", "x": 0, "z": 0, "radiusScale": 1}],
+  "impact": {"shape": "crater", "radius": 20, "depth": 13, "irregularity": 0.14, "damage": 60, "knockback": 1.7, "scorch": true},
+  "presentation": {"color": 16763955, "orbitalHeight": 72, "particleScale": 1, "soundPitch": 0.8},
+  "cooldownTicks": 600
+}

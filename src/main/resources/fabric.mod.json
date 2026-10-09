@@ -3,39 +3,18 @@
 	"id": "nullstar",
 	"version": "${version}",
 	"name": "NULLSTAR",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Server-authoritative orbital weapons, bounded terrain deformation, and cinematic foundations for Minecraft 26.3.",
 	"authors": [
-		"Me!"
+		"NULLSTAR contributors"
 	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
 	"license": "CC0-1.0",
 	"icon": "assets/nullstar/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": [
-			{
-				"value": "com.nullstar.NULLSTAR",
-				"adapter": "kotlin"
-			}
-		],
-		"client": [
-			{
-				"value": "com.nullstar.client.NULLSTARClient",
-				"adapter": "kotlin"
-			}
-		],
-		"fabric-datagen": [
-			{
-				"value": "com.nullstar.client.NULLSTARDataGenerator",
-				"adapter": "kotlin"
-			}
-		]
+		"main": ["com.nullstar.Nullstar"],
+		"client": ["com.nullstar.client.NullstarClient"]
 	},
 	"mixins": [
-		"nullstar.mixins.json",
 		{
 			"config": "nullstar.client.mixins.json",
 			"environment": "client"
@@ -43,7 +22,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
-		"minecraft": "~26.3",
+		"minecraft": "=26.3",
 		"java": ">=25",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"

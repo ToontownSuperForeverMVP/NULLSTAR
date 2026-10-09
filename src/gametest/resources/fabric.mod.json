@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "nullstar-test",
+  "version": "1.0.0",
+  "name": "NULLSTAR Integration Tests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": ["com.nullstar.test.DestructionGameTest"],
+    "fabric-client-gametest": ["com.nullstar.test.StrikeClientGameTest"]
+  }
+}

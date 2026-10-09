@@ -1,0 +1,8 @@
+{
+  "item.nullstar.controller": "NULLSTAR Orbital Controller",
+  "key.category.nullstar.controls": "NULLSTAR",
+  "key.nullstar.activate": "Acquire / activate orbital weapon",
+  "key.nullstar.select": "Select next orbital weapon",
+  "key.nullstar.skip": "Skip cinematic camera",
+  "key.nullstar.camera": "Toggle cinematic camera"
+}
