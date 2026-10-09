@@ -46,12 +46,11 @@ dependencies {
 
 tasks.withType(Test).configureEach { useJUnitPlatform() }
 
-// Visual evidence iteration: -PcaptureOnly skips the long regression scenario; -Pcapture=helios,modes selects scenes.
-def captureOnly = providers.gradleProperty('captureOnly').isPresent()
-def captureSelection = providers.gradleProperty('capture').getOrElse('helios,singularity,glassfall,modes')
+// Client suite selection: -Ptests=regression,dedicated,capture (default all); -Pcapture=helios,modes selects capture scenes.
+def clientTests = providers.gradleProperty('tests').getOrElse(providers.gradleProperty('captureOnly').isPresent() ? 'capture' : 'regression,dedicated,capture')
+def captureSelection = providers.gradleProperty('capture').getOrElse('helios,singularity,glassfall,modes,stress')
 tasks.matching { it.name == 'runClientGameTest' }.configureEach {
-    jvmArgs "-Dnullstar.capture=${captureSelection}"
-    if (captureOnly) jvmArgs '-Dnullstar.captureOnly=true'
+    jvmArgs "-Dnullstar.capture=${captureSelection}", "-Dnullstar.tests=${clientTests}"
 }
 
 def mainRuntime = sourceSets.main.runtimeClasspath

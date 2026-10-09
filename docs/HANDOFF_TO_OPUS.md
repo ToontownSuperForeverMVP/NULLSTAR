@@ -1,3 +1,5 @@
+> Historical Part 1.5B handoff. Current state: see `PART2_RELEASE_REPORT.md` and `PROJECT_STATE.md`.
+
 # Part 2 handoff to Claude Opus 5.5
 
 NULLSTAR Part 1.5B is a remediated Java 25 / Fabric 26.3 foundation with three playable server-owned weapon loops and native visuals. Engineering decision: **CONDITIONAL PASS**. No confirmed critical/high defect remains; independent multi-client deployment, dense-world timing and third-party integrations remain unverified. Expand the art and presentation while retaining the validated engine contracts.

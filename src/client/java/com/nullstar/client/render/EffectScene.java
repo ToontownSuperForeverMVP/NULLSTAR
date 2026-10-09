@@ -87,6 +87,8 @@ public final class EffectScene implements PresentationLayers.Layer {
     @Override public void reset() {
         particles.clear();events.clear();seenCue.clear();lastPhase.clear();
         NullstarMaterials.invalidate();
+        // A new level gets a fresh attempt; a persistent fault simply re-latches the native fallback.
+        failed=false;
     }
 
     public void collect(LevelRenderContext context) {

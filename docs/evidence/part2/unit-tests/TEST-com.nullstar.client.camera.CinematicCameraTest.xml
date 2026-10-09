@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.client.camera.CinematicCameraTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-09T16:58:03.602Z" hostname="SHADOW-DSNN03OD" time="0.017">
+  <properties/>
+  <testcase name="clearanceHookLiftsDesiredPositionAndShakeStaysBounded()" classname="com.nullstar.client.camera.CinematicCameraTest" time="0.005"/>
+  <testcase name="blendUsesShortestYawArcAndEaseHasBoundedEndpoints()" classname="com.nullstar.client.camera.CinematicCameraTest" time="0.002"/>
+  <testcase name="releaseHandsBackToVanillaWithinTwelveTicks()" classname="com.nullstar.client.camera.CinematicCameraTest" time="0.001"/>
+  <testcase name="skipIsOwnerScopedAndNewStrikesRemainEligible()" classname="com.nullstar.client.camera.CinematicCameraTest" time="0.001"/>
+  <testcase name="rollBlendsInAndReleasesToLevelVanillaView()" classname="com.nullstar.client.camera.CinematicCameraTest" time="0.001"/>
+  <testcase name="presetsStayFiniteAndUnloadedFramesAreRejected()" classname="com.nullstar.client.camera.CinematicCameraTest" time="0.001"/>
+  <testcase name="decliningPresetsNeverTakeTheCamera()" classname="com.nullstar.client.camera.CinematicCameraTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

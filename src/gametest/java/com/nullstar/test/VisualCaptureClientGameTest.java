@@ -22,18 +22,24 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
     static final int GROUND=-40;
     private static final Path OUT=Path.of("build/evidence/part2");
     private final List<String> diagnostics=new ArrayList<>();
+    private TestSingleplayerContext current;
 
+    /** -Ptests=regression,dedicated,capture selects client suites (default: all). */
+    static boolean selected(String suite){return System.getProperty("nullstar.tests","regression,dedicated,capture").contains(suite);}
     @Override public void runTest(ClientGameTestContext context) {
+        if(!selected("capture"))return;
         String selection=System.getProperty("nullstar.capture","helios,singularity,glassfall");
         // Each scene gets a fresh, identical diorama so earlier craters never invalidate later targets.
-        for(String scene:new String[]{"helios","singularity","glassfall","modes"}) {
+        for(String scene:new String[]{"helios","singularity","glassfall","modes","stress"}) {
             if(!selection.contains(scene))continue;
             try(TestSingleplayerContext world=context.worldBuilder().adjustSettings(settings->settings.setAllowCommands(true)).create()) {
+                current=world;
                 prepare(context,world);
                 switch(scene) {
                     case "helios" -> {shot(context,"00_diorama");helios(context,world);}
                     case "singularity" -> singularity(context,world);
                     case "glassfall" -> glassfall(context,world);
+                    case "stress" -> stress(context,world);
                     default -> modes(context,world);
                 }
                 world.getServer().runOnServer(server->Nullstar.config().cooldownMultiplier=1);
@@ -108,6 +114,15 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
     }
     /** Accessibility and quality modes: observer view with cinematics disabled, reduced motion, LOW preset. */
     private void modes(ClientGameTestContext context,TestSingleplayerContext world) {
+        // Interface evidence: aiming reticle/HUD from the player's view, then the visual settings screen.
+        world.getServer().runCommand("tp @p 30 "+(GROUND+10)+" 30 135 25");
+        context.waitTicks(20);
+        shot(context,"modes_ui_aim_reticle");
+        context.setScreen(()->new com.nullstar.client.NullstarSettingsScreen(null));
+        context.waitTicks(5);
+        shot(context,"modes_ui_settings_screen");
+        context.setScreen(()->null);
+        context.waitTicks(5);
         context.runOnClient(mc->{var c=NullstarClient.config();c.reducedMotion=true;c.quality=ClientConfig.Quality.MEDIUM;});
         world.getServer().runCommand("tp @p 30 "+(GROUND+10)+" 30 135 25");
         world.getServer().runCommand("execute as @p at @s run nullstar fire helios -28 "+GROUND+" -28");
@@ -125,6 +140,40 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         captureAges(context,"modes_improved_transparency",new int[]{110,130,175},new String[]{"core","beam","impact"});
         finish(context,world,"modes_oit");
         context.runOnClient(mc->mc.options.improvedTransparency().set(false));
+    }
+
+    /**
+     * Presentation stress: four concurrent synthetic strikes (the default active-strike cap) at heavy phases, injected
+     * into the client cache only. Measures extraction cost, vertex/particle bounds and frame time; never touches the server.
+     */
+    private void stress(ClientGameTestContext context,TestSingleplayerContext world) {
+        world.getServer().runCommand("tp @p 0 "+(GROUND+40)+" 70 180 30");
+        context.waitTicks(20);world.getConnection().waitForChunksRender();
+        String[][] plan={{"helios","ATMOSPHERIC_ENTRY","-26","-26"},{"helios","AFTERMATH","26","-26"},{"singularity","FIRING","-26","26"},{"glassfall","FIRING","26","26"}};
+        java.util.UUID[] ids=new java.util.UUID[plan.length];
+        for(int i=0;i<ids.length;i++)ids[i]=java.util.UUID.randomUUID();
+        for(int step=0;step<6;step++) {
+            final int s=step;
+            context.runOnClient(mc->{
+                long tick=NullstarClient.tickCount();
+                for(int i=0;i<plan.length;i++) {
+                    var def=Nullstar.catalog().get(plan[i][0]);
+                    Phase phase=Phase.valueOf(plan[i][1]);
+                    int duration=def.phases().stream().filter(p->p.phase()==phase).findFirst().orElseThrow().ticks();
+                    int phaseAge=Math.min(duration-1,(s*20)%duration);
+                    var pos=new net.minecraft.core.BlockPos(Integer.parseInt(plan[i][2]),GROUND,Integer.parseInt(plan[i][3]));
+                    NullstarClient.STATE.snapshot(new com.nullstar.network.StatePayload(ids[i],java.util.UUID.randomUUID(),mc.level.dimension().identifier().toString(),def.id(),def.name(),
+                            phase,200+s*20,phaseAge,duration,tick+s,pos,Math.min(24,def.impact().radius()),Math.min(24,def.impact().depth()),i*31L,true,0,
+                            def.presentation().color(),def.presentation().orbitalHeight(),def.presentation().particleScale(),"none",false),tick);
+                    if(s%2==0)NullstarClient.STATE.cue(new com.nullstar.network.VisualPayload(ids[i],s,s%4==0?"impact":"projectile",pos.offset(s%3*3,0,0),
+                            plan[i][0].equals("glassfall")?6:16,plan[i][0].equals("glassfall")&&s%4!=0?30:40),tick);
+                }
+            });
+            context.waitTicks(10);
+            shot(context,"stress_"+step+"_four_concurrent");
+            context.waitTicks(10);
+        }
+        context.runOnClient(mc->NullstarClient.STATE.clear());
     }
 
     private static void waitStrike(ClientGameTestContext context) {
@@ -156,8 +205,9 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         String info=context.computeOnClient(mc->{
             var strike=NullstarClient.STATE.strikes().values().stream().findFirst();
             String phase=strike.map(s->s.state().phase().name()+" age="+Math.round(s.age(NullstarClient.tickCount()))).orElse("idle");
-            return name+" | "+phase+" | fps="+mc.getFps()+" | "+NullstarClient.SCENE.diagnostics();
+            return name+" | "+phase+" | fps="+mc.getFps()+String.format(" frame=%.2fms",mc.getFrameTimeNs()/1e6)+" | "+NullstarClient.SCENE.diagnostics();
         });
+        if(current!=null){double mspt=current.getServer().computeOnServer(server->server.getAverageTickTimeNanos()/1e6);info+=String.format(" | serverTick=%.2fms",mspt);}
         diagnostics.add(info);
         context.takeScreenshot(TestScreenshotOptions.of(name).withDestinationDir(OUT));
     }

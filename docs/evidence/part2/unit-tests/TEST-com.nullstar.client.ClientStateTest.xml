@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.client.ClientStateTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-09T16:58:02.768Z" hostname="SHADOW-DSNN03OD" time="0.831">
+  <properties/>
+  <testcase name="staleConnectionsAndDimensionChangesClearEffects()" classname="com.nullstar.client.ClientStateTest" time="0.8"/>
+  <testcase name="lateObserverStartsAtAuthoritativeAgeAndRejectsOlderSnapshots()" classname="com.nullstar.client.ClientStateTest" time="0.002"/>
+  <testcase name="duplicateCuesAndTerminalCleanup()" classname="com.nullstar.client.ClientStateTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

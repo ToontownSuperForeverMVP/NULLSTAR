@@ -1,0 +1,258 @@
+{
+  "files": 28,
+  "failures": [],
+  "sounds": [
+    {
+      "sound": "nullstar:glassfall/activate",
+      "seconds": 1.0,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.33,
+      "rms_dbfs": -14.36
+    },
+    {
+      "sound": "nullstar:glassfall/aftermath",
+      "seconds": 5.0,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.65,
+      "rms_dbfs": -18.83
+    },
+    {
+      "sound": "nullstar:glassfall/align",
+      "seconds": 1.2,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.72,
+      "rms_dbfs": -16.76
+    },
+    {
+      "sound": "nullstar:glassfall/barrage",
+      "seconds": 2.2,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.38,
+      "rms_dbfs": -11.08
+    },
+    {
+      "sound": "nullstar:glassfall/charge",
+      "seconds": 2.7,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.7,
+      "rms_dbfs": -12.31
+    },
+    {
+      "sound": "nullstar:glassfall/final",
+      "seconds": 5.5,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.14,
+      "rms_dbfs": -15.88
+    },
+    {
+      "sound": "nullstar:glassfall/launch",
+      "seconds": 0.9,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.95,
+      "rms_dbfs": -21.02
+    },
+    {
+      "sound": "nullstar:glassfall/strike",
+      "seconds": 2.2,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.72,
+      "rms_dbfs": -19.51
+    },
+    {
+      "sound": "nullstar:glassfall/whistle",
+      "seconds": 1.55,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.87,
+      "rms_dbfs": -11.58
+    },
+    {
+      "sound": "nullstar:helios/activate",
+      "seconds": 1.0,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.79,
+      "rms_dbfs": -11.48
+    },
+    {
+      "sound": "nullstar:helios/aftermath",
+      "seconds": 5.0,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -3.08,
+      "rms_dbfs": -21.02
+    },
+    {
+      "sound": "nullstar:helios/aftershock",
+      "seconds": 3.0,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.92,
+      "rms_dbfs": -13.03
+    },
+    {
+      "sound": "nullstar:helios/align",
+      "seconds": 2.3,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.93,
+      "rms_dbfs": -14.81
+    },
+    {
+      "sound": "nullstar:helios/charge",
+      "seconds": 3.2,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.74,
+      "rms_dbfs": -11.09
+    },
+    {
+      "sound": "nullstar:helios/descent",
+      "seconds": 1.7,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.31,
+      "rms_dbfs": -18.34
+    },
+    {
+      "sound": "nullstar:helios/fire",
+      "seconds": 1.8,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.24,
+      "rms_dbfs": -15.99
+    },
+    {
+      "sound": "nullstar:helios/impact",
+      "seconds": 5.5,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.38,
+      "rms_dbfs": -15.11
+    },
+    {
+      "sound": "nullstar:helios/pulse",
+      "seconds": 0.8,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.85,
+      "rms_dbfs": -14.56
+    },
+    {
+      "sound": "nullstar:helios/ring_lock",
+      "seconds": 1.4,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -3.18,
+      "rms_dbfs": -15.09
+    },
+    {
+      "sound": "nullstar:helios/shutdown",
+      "seconds": 1.4,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.69,
+      "rms_dbfs": -11.65
+    },
+    {
+      "sound": "nullstar:singularity/activate",
+      "seconds": 1.2,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.72,
+      "rms_dbfs": -11.74
+    },
+    {
+      "sound": "nullstar:singularity/aftermath",
+      "seconds": 5.0,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.52,
+      "rms_dbfs": -14.5
+    },
+    {
+      "sound": "nullstar:singularity/charge",
+      "seconds": 4.2,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -3.03,
+      "rms_dbfs": -11.94
+    },
+    {
+      "sound": "nullstar:singularity/collapse",
+      "seconds": 1.0,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -3.05,
+      "rms_dbfs": -14.03
+    },
+    {
+      "sound": "nullstar:singularity/implode",
+      "seconds": 4.0,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.0,
+      "rms_dbfs": -13.09
+    },
+    {
+      "sound": "nullstar:singularity/pull",
+      "seconds": 6.2,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.92,
+      "rms_dbfs": -10.89
+    },
+    {
+      "sound": "nullstar:ui/lock",
+      "seconds": 0.45,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -2.38,
+      "rms_dbfs": -11.34
+    },
+    {
+      "sound": "nullstar:ui/select",
+      "seconds": 0.22,
+      "rate": 44100,
+      "channels": 1,
+      "subtype": "VORBIS",
+      "peak_dbfs": -3.03,
+      "rms_dbfs": -15.78
+    }
+  ]
+}

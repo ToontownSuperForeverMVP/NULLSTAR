@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.server.DestructionManagerTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-09T16:58:04.008Z" hostname="SHADOW-DSNN03OD" time="0.013">
+  <properties/>
+  <testcase name="exactlyReservedJobsCanBeEnqueuedAndCancellationFreesAllSlots()" classname="com.nullstar.server.DestructionManagerTest" time="0.011"/>
+  <testcase name="reservationsCannotBeOverwrittenOrOvercommitted()" classname="com.nullstar.server.DestructionManagerTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

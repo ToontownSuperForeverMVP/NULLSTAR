@@ -44,6 +44,30 @@ class CinematicCameraTest {
         camera.reset();camera.skip(state,owner);state.clear();state.snapshot(snapshot(UUID.randomUUID(),owner,"impact"),3);
         assertNotNull(sample(4,true,true));
     }
+    @Test void rollBlendsInAndReleasesToLevelVanillaView() {
+        camera.register("rolled",ctx->new CameraPreset.Frame(ctx.target().add(20,10,0),ctx.target(),60,12,0));
+        state.snapshot(snapshot(id,owner,"rolled"),0);
+        CinematicCamera.Pose pose=null;
+        for(int tick=1;tick<40;tick++)pose=sample(tick,true,true);
+        assertNotNull(pose);assertEquals(12,pose.roll(),.5,"roll converges on the preset");
+        var mid=sample(46,true,false);assertTrue(Math.abs(mid.roll())<12);
+        assertNull(sample(60,true,false));assertFalse(camera.applied());assertEquals(0,camera.roll());
+    }
+    @Test void decliningPresetsNeverTakeTheCamera() {
+        camera.register("declines",ctx->null);
+        state.snapshot(snapshot(id,owner,"declines"),0);
+        assertNull(sample(1,true,true));assertFalse(camera.applied());
+        camera.register("nan",ctx->new CameraPreset.Frame(new Vec3(Double.NaN,0,0),ctx.target(),60));
+        state.clear();state.snapshot(snapshot(id,owner,"nan"),0);
+        assertNull(sample(2,true,true),"non-finite frames are rejected");
+    }
+    @Test void clearanceHookLiftsDesiredPositionAndShakeStaysBounded() {
+        state.snapshot(snapshot(id,owner,"impact"),0);
+        CinematicCamera.Pose pose=null;
+        for(int tick=1;tick<80;tick++)pose=camera.sample(Vec3.ZERO,0,0,90,tick,state,owner,true,true,1,p->true,p->p.add(0,100,0));
+        assertTrue(pose.position().y>100,"clearance offset applied to the desired position");
+        for(double t=0;t<200;t+=.37)assertTrue(Math.abs(CinematicCamera.noise(t,1.7,4.1))<=1.0001);
+    }
     @Test void presetsStayFiniteAndUnloadedFramesAreRejected() {
         for(String preset:new String[]{"orbital","beam","impact"}) {
             camera.reset();state.clear();state.snapshot(snapshot(id,owner,preset),0);

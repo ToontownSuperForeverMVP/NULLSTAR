@@ -1,5 +1,40 @@
 # Acceptance
 
+Part 2 release decision: **PASS with documented open items** (see the OPEN rows).
+
+## Part 2 acceptance
+
+`PASS` = implemented and verified by the named automated check; `PASS (visual)` = implemented and inspected in captured frames by the developer; `OPEN` = not verifiable in this environment. Evidence paths are under `docs/evidence/part2`.
+
+| Criterion | Status | Evidence |
+| --- | --- | --- |
+| 26.3 / Java 25 / Loader / API unchanged; clean build | PASS | `clean-build.log`, `artifact-validation.json` |
+| Server authority, wire schemas, destruction budgets, preview and PvP policy intact | PASS | unchanged server code; 7 dedicated GameTests; regression scenario |
+| All three gameplay loops, persistent craters, save/reopen | PASS | `client-suite.log` |
+| Camera restoration (skip, completion, cancel, dimension, disconnect) | PASS | regression + dedicated-server suites; camera JUnit (roll, decline, release) |
+| Dedicated-server initialization and networked strike | PASS | dedicated-server client suite |
+| Custom shaders load with fallbacks; OIT compatible | PASS | pipelines-ready log lines; OIT capture; optional registration + vanilla fallback code path |
+| Helios authored collector with recognizable alignment | PASS (visual) | `frames/helios_03..06`, `sheet-helios.png` |
+| Helios layered beam, entry, distinct shockwaves, aftermath | PASS (visual) | `frames/helios_07..16` |
+| Singularity original anomaly with animated gravitational structures and implosion | PASS (visual) | `sheet-singularity.png` |
+| Glassfall authored lattice; distinct projectile meshes on authoritative trajectories | PASS (visual + unit) | `sheet-glassfall.png`; `TrajectoryTest` |
+| Distinct audiovisual identities per weapon | PASS (visual) | sheets; 28 weapon-specific sounds |
+| Original textures, models (procedural meshes) and sounds; no third-party assets | PASS | `tools/assets`, `audio-validation.json` |
+| Directed camera shots, roll, shake, occlusion lift, cave decline | PASS (visual) | sheets; `CameraScripts` |
+| Holographic HUD, reticle, selector, banners; settings screen | PASS (visual) | `frames/ui_*.png` |
+| Quality presets LOW/MEDIUM/ULTRA | PASS (visual) | `sheet-modes.png` |
+| Reduced motion keeps player view while effects play | PASS (visual) | `sheet-modes.png` (reduced-motion row) |
+| Reduced flashing default on; zero-particle mode; rebindable keys | PASS | `PresentationEngineTest`; native key mappings |
+| Bounded resources under concurrent load | PASS | stress rows in `renderer-diagnostics.txt` (particle cap 1,024 held, vertex budgets dropped excess) |
+| Performance measured, not estimated | PASS (single machine) | `VALIDATION.md` measurements |
+| Final artistic and audio approval by a human | OPEN | requires listening/viewing by the user |
+| Multiple independent graphical clients and late observers | OPEN | one client available; embedded two-owner and one-client dedicated tests only |
+| Third-party render/shader/claim mod compatibility | OPEN | not installed |
+| Survival-owner death in each phase; dense real-world timing | OPEN | death path covered by camera/strike cancellation code and earlier tests only |
+| True screen-space lensing / heat refraction | Not implemented | geometric illusion documented in `PART2_RELEASE_REPORT.md` |
+
+## Part 1.5B acceptance (historical)
+
 Statuses refer to actual checks in this repository. `PASS` is automated unless explicitly marked visual inspection. Final run details and versions are in `VALIDATION.md`.
 
 Part 1.5B engineering readiness: **CONDITIONAL PASS**. All confirmed critical/high defects are resolved (none were reported); targeted repairs pass 27 JUnit tests, seven dedicated GameTests and the expanded real client scenario. Detailed finding classifications and narrow runtime gaps are in `SOL_QA_REMEDIATION.md`.
@@ -39,15 +74,3 @@ Part 1.5B engineering readiness: **CONDITIONAL PASS**. All confirmed critical/hi
 | Camera blend/presets/release/death/unloaded frame | PASS | deterministic frame-input JUnit tests plus real restoration scenario |
 | Disabled terrain destruction stays inert | PASS | dedicated complete Glassfall cycle with terrain disabled |
 | Reproducible artifact evidence and JDK guard | PASS | executable archive inspector; actual Java 21 rejection |
-
-## Additional acceptance for Part 2
-
-- [ ] Evaluate final authored visuals and custom sounds with the user.
-- [ ] Verify concurrent strikes with multiple independent clients and late observers on a production dedicated server.
-- [ ] Validate claim-mod adapters against the exact installed claim-mod versions.
-- [ ] Evaluate renderer/shader compatibility and reduced-motion/flashing on the final effects.
-- [ ] Manually test survival death, dimension travel and disconnect during each weapon phase.
-- [ ] Measure server tick time and client frame time in dense real worlds at configured upper limits.
-- [ ] Evaluate cave/water/near-border art, remaining vanilla fluid behavior and physical aftermath for the final presentation.
-
-These additional scenarios concern integrations and final art/performance validation. They are not marked complete by a green compile or by the disposable singleplayer fixture.

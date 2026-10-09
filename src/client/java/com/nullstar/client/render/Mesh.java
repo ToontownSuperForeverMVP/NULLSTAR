@@ -40,14 +40,21 @@ public final class Mesh {
 
         private void vertex(float x,float y,float z,float u,float v,float nx,float ny,float nz) {
             if((vertices+1)*8>data.length)data=Arrays.copyOf(data,data.length*2);
-            matrix.transformPosition(p.set(x,y,z));matrix.normal(normal).transform(n.set(nx,ny,nz)).normalize();
+            matrix.transformPosition(p.set(x,y,z));matrix.normal(normal).transform(n.set(nx,ny,nz));
+            float length=n.length();
+            if(length>1e-9f&&Float.isFinite(length))n.div(length);else n.set(0,1,0);
             int i=vertices++*8;
             data[i]=p.x;data[i+1]=p.y;data[i+2]=p.z;data[i+3]=u;data[i+4]=v;data[i+5]=n.x;data[i+6]=n.y;data[i+7]=n.z;
         }
         public Builder quad(float[] a,float[] b,float[] c,float[] d,float u0,float v0,float u1,float v1) {
-            float ex=b[0]-a[0],ey=b[1]-a[1],ez=b[2]-a[2],fx=d[0]-a[0],fy=d[1]-a[1],fz=d[2]-a[2];
-            float nx=ey*fz-ez*fy,ny=ez*fx-ex*fz,nz=ex*fy-ey*fx;
-            if(nx*nx+ny*ny+nz*nz<1e-12f){ex=c[0]-a[0];ey=c[1]-a[1];ez=c[2]-a[2];nx=ey*fz-ez*fy;ny=ez*fx-ex*fz;nz=ex*fy-ey*fx;}
+            // Newell's method stays well-defined for degenerate (triangle-like) quads such as caps and crystal tips.
+            float nx=0,ny=0,nz=0;
+            float[][] ring={a,b,c,d};
+            for(int i=0;i<4;i++) {
+                float[] p0=ring[i],p1=ring[(i+1)%4];
+                nx+=(p0[1]-p1[1])*(p0[2]+p1[2]);ny+=(p0[2]-p1[2])*(p0[0]+p1[0]);nz+=(p0[0]-p1[0])*(p0[1]+p1[1]);
+            }
+            if(nx*nx+ny*ny+nz*nz<1e-12f){nx=0;ny=1;nz=0;}
             vertex(a[0],a[1],a[2],u0,v0,nx,ny,nz);vertex(b[0],b[1],b[2],u1,v0,nx,ny,nz);
             vertex(c[0],c[1],c[2],u1,v1,nx,ny,nz);vertex(d[0],d[1],d[2],u0,v1,nx,ny,nz);
             return this;

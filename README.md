@@ -1,6 +1,6 @@
 # NULLSTAR: Cataclysm Engine
 
-An original Minecraft **26.3** Fabric mod with three server-authoritative orbital weapons, persistent terrain deformation, bounded destruction queues, native particle effects, cinematic camera foundations and operator controls. This is the functional Part 1 foundation; the final models, shaders and sound design belong to Part 2.
+An original Minecraft **26.3** Fabric mod with three server-authoritative orbital weapons, persistent terrain deformation and bounded destruction queues, presented with a custom RenderPearl effects engine: an asymmetric golden orbital collector and layered stellar beam (Helios), a lensed gravitational anomaly that implodes (Singularity) and a crystalline orbital lattice firing a synchronized barrage (Glassfall). Directed camera shots, original procedural textures, synthesized sound design, a holographic HUD, quality presets and accessibility options are included. See `docs/PART2_RELEASE_REPORT.md` for what is verified and what still needs human review.
 
 ## Install
 
@@ -22,9 +22,12 @@ Enable cheats/operator permissions, then run `/nullstar give`. The controller is
 - **Use** or **G**: designate the solid surface under your aim, up to the weapon's range.
 - **Use/G again**: authorize the confirmed strike. Move clear of the target in survival.
 - **K**: skip your cinematic view while the strike continues.
-- **C**: toggle cinematic camera effects. Keybinds are editable in Minecraft's Controls settings.
+- **C**: toggle cinematic camera effects.
+- **N**: open NULLSTAR visual settings (quality, particles, camera, shake, reduced motion/flashing, distortion, glow, cinematic audio, letterbox).
 
-The HUD displays selection, targeting coordinates, phase/progress, terrain progress and cooldown. Designations expire after ten seconds. One strike per owner is allowed at a time. The camera does not teleport the player or take away movement controls.
+Keybinds are editable in Minecraft's Controls settings.
+
+The HUD displays the weapon icon and name, an animated targeting reticle with lock and range state, a segmented phase timeline, terrain progress, recharge and abort/complete banners. A ground reticle shows the selected weapon's effective radius. Designations expire after ten seconds. One strike per owner is allowed at a time. The camera does not teleport the player or take away movement controls.
 
 ## Commands
 
@@ -50,7 +53,7 @@ Bundled definitions are classpath defaults, not data-pack overrides. Unknown ove
 
 Server defaults: terrain destruction on, operators only, radius/depth caps 24, 1,536 candidate operations globally per tick, four concurrent strikes, 16 outstanding/reserved impact jobs, normal duration/cooldowns/sound volume, 64 living entities processed per interaction. Absolute caps are radius/depth 48 and 8,192 candidate operations/tick. Values are validated/clamped. Setting `terrainDestruction` false makes all strikes cinematic-only.
 
-Client defaults: cinematic camera enabled, reduced motion off, reduced flashing on, particle budget 192/tick, shake intensity 0.35. Reduced motion disables camera motion/shake; reduced flashing disables the optional impact screen wash/bright explosion accent. Particle budget can be zero. Camera toggle preference is saved; other client settings are read at startup.
+Client defaults: quality MEDIUM, particle intensity 100%, cinematic camera enabled, shake 0.35, reduced motion off, reduced flashing **on**, screen distortion on, glow 100%, cinematic audio 100%, letterbox on, native particle budget 192/tick (used by the LOW preset and the fallback). Reduced motion keeps the player's own view while all effects still play; reduced flashing replaces bright flashes with a soft tint; particle intensity 0 removes cosmetic particles and debris. Settings save from the N screen or the camera toggle; none of them reach the server or change destruction limits.
 
 Destruction skips block entities, unbreakable/protected blocks, unloaded chunks, build limits and borders. Vanilla interaction protection is respected. Claim integrations must register `ProtectionHooks`; specific third-party claim bridges are not bundled.
 
@@ -68,7 +71,9 @@ pwsh -File scripts/verify-artifact.ps1
 .\gradlew.bat runServer
 ```
 
-On other systems use `./gradlew` and set `JAVA_HOME` appropriately. Build runs JUnit and dedicated server GameTests. Client GameTests create disposable worlds, activate the weapons, capture screenshots, verify restored view and save/reopen behavior. Loom's test configuration enables Minecraft's EULA for these automated test servers; standard development `runServer` uses its own `run/eula.txt`.
+On other systems use `./gradlew` and set `JAVA_HOME` appropriately. Build runs JUnit and dedicated server GameTests. Client GameTests create disposable worlds and run three suites: the regression scenario (all weapons, restored view, preview, cancellation, dimension change, save/reopen), a real dedicated-server connection (networked strike, disconnect cancellation, clean reconnect) and visual capture (authored story beats per weapon, accessibility/quality modes and a four-strike presentation stress test, written to `build/run/clientGameTest/build/evidence/part2`). Select suites with `-Ptests=regression,dedicated,capture` and capture scenes with `-Pcapture=helios,singularity,glassfall,modes,stress`.
+
+Original assets are reproducible: `python -I tools/assets/generate_textures.py`, `python -I tools/assets/generate_audio.py` and `python -I tools/assets/validate_audio.py` (numpy, Pillow, soundfile). Loom's test configuration enables Minecraft's EULA for these automated test servers; standard development `runServer` uses its own `run/eula.txt`.
 
 Generate sources separately with `./gradlew genSources`, then build in a second command. Running source generation and compilation in one invocation triggers a Loom/Gradle generated-JAR dependency validation error.
 
