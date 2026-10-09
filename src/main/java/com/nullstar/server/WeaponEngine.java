@@ -29,6 +29,12 @@ public final class WeaponEngine {
         return !Nullstar.config().operatorsOnly || player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
     }
     public void request(ServerPlayer player,RequestPayload payload) {
+        try { requestUnchecked(player,payload); }
+        catch(RuntimeException exception) {
+            failRequest(player,exception,"Request failed safely; see server log.");
+        }
+    }
+    private void requestUnchecked(ServerPlayer player,RequestPayload payload) {
         UUID owner=player.getUUID();
         if(!gate.request(owner,payload.sequence(),tick))return;
         if(payload.action()==RequestPayload.SKIP){status(player,"Cinematic skipped; strike continues.");return;}
@@ -62,10 +68,22 @@ public final class WeaponEngine {
     }
     /** Shared entry for commands/tests and item activation; repeats all server validation. */
     public boolean activate(ServerPlayer player,String weapon,BlockPos target,boolean preview) {
+        try { return activateUnchecked(player,weapon,target,preview); }
+        catch(RuntimeException exception) {
+            failRequest(player,exception,"Activation failed safely; see server log.");return false;
+        }
+    }
+    private void failRequest(ServerPlayer player,RuntimeException exception,String message) {
+        Nullstar.LOGGER.error("NULLSTAR request/activation failed for {}",player.getUUID(),exception);
+        cancelOwner(player.getUUID(),((net.minecraft.server.level.ServerLevel)player.level()).getServer());
+        try { status(player,message); }
+        catch(RuntimeException feedbackFailure) { Nullstar.LOGGER.error("Could not deliver failure status",feedbackFailure); }
+    }
+    private boolean activateUnchecked(ServerPlayer player,String weapon,BlockPos target,boolean preview) {
         ServerConfig config=Nullstar.config(); UUID owner=player.getUUID();
         if(!WeaponCatalog.IDS.contains(weapon)){status(player,"Unknown weapon.");return false;}
-        var definition=Nullstar.catalog().get(weapon).scaled(config.cinematicDurationMultiplier);
-        if(!preview && !authorized(player)){status(player,"An operator is required to activate destructive weapons.");return false;}
+        var definition=Nullstar.catalog().get(weapon);
+        if(!authorized(player)){status(player,"An operator is required to activate weapons, including previews.");return false;}
         if(!TargetingService.valid(player,target,definition.targeting().range(),definition.targeting().groundRequired())
                 || !ProtectionHooks.allows((net.minecraft.server.level.ServerLevel)player.level(),owner,target)) {
             status(player,"Target is out of range, protected, or unloaded.");return false;
@@ -92,37 +110,47 @@ public final class WeaponEngine {
         tick++;gate.prune(tick);targets.entrySet().removeIf(e->e.getValue().expires<tick);
         Iterator<ActiveStrike> iterator=active.values().iterator();
         while(iterator.hasNext()) {
-            ActiveStrike strike=iterator.next();var level=server.getLevel(strike.dimension);var owner=server.getPlayerList().getPlayer(strike.owner);
-            if(level==null || owner==null || !owner.isAlive() || !owner.level().dimension().equals(strike.dimension)
-                    || !level.getChunkSource().hasChunk(strike.target.getX()>>4,strike.target.getZ()>>4)) {
-                finish(server,strike,true);iterator.remove();continue;
-            }
-            int age=(int)(tick-strike.startTick);var advance=strike.timeline.advance(age);var state=advance.state();
-            if(advance.changed()) {
-                strike.definition.phases().stream().filter(s->s.phase()==state.phase()).findFirst().ifPresent(stage->
-                        SoundScheduler.phase(level,strike.target,stage,strike.definition,Nullstar.config()));
-            }
-            if(!strike.preview && strike.definition.behavior().equals("singularity") && state.phase()==Phase.FIRING && age%5==0)
-                EntityEffects.attract(level,strike.owner,strike.target,strike.radius,Nullstar.config());
-            for(var cue:advance.cues()) {
-                BlockPos position=TargetingService.surfaceNear(level,strike.target.offset((int)Math.round(cue.x()),0,(int)Math.round(cue.z())));
-                int radius=Math.max(1,(int)Math.round(strike.radius*cue.radiusScale()));
-                int cueIndex=strike.cueIndex++;
-                if(position==null){if(cue.effect().equals("impact")&&!strike.preview) releaseUnusedImpact(strike);continue;}
-                broadcast(server,new VisualPayload(strike.id,cueIndex,cue.effect(),position,radius,
-                        cue.effect().equals("projectile")?Math.max(1,(int)Math.round(30*Nullstar.config().cinematicDurationMultiplier)):40));
-                if(cue.effect().equals("impact")&&!strike.preview) {
-                    var impact=strike.definition.impact();
-                    destruction.enqueue(strike.id,strike.owner,strike.dimension,position,strike.definition.behavior(),impact.scorch(),
-                            new CraterGeometry(impact.shape(),radius,Math.max(1,(int)Math.round(strike.depth*cue.radiusScale())),impact.irregularity(),strike.seed+cueIndex));
-                    EntityEffects.impact(level,strike.owner,position,radius,impact.damage()*(float)cue.radiusScale(),impact.knockback(),Nullstar.config());
+            ActiveStrike strike=iterator.next();
+            try {
+                var level=server.getLevel(strike.dimension);var owner=server.getPlayerList().getPlayer(strike.owner);
+                if(level==null || owner==null || !owner.isAlive() || !owner.level().dimension().equals(strike.dimension)
+                        || !level.getChunkSource().hasChunk(strike.target.getX()>>4,strike.target.getZ()>>4)) {
+                    finish(server,strike,true);iterator.remove();continue;
                 }
+                int age=(int)(tick-strike.startTick);var advance=strike.timeline.advance(age);var state=advance.state();
+                if(advance.changed()) {
+                    strike.definition.phases().stream().filter(s->s.phase()==state.phase()).findFirst().ifPresent(stage->
+                            SoundScheduler.phase(level,strike.target,stage,strike.definition,Nullstar.config()));
+                }
+                if(!strike.preview && strike.definition.behavior().equals("singularity") && state.phase()==Phase.FIRING && age%5==0)
+                    EntityEffects.attract(level,strike.owner,strike.target,strike.radius,Nullstar.config());
+                for(var cue:advance.cues()) {
+                    BlockPos position=TargetingService.surfaceNear(level,strike.target.offset((int)Math.round(cue.x()),0,(int)Math.round(cue.z())));
+                    int radius=Math.max(1,(int)Math.round(strike.radius*cue.radiusScale()));
+                    int cueIndex=strike.cueIndex++;
+                    if(position==null){if(cue.effect().equals("impact")&&!strike.preview) releaseUnusedImpact(strike);continue;}
+                    broadcast(server,new VisualPayload(strike.id,cueIndex,cue.effect(),position,radius,
+                            cue.effect().equals("projectile")?Math.max(1,(int)Math.round(30*Nullstar.config().cinematicDurationMultiplier)):40));
+                    if(cue.effect().equals("impact")&&!strike.preview) {
+                        var impact=strike.definition.impact();
+                        destruction.enqueue(strike.id,strike.owner,strike.dimension,position,strike.definition.behavior(),impact.scorch(),
+                                new CraterGeometry(impact.shape(),radius,Math.max(1,(int)Math.round(strike.depth*cue.radiusScale())),impact.irregularity(),strike.seed+cueIndex));
+                        EntityEffects.impact(level,strike.owner,position,radius,impact.damage()*(float)cue.radiusScale(),impact.knockback(),Nullstar.config());
+                    }
+                }
+                boolean done=state.phase()==Phase.COMPLETE && destruction.progress(strike.id).active()==0;
+                if(done){finish(server,strike,false);iterator.remove();}
+                else if(advance.changed() || tick%20==0)broadcast(server,snapshot(strike,state,false));
+            } catch(RuntimeException exception) {
+                Nullstar.LOGGER.error("Strike {} failed; cancelling only this strike",strike.id,exception);
+                finish(server,strike,true);iterator.remove();
             }
-            boolean done=state.phase()==Phase.COMPLETE && destruction.progress(strike.id).active()==0;
-            if(done){finish(server,strike,false);iterator.remove();}
-            else if(advance.changed() || tick%20==0)broadcast(server,snapshot(strike,state,false));
         }
         destruction.tick(server,Nullstar.config());
+        for(UUID failed:destruction.drainFailures()) {
+            var strike=active.get(failed);
+            if(strike!=null){finish(server,strike,true);active.remove(failed);}
+        }
         if(tick%20==0)for(var player:server.getPlayerList().getPlayers()) {
             if(selections.containsKey(player.getUUID())) status(player,"");
             // Periodic resync handles late entry into a dimension and view range without huge replay streams.
@@ -130,11 +158,14 @@ public final class WeaponEngine {
     }
     private void releaseUnusedImpact(ActiveStrike strike) {destruction.releaseReservation(strike.id);}
     private void finish(MinecraftServer server,ActiveStrike strike,boolean cancelled) {
-        if(cancelled)strike.timeline.cancel();
-        broadcast(server,snapshot(strike,new Timeline.State(cancelled?Phase.CANCELLED:Phase.COMPLETE,0,1,(int)Math.max(0,tick-strike.startTick)),true));
-        var progress=destruction.progress(strike.id);
-        Nullstar.LOGGER.info("Strike {} {}: {} changed blocks",strike.id,cancelled?"cancelled":"complete",progress.changed());
-        destruction.cancel(strike.id);
+        try {
+            if(cancelled)strike.timeline.cancel();
+            broadcast(server,snapshot(strike,new Timeline.State(cancelled?Phase.CANCELLED:Phase.COMPLETE,0,1,(int)Math.max(0,tick-strike.startTick)),true));
+            var progress=destruction.progress(strike.id);
+            Nullstar.LOGGER.info("Strike {} {}: {} changed blocks",strike.id,cancelled?"cancelled":"complete",progress.changed());
+        } catch(RuntimeException exception) {
+            Nullstar.LOGGER.error("Could not publish terminal state for strike {}",strike.id,exception);
+        } finally { destruction.cancel(strike.id); }
     }
     private StatePayload snapshot(ActiveStrike s,Timeline.State state,boolean terminal) {
         String camera=s.definition.phases().stream().filter(p->p.phase()==state.phase()).map(WeaponDefinition.Stage::camera).findFirst().orElse("none");
@@ -144,9 +175,10 @@ public final class WeaponEngine {
     }
     private void broadcast(MinecraftServer server,net.minecraft.network.protocol.common.custom.CustomPacketPayload payload) {
         if(server==null)return;
+        ActiveStrike strike=payload instanceof StatePayload state?active.get(state.id()):payload instanceof VisualPayload visual?active.get(visual.strike()):null;
+        if(strike==null)return;
         for(var player:server.getPlayerList().getPlayers()) {
-            ActiveStrike strike=payload instanceof StatePayload state?active.get(state.id()):payload instanceof VisualPayload visual?active.get(visual.strike()):null;
-            if(strike!=null && !player.getUUID().equals(strike.owner)
+            if(!player.getUUID().equals(strike.owner)
                     && (!player.level().dimension().equals(strike.dimension) || player.blockPosition().distSqr(strike.target)>256*256))continue;
             if(ServerPlayNetworking.canSend(player,payload.type()))ServerPlayNetworking.send(player,payload);
         }
@@ -159,7 +191,9 @@ public final class WeaponEngine {
     }
     public void join(ServerPlayer player) {
         status(player,"Controller ready: aim and use to designate a target.");
-        for(var strike:active.values())if(strike.dimension.equals(player.level().dimension())&&ServerPlayNetworking.canSend(player,StatePayload.TYPE))
+        for(var strike:active.values())if(strike.dimension.equals(player.level().dimension())
+                && (strike.owner.equals(player.getUUID()) || player.blockPosition().distSqr(strike.target)<=256*256)
+                && ServerPlayNetworking.canSend(player,StatePayload.TYPE))
             ServerPlayNetworking.send(player,snapshot(strike,strike.timeline.at((int)(tick-strike.startTick)),false));
     }
     public void disconnect(UUID owner) {gate.disconnect(owner);selections.remove(owner);targets.remove(owner);}

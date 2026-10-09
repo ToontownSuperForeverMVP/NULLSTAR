@@ -34,11 +34,15 @@ public final class StrikeClientGameTest implements FabricClientGameTest {
             for(String weapon:new String[]{"helios","singularity","glassfall"}) {
                 platform(world);world.getConnection().waitForClientboundPackets();context.waitTicks(10);
                 if(weapon.equals("helios")) {
+                    world.getServer().runCommand("item replace entity @p weapon.mainhand with minecraft:air");
+                    world.getServer().runCommand("item replace entity @p weapon.offhand with nullstar:controller");
+                    world.getConnection().waitForClientboundPackets();
                     context.runOnClient(mc->{
                         double dx=.5-mc.player.getX(),dz=.5-mc.player.getZ(),dy=81.0001-mc.player.getEyePosition().y;
                         mc.player.setYRot((float)Math.toDegrees(Math.atan2(-dx,dz)));
                         mc.player.setXRot((float)-Math.toDegrees(Math.atan2(dy,Math.hypot(dx,dz))));
                     });context.waitTicks(10);
+                    check(context.computeOnClient(mc->NullstarClient.holdingController(mc)&&NullstarClient.targetPreview()!=null),"Offhand controller did not show aiming preview");
                     context.getInput().pressKey(options->options.keyUse);
                     context.waitFor(mc->NullstarClient.status().hasTarget(),100);
                     check(context.computeOnClient(mc->NullstarClient.status().target().distSqr(TARGET))<9,"Designation did not hit intended ground: "+
@@ -87,6 +91,10 @@ public final class StrikeClientGameTest implements FabricClientGameTest {
             context.waitTicks(60);
             world.getServer().runCommand("execute as @p at @s run nullstar fire helios 0 80 0");
             context.waitFor(mc->NullstarClient.STATE.strikes().values().stream().anyMatch(s->s.state().phase()==Phase.CHARGING),120);
+            context.runOnClient(mc->{
+                int cooldown=NullstarClient.cooldown();check(cooldown>0,"Cooldown fixture already expired");
+                NullstarClient.reset();check(NullstarClient.cooldown()==cooldown,"Transient level reset erased cooldown");
+            });
             world.getServer().runCommand("execute in minecraft:the_nether run tp @p 0 100 0");
             context.waitFor(mc->mc.level!=null&&mc.level.dimension()==net.minecraft.world.level.Level.NETHER,400);
             world.getServer().waitFor(server->Nullstar.engine().active().isEmpty(),100);

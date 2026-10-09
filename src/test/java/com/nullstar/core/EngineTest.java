@@ -9,7 +9,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EngineTest {
+    @Test void longStagesScaleSafelyAndKeepCuePositions() throws Exception {
+        var base=catalog().get("helios");
+        var def=new WeaponDefinition(base.id(),base.name(),base.behavior(),base.targeting(),
+                java.util.List.of(new WeaponDefinition.Stage(Phase.CHARGING,2400,"orbital",""),new WeaponDefinition.Stage(Phase.IMPACT,600,"impact","")),
+                java.util.List.of(new WeaponDefinition.Cue(1200,"projectile",0,0,1),new WeaponDefinition.Cue(2700,"impact",0,0,1)),
+                base.impact(),base.presentation(),base.cooldownTicks());
+        var scaled=assertDoesNotThrow(()->def.scaled(4));
+        assertEquals(4800,scaled.duration());assertEquals(1200,scaled.events().get(0).tick());assertEquals(3600,scaled.events().get(1).tick());
+        assertEquals(2*base.duration(),new WeaponCatalog(Path.of("build/test-overrides"),2).get("helios").duration());
+        assertThrows(IllegalArgumentException.class,()->def.scaled(Double.NaN));
+        assertThrows(UnsupportedOperationException.class,()->catalog().all().clear());
+    }
     private WeaponCatalog catalog() throws Exception { return new WeaponCatalog(Path.of("build/test-overrides")); }
+    @Test void operatorOverridesScaleOnceAndUnknownFilesDoNotReplaceWeapons(@org.junit.jupiter.api.io.TempDir Path directory) throws Exception {
+        var base=catalog().get("helios");
+        java.nio.file.Files.writeString(directory.resolve("helios.json"),ConfigFiles.JSON.toJson(base));
+        java.nio.file.Files.writeString(directory.resolve("heilos.json"),"invalid ignored file");
+        var overridden=new WeaponCatalog(directory,2);
+        assertEquals(base.duration()*2,overridden.get("helios").duration());assertEquals(3,overridden.all().size());
+    }
     @Test void bundledDefinitionsHaveCompleteLifecyclesAndRoundTrip() throws Exception {
         for (var def : catalog().all()) {
             assertEquals(def, ConfigFiles.JSON.fromJson(ConfigFiles.JSON.toJson(def), WeaponDefinition.class));

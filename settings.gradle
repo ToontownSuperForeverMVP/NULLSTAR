@@ -9,5 +9,9 @@ pluginManagement {
 	}
 }
 
+if (JavaVersion.current() != JavaVersion.VERSION_25) {
+    throw new GradleException("NULLSTAR requires JDK 25. Set JAVA_HOME to a Java 25 JDK before running Gradle.")
+}
+
 // Should match your modid
 rootProject.name = 'nullstar'

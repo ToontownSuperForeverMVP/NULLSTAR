@@ -33,28 +33,38 @@ public final class CinematicCamera {
         register("impact",ctx->new CameraPreset.Frame(ctx.target().add(ctx.strike().state().radius()*2+12,18,ctx.strike().state().radius()+15),ctx.target(),72));
     }
     public void register(String id,CameraPreset preset){presets.put(id,preset);}
-    public void skip(){skipped.addAll(NullstarClient.STATE.strikes().keySet());}
+    public void skip(){skip(NullstarClient.STATE,Minecraft.getInstance().player==null?null:Minecraft.getInstance().player.getUUID());}
+    public void skip(ClientStrikeState state,UUID owner){state.strikes().values().stream().filter(s->s.state().owner().equals(owner)).forEach(s->skipped.add(s.state().id()));}
     public void reset(){last=null;skipped.clear();releaseStart=-1;applied=false;}
     public boolean applied(){return applied;}
     public Pose sample(Vec3 vanilla,float yaw,float pitch,float fov,double tick) {
-        Minecraft mc=Minecraft.getInstance();applied=false;
-        if(mc.level==null||mc.player==null||!mc.player.isAlive()){reset();return null;}
-        skipped.retainAll(NullstarClient.STATE.strikes().keySet());
-        ClientStrikeState.Strike strike=NullstarClient.STATE.strikes().values().stream().filter(s->s.state().owner().equals(mc.player.getUUID())
+        Minecraft mc=Minecraft.getInstance();
+        boolean alive=mc.level!=null&&mc.player!=null&&mc.player.isAlive();
+        return sample(vanilla,yaw,pitch,fov,tick,NullstarClient.STATE,alive?mc.player.getUUID():null,alive,
+                NullstarClient.config().cinematicCamera&&!NullstarClient.config().reducedMotion&&mc.gui.screen()==null,
+                NullstarClient.config().cameraShakeIntensity,
+                position->mc.level!=null&&mc.level.hasChunk((int)Math.floor(position.x)>>4,(int)Math.floor(position.z)>>4));
+    }
+    /** Explicit frame inputs allow deterministic testing without launching a Minecraft client. */
+    public Pose sample(Vec3 vanilla,float yaw,float pitch,float fov,double tick,ClientStrikeState state,UUID owner,
+                       boolean alive,boolean enabled,double shakeIntensity,java.util.function.Predicate<Vec3> loaded) {
+        applied=false;
+        if(!alive || owner==null){reset();return null;}
+        skipped.retainAll(state.strikes().keySet());
+        ClientStrikeState.Strike strike=state.strikes().values().stream().filter(s->s.state().owner().equals(owner)
                 && !skipped.contains(s.state().id()) && presets.containsKey(s.state().camera())).findFirst().orElse(null);
-        boolean enabled=NullstarClient.config().cinematicCamera&&!NullstarClient.config().reducedMotion&&mc.gui.screen()==null;
         Pose desired=null;
         if(enabled&&strike!=null) {
             Vec3 target=Vec3.atCenterOf(strike.state().target());
             var frame=presets.get(strike.state().camera()).sample(new CameraPreset.Context(strike,tick,target,strike.phaseProgress(tick)));
-            if(mc.level.hasChunk((int)Math.floor(frame.position().x)>>4,(int)Math.floor(frame.position().z)>>4)) {
+            if(loaded.test(frame.position())) {
                 Vec3 direction=frame.lookAt().subtract(frame.position());
                 float targetYaw=(float)(Math.toDegrees(Math.atan2(-direction.x,direction.z)));
                 float targetPitch=(float)(-Math.toDegrees(Math.atan2(direction.y,Math.hypot(direction.x,direction.z))));
                 double shake=0;
-                for(var cue:NullstarClient.STATE.cues())if(cue.payload().strike().equals(strike.state().id())&&cue.payload().effect().equals("impact"))
+                for(var cue:state.cues())if(cue.payload().strike().equals(strike.state().id())&&cue.payload().effect().equals("impact"))
                     shake=Math.max(shake,Math.max(0,1-(tick-cue.received())/20));
-                shake*=NullstarClient.config().cameraShakeIntensity;
+                shake*=shakeIntensity;
                 desired=new Pose(frame.position().add(Math.sin(tick*3)*shake,Math.cos(tick*2.7)*shake*.5,0),
                         targetYaw+(float)(Math.sin(tick*4)*shake),targetPitch,frame.fov());
             }
@@ -74,8 +84,8 @@ public final class CinematicCamera {
         return null;
     }
     public static double ease(double t){t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);}
-    private static Pose blend(Pose a,Pose b,double t) {
-        float yawDelta=(b.yaw-a.yaw+540)%360-180;
+    static Pose blend(Pose a,Pose b,double t) {
+        float yawDelta=((b.yaw-a.yaw)%360+540)%360-180;
         return new Pose(a.position.lerp(b.position,t),a.yaw+(float)(yawDelta*t),a.pitch+(float)((b.pitch-a.pitch)*t),a.fov+(float)((b.fov-a.fov)*t));
     }
 }

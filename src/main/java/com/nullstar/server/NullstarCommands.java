@@ -23,7 +23,11 @@ public final class NullstarCommands {
             }));
             root.then(Commands.literal("target").executes(ctx->{Nullstar.engine().acquire(ctx.getSource().getPlayerOrException());return 1;}));
             root.then(strike("fire",false));root.then(strike("preview",true));
-            root.then(Commands.literal("cancel").executes(ctx->Nullstar.engine().cancelOwner(ctx.getSource().getPlayerOrException().getUUID(),ctx.getSource().getServer())));
+            root.then(Commands.literal("cancel").executes(ctx->{
+                int count=Nullstar.engine().cancelOwner(ctx.getSource().getPlayerOrException().getUUID(),ctx.getSource().getServer());
+                ctx.getSource().sendSuccess(()->Component.literal(count==0?"No active NULLSTAR strike to cancel.":"Cancelled "+count+" NULLSTAR strike(s)."),false);
+                return count;
+            }));
             root.then(Commands.literal("status").executes(ctx->{
                 var engine=Nullstar.engine();ctx.getSource().sendSuccess(()->Component.literal("NULLSTAR: "+engine.active().size()+" active strikes; "+
                         engine.destruction().queued()+" jobs; last tick "+engine.destruction().lastTickOperations()+" candidates."),false);return 1;

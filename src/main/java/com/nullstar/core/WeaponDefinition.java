@@ -45,17 +45,22 @@ public record WeaponDefinition(String id, String name, String behavior, Targetin
 
     public int duration() { return phases.stream().mapToInt(Stage::ticks).sum(); }
     public WeaponDefinition scaled(double multiplier) {
+        if (!Double.isFinite(multiplier) || multiplier < .25 || multiplier > 4)
+            throw new IllegalArgumentException("Duration multiplier must be between .25 and 4");
         return new WeaponDefinition(id, name, behavior, targeting,
-                phases.stream().map(s -> new Stage(s.phase, Math.max(1, (int) Math.round(s.ticks * multiplier)), s.camera, s.sound)).toList(),
+                phases.stream().map(s -> new Stage(s.phase, scaledLength(s, multiplier), s.camera, s.sound)).toList(),
                 events.stream().map(e -> new Cue(scaleTick(e.tick, multiplier), e.effect, e.x, e.z, e.radiusScale)).toList(),
                 impact, presentation, cooldownTicks);
+    }
+    private static int scaledLength(Stage stage, double multiplier) {
+        return Math.max(1, Math.min(2400, (int) Math.round(stage.ticks * multiplier)));
     }
     private int scaleTick(int tick, double multiplier) {
         int sourceStart = 0, destinationStart = 0;
         for (Stage stage : phases) {
-            int length = Math.max(1, (int) Math.round(stage.ticks * multiplier));
+            int length = scaledLength(stage, multiplier);
             if (tick < sourceStart + stage.ticks)
-                return destinationStart + Math.min(length - 1, (int) Math.floor((tick - sourceStart) * multiplier));
+                return destinationStart + Math.min(length - 1, (int) ((long) (tick - sourceStart) * length / stage.ticks));
             sourceStart += stage.ticks; destinationStart += length;
         }
         throw new IllegalArgumentException("Cue outside timeline");

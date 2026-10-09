@@ -7,6 +7,7 @@ import com.nullstar.item.WeaponControllerItem;
 import com.nullstar.network.NullstarNetworking;
 import com.nullstar.server.NullstarCommands;
 import com.nullstar.server.WeaponEngine;
+import com.nullstar.server.SoundScheduler;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -36,8 +37,8 @@ public final class Nullstar implements ModInitializer {
         try {
             var directory=FabricLoader.getInstance().getConfigDir().resolve("nullstar");
             var next=ConfigFiles.load(directory.resolve("server.json"),ServerConfig.class,ServerConfig::new);next.validate();
-            var weapons=new WeaponCatalog(directory.resolve("weapons"));
-            weapons.all().forEach(weapon->weapon.scaled(next.cinematicDurationMultiplier));
+            var weapons=new WeaponCatalog(directory.resolve("weapons"),next.cinematicDurationMultiplier);
+            SoundScheduler.validate(weapons);
             config=next;catalog=weapons;
         } catch(Exception exception){throw new IllegalStateException("Invalid NULLSTAR configuration; fix config/nullstar before startup",exception);}
     }

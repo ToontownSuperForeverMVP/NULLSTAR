@@ -50,7 +50,7 @@ public final class NullstarClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(StatePayload.TYPE,(payload,ctx)->STATE.snapshot(payload,tick));
         ClientPlayNetworking.registerGlobalReceiver(VisualPayload.TYPE,(payload,ctx)->STATE.cue(payload,tick));
         ClientPlayNetworking.registerGlobalReceiver(StatusPayload.TYPE,(payload,ctx)->{status=payload;statusReceived=tick;});
-        ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->{reset();sequence=0;});
+        ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->{reset();sequence=0;tick=0;statusReceived=0;status=new StatusPayload("helios","HELIOS ANNIHILATOR","",false,BlockPos.ZERO,0);});
         ClientPlayConnectionEvents.JOIN.register((handler,sender,client)->sequence=0);
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
         HudElementRegistry.addLast(Nullstar.id("controller_hud"),NullstarHud::draw);
@@ -75,7 +75,7 @@ public final class NullstarClient implements ClientModInitializer {
             }
         }
         preview=null;
-        if(mc.player.getMainHandItem().is(Nullstar.CONTROLLER)) {
+        if(holdingController(mc)) {
             var eye=mc.player.getEyePosition();var end=eye.add(mc.player.getViewVector(1).scale(128));
             var hit=mc.level.clip(new ClipContext(eye,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,mc.player));
             if(hit.getType()==HitResult.Type.BLOCK)preview=hit.getBlockPos();
@@ -85,5 +85,9 @@ public final class NullstarClient implements ClientModInitializer {
     private static void request(int action) {
         if(ClientPlayNetworking.canSend(RequestPayload.TYPE))ClientPlayNetworking.send(new RequestPayload(1,++sequence,action,status.weapon(),false));
     }
-    public static void reset(){STATE.clear();CAMERA.reset();EFFECTS.clear();PresentationLayers.reset();preview=null;observedLevel=null;tick=0;statusReceived=0;status=new StatusPayload("helios","HELIOS ANNIHILATOR","",false,BlockPos.ZERO,0);}
+    public static boolean holdingController(Minecraft mc) {
+        return mc.player!=null && (mc.player.getMainHandItem().is(Nullstar.CONTROLLER) || mc.player.getOffhandItem().is(Nullstar.CONTROLLER));
+    }
+    public static void reset(){STATE.clear();CAMERA.reset();EFFECTS.clear();PresentationLayers.reset();preview=null;observedLevel=null;
+        status=new StatusPayload(status.weapon(),status.displayName(),"",false,BlockPos.ZERO,status.cooldown());}
 }

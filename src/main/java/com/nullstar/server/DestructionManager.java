@@ -28,16 +28,18 @@ public final class DestructionManager {
     private final Map<UUID,Integer> reservations=new HashMap<>();
     private final Map<UUID,Statistics> statistics=new HashMap<>();
     private int lastTickOperations;
+    private final java.util.Set<UUID> failures=new java.util.HashSet<>();
     public boolean reserve(UUID strike,int count,int limit) {
-        if (count<0 || jobs.size()+reservations.values().stream().mapToInt(Integer::intValue).sum()+count>limit) return false;
+        if (count<0 || limit<0 || reservations.containsKey(strike) || statistics.containsKey(strike)
+                || (long)jobs.size()+reservations.values().stream().mapToLong(Integer::longValue).sum()+count>limit) return false;
         reservations.put(strike,count);return true;
     }
     public void enqueue(UUID strike, UUID owner, ResourceKey<Level> dimension, BlockPos target,
                         String weapon, boolean scorch, CraterGeometry geometry) {
         int reserved=reservations.getOrDefault(strike,0);
         if (reserved<=0) throw new IllegalStateException("Unreserved destruction work");
-        reservations.put(strike,reserved-1);
         var job=new DestructionJob(geometry);
+        reservations.put(strike,reserved-1);
         jobs.add(new Entry(strike,owner,dimension,target.immutable(),weapon,scorch,job));
         var stats=statistics.computeIfAbsent(strike,key->new Statistics());stats.total+=job.total();stats.active++;
     }
@@ -47,25 +49,33 @@ public final class DestructionManager {
         while (left>0 && !jobs.isEmpty() && System.nanoTime()<deadline) {
             var entry=jobs.removeFirst();var level=server.getLevel(entry.dimension);
             int used=0;
-            if (level==null) entry.job.cancel();
-            else used=entry.job.step(Math.min(left,64),(x,y,z,remove,scorch)-> {
-                BlockPos pos=entry.target.offset(x,y,z);
-                if (y < -config.maximumDepth || x*x+z*z > config.maximumRadius*config.maximumRadius) return false;
-                if (pos.getY()<level.getMinY() || pos.getY()>level.getMaxY() || !level.getWorldBorder().isWithinBounds(pos)
-                        || !level.getChunkSource().hasChunk(pos.getX()>>4,pos.getZ()>>4)) return false;
-                var state=level.getBlockState(pos);
-                var actor=server.getPlayerList().getPlayer(entry.owner);
-                if (state.isAir() || state.getDestroySpeed(level,pos)<0 || state.is(PROTECTED) || state.hasBlockEntity()
-                        || (actor!=null && !actor.mayInteract(level,pos))
-                        || !ProtectionHooks.allows(level,entry.owner,pos)) return false;
-                var replacement=Blocks.AIR.defaultBlockState();
-                if (!remove) {
-                    if (!scorch || !entry.scorch) return false;
-                    replacement=BlockTransformations.scorch(entry.weapon,state);
-                    if (replacement==state) return false;
-                }
-                return level.setBlock(pos,replacement,Block.UPDATE_CLIENTS|Block.UPDATE_KNOWN_SHAPE);
-            });
+            long before=entry.job.scanned();
+            try {
+                if (level==null) entry.job.cancel();
+                else used=entry.job.step(Math.min(left,64),(x,y,z,remove,scorch)-> {
+                    BlockPos pos=entry.target.offset(x,y,z);
+                    if (y < -config.maximumDepth || x*x+z*z > config.maximumRadius*config.maximumRadius) return false;
+                    if (pos.getY()<level.getMinY() || pos.getY()>level.getMaxY() || !level.getWorldBorder().isWithinBounds(pos)
+                            || !level.getChunkSource().hasChunk(pos.getX()>>4,pos.getZ()>>4)) return false;
+                    var state=level.getBlockState(pos);
+                    var actor=server.getPlayerList().getPlayer(entry.owner);
+                    if (state.isAir() || state.getDestroySpeed(level,pos)<0 || state.is(PROTECTED) || state.hasBlockEntity()
+                            || (actor!=null && !actor.mayInteract(level,pos))
+                            || !ProtectionHooks.allows(level,entry.owner,pos)) return false;
+                    var replacement=Blocks.AIR.defaultBlockState();
+                    if (!remove) {
+                        if (!scorch || !entry.scorch) return false;
+                        replacement=BlockTransformations.scorch(entry.weapon,state);
+                        if (replacement==state) return false;
+                    }
+                    return level.setBlock(pos,replacement,Block.UPDATE_CLIENTS|Block.UPDATE_KNOWN_SHAPE);
+                });
+            } catch(RuntimeException exception) {
+                used=(int)(entry.job.scanned()-before);
+                Nullstar.LOGGER.error("Destruction failed for strike {}; cancelling its work",entry.strike,exception);
+                cancel(entry.strike);failures.add(entry.strike);
+                left-=used;continue;
+            }
             left-=used;
             if (entry.job.done()) {
                 var stats=statistics.get(entry.strike);stats.scanned+=entry.job.scanned();stats.changed+=entry.job.changed();stats.active--;
@@ -83,7 +93,8 @@ public final class DestructionManager {
         jobs.removeIf(entry->{if(!entry.strike.equals(strike))return false;entry.job.cancel();return true;});
         reservations.remove(strike);statistics.remove(strike);
     }
-    public void clear() {jobs.forEach(e->e.job.cancel());jobs.clear();reservations.clear();statistics.clear();}
+    public java.util.Set<UUID> drainFailures() {var result=java.util.Set.copyOf(failures);failures.clear();return result;}
+    public void clear() {jobs.forEach(e->e.job.cancel());jobs.clear();reservations.clear();statistics.clear();failures.clear();lastTickOperations=0;}
     public int queued() {return jobs.size();}
     public int lastTickOperations() {return lastTickOperations;}
 }

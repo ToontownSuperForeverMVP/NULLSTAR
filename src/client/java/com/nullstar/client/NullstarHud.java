@@ -10,7 +10,7 @@ public final class NullstarHud {
     public static void draw(GuiGraphicsExtractor graphics,DeltaTracker tracker) {
         Minecraft mc=Minecraft.getInstance();if(mc.player==null||mc.gui.hud.isHidden())return;
         var own=NullstarClient.STATE.strikes().values().stream().filter(s->s.state().owner().equals(mc.player.getUUID())).findFirst().orElse(null);
-        if(own==null&&!mc.player.getMainHandItem().is(Nullstar.CONTROLLER))return;
+        if(own==null&&!NullstarClient.holdingController(mc))return;
         int x=8,y=20,w=Math.max(110,Math.min(244,graphics.guiWidth()/2-16));
         graphics.fill(x-4,y-4,x+w,y+59,0xbd10151e);
         String title=NullstarClient.status().displayName();

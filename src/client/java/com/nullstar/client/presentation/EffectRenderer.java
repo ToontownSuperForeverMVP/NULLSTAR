@@ -71,7 +71,7 @@ public final class EffectRenderer {
                 for(int i=0;i<10;i++)emit(mc,dust,head.add(i*.14,i*.8,-i*.1),Vec3.ZERO,14);
             }
         }
-        if(mc.player!=null && mc.player.getMainHandItem().is(com.nullstar.Nullstar.CONTROLLER)) {
+        if(NullstarClient.holdingController(mc)) {
             layerRemaining=remaining;
             var pos=NullstarClient.targetPreview();if(pos!=null)ring(mc,new DustParticleOptions(0x55ddff,1),Vec3.atCenterOf(pos).add(0,1,0),1.7,8,tick*.1,10);
         }
