@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.network.SerializationTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-09T06:11:16.417Z" hostname="SHADOW-DSNN03OD" time="0.126">
+  <properties/>
+  <testcase name="visualRoundTrip()" classname="com.nullstar.network.SerializationTest" time="0.114"/>
+  <testcase name="requestRoundTrip()" classname="com.nullstar.network.SerializationTest" time="0.003"/>
+  <testcase name="stateRoundTrip()" classname="com.nullstar.network.SerializationTest" time="0.002"/>
+  <testcase name="statusRoundTrip()" classname="com.nullstar.network.SerializationTest" time="0.002"/>
+  <testcase name="invalidRequestsAndStatesRejected()" classname="com.nullstar.network.SerializationTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

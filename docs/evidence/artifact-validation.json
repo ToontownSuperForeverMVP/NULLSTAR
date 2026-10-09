@@ -1,0 +1,12 @@
+{
+  "Version": "1.0.0",
+  "Entrypoint": [
+    "com.nullstar.Nullstar"
+  ],
+  "Minecraft": "=26.3",
+  "TestClasses": 0,
+  "Common": true,
+  "Client": true,
+  "ClassMajor": 69,
+  "Sha256": "31C4567128ABE1C37460DEA923901A476DF9D1AEFD328C4E9133F8210D7A29D2"
+}
