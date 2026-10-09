@@ -4,7 +4,7 @@
 
 ## 1. Revision
 
-Branch `part2/cinematic-release`, based on tag `codex/part-1.5b-complete` (`5ba60f1`). The final commit hash is printed by `git log -1` on that branch; release evidence was produced from the source tree committed with this report.
+Branch `part2/cinematic-release`, based on tag `codex/part-1.5b-complete` (`5ba60f1`). Release source and evidence: commit `b181042` (code identical to the JAR build); tag `part2-release` marks the final documentation commit.
 
 ## 2. Visual systems
 
