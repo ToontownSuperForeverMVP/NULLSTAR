@@ -31,6 +31,7 @@ public final class StrikeClientGameTest implements FabricClientGameTest {
             world.getServer().runOnServer(server->{var player=world.getConnection().getServerPlayer();player.getAbilities().flying=true;player.onUpdateAbilities();});
             world.getServer().runCommand("give @p nullstar:controller");
             context.waitTicks(30);world.getConnection().waitForChunksDownload();
+            verifyDiagnosticsAndNetworkBoundaries(context,world);
             for(String weapon:new String[]{"helios","singularity","glassfall"}) {
                 platform(world);world.getConnection().waitForClientboundPackets();context.waitTicks(10);
                 if(weapon.equals("helios")) {
@@ -117,6 +118,43 @@ public final class StrikeClientGameTest implements FabricClientGameTest {
     private static void platform(TestSingleplayerContext world) {
         world.getServer().runCommand("fill -24 60 -24 24 70 24 minecraft:stone");
         world.getServer().runCommand("fill -24 71 -24 24 80 24 minecraft:stone");
+    }
+    private static void verifyDiagnosticsAndNetworkBoundaries(ClientGameTestContext context,TestSingleplayerContext world) {
+        world.getServer().runCommand("execute as @p at @s run nullstar cancel");
+        var distant=java.util.UUID.randomUUID();
+        world.getServer().runOnServer(server->{
+            try {
+                var player=world.getConnection().getServerPlayer();var level=world.getConnection().getServerLevel();
+                var base=Nullstar.catalog().get("helios");var directory=java.nio.file.Files.createTempDirectory(Path.of("."),"sound-validation-");
+                var phases=new java.util.ArrayList<>(base.phases());
+                phases.set(0,new com.nullstar.core.WeaponDefinition.Stage(phases.get(0).phase(),phases.get(0).ticks(),"none","nullstar:missing_sound"));
+                phases.set(1,new com.nullstar.core.WeaponDefinition.Stage(phases.get(1).phase(),phases.get(1).ticks(),"orbital","invalid#sound"));
+                var definition=new com.nullstar.core.WeaponDefinition(base.id(),base.name(),base.behavior(),base.targeting(),phases,base.events(),base.impact(),base.presentation(),base.cooldownTicks());
+                java.nio.file.Files.writeString(directory.resolve("helios.json"),com.nullstar.config.ConfigFiles.JSON.toJson(definition));
+                var catalog=new com.nullstar.core.WeaponCatalog(directory);
+                com.nullstar.server.SoundScheduler.validate(catalog);
+                for(int i=0;i<2;i++)com.nullstar.server.SoundScheduler.phase(level,TARGET,phases.get(i),definition,Nullstar.config());
+
+                var engine=new com.nullstar.server.WeaponEngine();
+                var broadcast=com.nullstar.server.WeaponEngine.class.getDeclaredMethod("broadcast",net.minecraft.server.MinecraftServer.class,net.minecraft.network.protocol.common.custom.CustomPacketPayload.class);
+                broadcast.setAccessible(true);
+                broadcast.invoke(engine,server,new com.nullstar.network.StatusPayload("glassfall","GLASSFALL ARRAY","UNSUPPORTED_BROADCAST",false,BlockPos.ZERO,0));
+            } catch(Exception exception) {throw new RuntimeException("Diagnostic/network regression failed",exception);}
+        });
+        world.getConnection().waitForClientboundPackets();context.waitTicks(5);
+        check(context.computeOnClient(mc->NullstarClient.status().weapon().equals("helios")&&!NullstarClient.status().message().equals("UNSUPPORTED_BROADCAST")),"Unsupported payload was broadcast globally");
+        world.getServer().runOnServer(server->{
+            try {
+                var player=world.getConnection().getServerPlayer();var level=world.getConnection().getServerLevel();
+                var base=Nullstar.catalog().get("helios");var engine=new com.nullstar.server.WeaponEngine();
+                var active=com.nullstar.server.WeaponEngine.class.getDeclaredField("active");active.setAccessible(true);
+                @SuppressWarnings("unchecked") var strikes=(java.util.Map<java.util.UUID,com.nullstar.server.ActiveStrike>)active.get(engine);
+                strikes.put(distant,new com.nullstar.server.ActiveStrike(distant,java.util.UUID.randomUUID(),level.dimension(),new BlockPos(1000,80,1000),base,0,1,true,20,13));
+                engine.join(player);engine.stop();
+            } catch(Exception exception) {throw new RuntimeException("Diagnostic/network regression failed",exception);}
+        });
+        world.getConnection().waitForClientboundPackets();context.waitTicks(5);
+        check(context.computeOnClient(mc->!NullstarClient.STATE.strikes().containsKey(distant)),"Distant non-owner join received strike state");
     }
     private static void screenshot(ClientGameTestContext context,String name) {
         context.runOnClient(mc->mc.gui.hud.getChat().clearMessages(true));
