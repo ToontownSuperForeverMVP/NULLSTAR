@@ -18,6 +18,28 @@ Astronomical scene/structure scale, beam width, shockwave extent, blast radius, 
 
 See `PART25_ENGINEERING_REPORT.md` for policy/limits, persistence and exact runtime evidence; `HANDOFF_TO_OPUS_PART25.md` identifies visual hooks.
 
+## Part 2.5B colossal presentation
+
+Every magnitude below is derived on the client from the authoritative `_v2` descriptors through `PresentationScale`; the server owns only the damage. STANDARD resolves to exactly the Part 2 numbers, so nothing in this section changes the shipped default experience.
+
+| Presentation quantity | STANDARD | TITANIC | APOCALYPSE |
+| --- | --- | --- | --- |
+| Machinery multiplier | 1 | ~2.9 | ~4.4 |
+| Emitter / platform altitude (blocks) | 72 | ~216 | ~331 |
+| Cosmetic beam radius (blocks) | 1.7 | ~7.2 | ~27 |
+| Shock / debris reach (blocks) | 60 | 512 | 2,000 |
+| Secondary devastation reach (blocks) | radius | ~146 | 650 |
+
+**Helios.** A colossal (TITANIC/APOCALYPSE) Helios now runs the whole charge, alignment and discharge inside the detached cosmic act: the camera stays at the player's own position and the composition fills the frame, so no teleport or unloaded terrain is involved. The sequence is a directed mini-film: acquisition → charging machinery → an atmospheric ascent → a planetary body with atmosphere, terminator, debris belt and moon → a solar system with orbital paths → a barred-spiral galaxy with dust lanes, core and polar jets (the world is now a mote on an arm) → an observable-universe filament web with redshifted boundary shells → the star mothership, first revealed, then deploying armoured collar rings, star-harvesting vanes, harvest shells and targeting pylons while its aperture iris opens around a contained star → the colossal layered stellar lance fired back down at the mote of a world → the cut to the world for the descent, impact, two devastation waves and the crater sweep. The lance is layered (white-hot interior, plasma body, unstable outer envelope, ejected edge streaks) and reads from very large distances. The world-space impact is rebuilt around the shock reach: contact flash, incandescent core, energy pillar, multiple concentric shock systems with re-emanating follow-up fronts, a ground-hugging pressure wall, debris towers and towering ash columns, secondary devastation rings, then a long aftermath with molten pools, ash domes, seared outer layers and drifting residual rings.
+
+**Singularity.** The anomaly body is lifted into the sky and enlarged, with an enormous counter-precessing outer torus, two further tilted ring systems, infalling matter streams, terrain slabs and shards spiralling up and inward, a prolonged attraction, a compressing core, a genuine held-breath pause, a violent release and a devastated gravitational sink basin: inward-sloped collapsed shells dropping to a fused floor, fracture rings out to the secondary reach, release jets, molten residue and a slow settling dust dome.
+
+**Glassfall.** The lattice becomes a monumental orbital bombardment platform: a spine of reactor corridors, counter-rotating outer ring stacks with docking cradles, capacitor banks, aiming booms and tension struts, all unfolding as the strike deploys. Projectiles are colossal crystalline shells with a visible internal energy core, layered pseudo-refractive rinds, a camera-facing refraction annulus, a bow-shock cap and long analytic trails that still terminate exactly on the authoritative cue positions. Sub-impacts get regional shock systems; the final centre strike adds a pressure dome, a taller pillar, an ash column and concentric devastation rings out to the secondary reach, then a long crystalline aftermath.
+
+New colossal shots (registered in `CameraScripts`, selected by the generated profile): `helios_pursuit`, `helios_annihilation`, `helios_pressure`, `helios_crater`, `helios_sweep`, `helios_horizon`, `helios_monolith`, `singularity_sky`, `singularity_sink`, `singularity_sweep`, `glassfall_platform`, `glassfall_crater`, `glassfall_sweep`. Every orbital distance is bounded so a shot stays inside the player's loaded region. New sounds: `cosmic.ascend/reveal/vast/mothership/deploy/charge/align/fire/invoke`, `singularity.vacuum/release`, `glassfall.lattice_charge/dome`, with a colossal-only client accent table layered over them.
+
+Accessibility is unchanged: reduced motion keeps the player's own view while all world effects still play, reduced flashing caps the flash billboards, particle intensity zero removes cosmetic particles, and `K` skips the cinematic without touching the authoritative damage.
+
 ## STANDARD weapon behavior
 
 The three identities and their implementations are original. Part 2 replaced the native particle presentation with authored procedural machinery, custom RenderPearl shaders, original procedural textures and synthesized sound effects (generators in `tools/assets`). No reference-mod code, models, textures, music, sounds or cinematic sequences are incorporated. Gameplay timings below are unchanged and authoritative; presentation is derived from them.

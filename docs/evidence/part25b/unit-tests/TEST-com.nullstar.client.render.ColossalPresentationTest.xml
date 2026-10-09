@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.client.render.ColossalPresentationTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-09T19:30:04.540Z" hostname="SHADOW-DSNN03OD" time="0.118">
+  <properties/>
+  <testcase name="everyGeneratedCameraNameIsRegistered()" classname="com.nullstar.client.render.ColossalPresentationTest" time="0.101"/>
+  <testcase name="standardKeepsThePart2MagnitudesExactly()" classname="com.nullstar.client.render.ColossalPresentationTest" time="0.002"/>
+  <testcase name="colossalMagnitudesGrowWithTheAuthoritativeDescriptors()" classname="com.nullstar.client.render.ColossalPresentationTest" time="0.002"/>
+  <testcase name="colossalHeliosHoldsTheCosmicActThroughTheDischarge()" classname="com.nullstar.client.render.ColossalPresentationTest" time="0.001"/>
+  <testcase name="colossalTimelineSelectsTheCosmicActAndTheDevastationSweeps()" classname="com.nullstar.client.render.ColossalPresentationTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

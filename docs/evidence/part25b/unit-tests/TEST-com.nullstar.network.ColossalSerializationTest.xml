@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.network.ColossalSerializationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-09T19:30:05.217Z" hostname="SHADOW-DSNN03OD" time="0.163">
+  <properties/>
+  <testcase name="compactColossalStateAndLargeCueRoundTrip()" classname="com.nullstar.network.ColossalSerializationTest" time="0.163"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

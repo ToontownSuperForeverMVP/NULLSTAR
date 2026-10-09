@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.client.render.PresentationEngineTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-09T19:30:04.659Z" hostname="SHADOW-DSNN03OD" time="0.056">
+  <properties/>
+  <testcase name="sinkBudgetDropsWholePrimitivesAndResets()" classname="com.nullstar.client.render.PresentationEngineTest" time="0.002"/>
+  <testcase name="proceduralMeshesHaveExpectedTopologyAndUnitNormals()" classname="com.nullstar.client.render.PresentationEngineTest" time="0.038"/>
+  <testcase name="glowPreferenceScalesEnergyAlphaButNotOpaqueMaterials()" classname="com.nullstar.client.render.PresentationEngineTest" time="0.007"/>
+  <testcase name="particlePoolIsBoundedAndOwnerScoped()" classname="com.nullstar.client.render.PresentationEngineTest" time="0.001"/>
+  <testcase name="clientConfigClampsPresentationPreferences()" classname="com.nullstar.client.render.PresentationEngineTest" time="0.002"/>
+  <testcase name="canvasPrimitivesEmitQuadsAndRespectBudgets()" classname="com.nullstar.client.render.PresentationEngineTest" time="0.003"/>
+  <testcase name="phaseHelpersFollowTimelineOrder()" classname="com.nullstar.client.render.PresentationEngineTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

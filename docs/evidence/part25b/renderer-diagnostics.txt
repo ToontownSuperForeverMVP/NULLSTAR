@@ -1,0 +1,84 @@
+00_diorama | idle | fps=30 frame=1.51ms | strikes=0 vertices=740 dropped=0 particles=0 peak=384 collect=0.032ms custom=true | serverTick=2.09ms
+helios_00_acquire | ACQUIRING age=9 | fps=30 frame=1.53ms | strikes=1 vertices=772 dropped=0 particles=0 peak=384 collect=0.049ms custom=true | serverTick=1.91ms
+helios_01_charge_warning | CHARGING age=35 | fps=28 frame=1.55ms | strikes=1 vertices=15688 dropped=0 particles=45 peak=384 collect=0.244ms custom=true | serverTick=1.60ms
+helios_02_reveal | CHARGING age=53 | fps=29 frame=1.67ms | strikes=1 vertices=16232 dropped=0 particles=99 peak=384 collect=0.269ms custom=true | serverTick=1.21ms
+helios_03_descended | CHARGING age=75 | fps=30 frame=1.34ms | strikes=1 vertices=16456 dropped=0 particles=155 peak=384 collect=0.262ms custom=true | serverTick=0.88ms
+helios_04_align_rings | ORBITAL_ALIGNMENT age=93 | fps=30 frame=1.19ms | strikes=1 vertices=15728 dropped=0 particles=166 peak=384 collect=0.251ms custom=true | serverTick=0.88ms
+helios_05_align_vanes | ORBITAL_ALIGNMENT age=107 | fps=30 frame=1.26ms | strikes=1 vertices=15740 dropped=0 particles=163 peak=384 collect=0.241ms custom=true | serverTick=0.87ms
+helios_06_core_open | ORBITAL_ALIGNMENT age=119 | fps=30 frame=2.04ms | strikes=1 vertices=15932 dropped=0 particles=158 peak=384 collect=0.256ms custom=true | serverTick=0.85ms
+helios_07_discharge | FIRING age=127 | fps=30 frame=1.29ms | strikes=1 vertices=16760 dropped=0 particles=139 peak=384 collect=0.274ms custom=true | serverTick=0.85ms
+helios_08_beam_mid | FIRING age=135 | fps=30 frame=1.50ms | strikes=1 vertices=16200 dropped=0 particles=120 peak=384 collect=0.273ms custom=true | serverTick=0.85ms
+helios_09_entry | ATMOSPHERIC_ENTRY age=151 | fps=29 frame=1.70ms | strikes=1 vertices=16444 dropped=0 particles=138 peak=384 collect=0.256ms custom=true | serverTick=0.79ms
+helios_10_entry_low | ATMOSPHERIC_ENTRY age=163 | fps=29 frame=1.63ms | strikes=1 vertices=16732 dropped=0 particles=180 peak=384 collect=0.265ms custom=true | serverTick=0.73ms
+helios_11_impact_flash | IMPACT age=172 | fps=29 frame=1.71ms | strikes=1 vertices=23856 dropped=0 particles=581 peak=582 collect=0.304ms custom=true | serverTick=0.73ms
+helios_12_impact_core | IMPACT age=175 | fps=28 frame=2.16ms | strikes=1 vertices=23828 dropped=0 particles=574 peak=582 collect=0.343ms custom=true | serverTick=0.73ms
+helios_13_shockwaves | AFTERMATH age=181 | fps=28 frame=2.49ms | strikes=1 vertices=24920 dropped=0 particles=573 peak=582 collect=0.405ms custom=true | serverTick=0.73ms
+helios_14_pressure_wave | AFTERMATH age=191 | fps=28 frame=2.10ms | strikes=1 vertices=25500 dropped=0 particles=562 peak=583 collect=0.411ms custom=true | serverTick=0.72ms
+helios_15_aftermath | AFTERMATH age=216 | fps=30 frame=1.48ms | strikes=1 vertices=22160 dropped=0 particles=473 peak=583 collect=0.359ms custom=true | serverTick=0.73ms
+helios_16_aftermath_late | AFTERMATH age=261 | fps=30 frame=1.38ms | strikes=1 vertices=17868 dropped=0 particles=334 peak=583 collect=0.301ms custom=true | serverTick=0.71ms
+helios_zz_crater_player_view | idle | fps=30 frame=1.38ms | strikes=0 vertices=968 dropped=0 particles=57 peak=583 collect=0.037ms custom=true | serverTick=0.65ms
+singularity_00_formation | CHARGING age=31 | fps=30 frame=1.26ms | strikes=1 vertices=4672 dropped=0 particles=0 peak=583 collect=0.153ms custom=true | serverTick=1.14ms
+singularity_01_accretion | CHARGING age=71 | fps=30 frame=1.26ms | strikes=1 vertices=5340 dropped=0 particles=0 peak=583 collect=0.161ms custom=true | serverTick=0.66ms
+singularity_02_charged | FIRING age=101 | fps=30 frame=1.59ms | strikes=1 vertices=5620 dropped=0 particles=0 peak=583 collect=0.170ms custom=true | serverTick=0.67ms
+singularity_03_attraction | FIRING age=131 | fps=29 frame=1.25ms | strikes=1 vertices=6184 dropped=0 particles=17 peak=583 collect=0.191ms custom=true | serverTick=0.69ms
+singularity_04_attraction_late | FIRING age=171 | fps=30 frame=1.29ms | strikes=1 vertices=6628 dropped=0 particles=24 peak=583 collect=0.188ms custom=true | serverTick=0.65ms
+singularity_05_destabilize | FIRING age=201 | fps=30 frame=1.55ms | strikes=1 vertices=6564 dropped=0 particles=25 peak=583 collect=0.198ms custom=true | serverTick=0.65ms
+singularity_06_contraction | FIRING age=215 | fps=29 frame=1.07ms | strikes=1 vertices=5996 dropped=0 particles=30 peak=583 collect=0.172ms custom=true | serverTick=0.64ms
+singularity_07_silence | IMPACT age=220 | fps=29 frame=1.19ms | strikes=1 vertices=5996 dropped=0 particles=30 peak=583 collect=0.177ms custom=true | serverTick=0.64ms
+singularity_08_implosion | IMPACT age=223 | fps=29 frame=1.39ms | strikes=1 vertices=6380 dropped=0 particles=247 peak=583 collect=0.198ms custom=true | serverTick=0.65ms
+singularity_09_shockwave | IMPACT age=227 | fps=29 frame=1.70ms | strikes=1 vertices=6620 dropped=0 particles=243 peak=583 collect=0.180ms custom=true | serverTick=0.65ms
+singularity_10_release | AFTERMATH age=237 | fps=26 frame=1.25ms | strikes=1 vertices=7160 dropped=0 particles=228 peak=583 collect=0.144ms custom=true | serverTick=0.65ms
+singularity_11_aftermath | AFTERMATH age=261 | fps=28 frame=1.17ms | strikes=1 vertices=4992 dropped=0 particles=198 peak=583 collect=0.104ms custom=true | serverTick=0.64ms
+singularity_12_aftermath_late | AFTERMATH age=301 | fps=30 frame=1.03ms | strikes=1 vertices=2884 dropped=0 particles=144 peak=583 collect=0.078ms custom=true | serverTick=0.62ms
+singularity_zz_crater_player_view | idle | fps=30 frame=1.02ms | strikes=0 vertices=744 dropped=0 particles=1 peak=583 collect=0.023ms custom=true | serverTick=0.61ms
+glassfall_00_lattice_deploy | CHARGING age=41 | fps=30 frame=1.32ms | strikes=1 vertices=4552 dropped=0 particles=0 peak=583 collect=0.143ms custom=true | serverTick=1.00ms
+glassfall_01_lattice_lock | CHARGING age=65 | fps=29 frame=0.94ms | strikes=1 vertices=4552 dropped=0 particles=0 peak=583 collect=0.126ms custom=true | serverTick=0.62ms
+glassfall_02_rails_aim | ORBITAL_ALIGNMENT age=85 | fps=30 frame=0.79ms | strikes=1 vertices=3272 dropped=0 particles=0 peak=583 collect=0.094ms custom=true | serverTick=0.61ms
+glassfall_03_first_launch | FIRING age=97 | fps=30 frame=1.21ms | strikes=1 vertices=3352 dropped=0 particles=0 peak=583 collect=0.147ms custom=true | serverTick=0.60ms
+glassfall_04_first_descent | FIRING age=113 | fps=30 frame=1.21ms | strikes=1 vertices=3392 dropped=0 particles=0 peak=583 collect=0.109ms custom=true | serverTick=0.60ms
+glassfall_05_first_impact | FIRING age=122 | fps=30 frame=1.81ms | strikes=1 vertices=5020 dropped=0 particles=80 peak=583 collect=0.121ms custom=true | serverTick=0.61ms
+glassfall_06_second_impact | FIRING age=141 | fps=28 frame=1.11ms | strikes=1 vertices=5092 dropped=0 particles=77 peak=583 collect=0.147ms custom=true | serverTick=0.60ms
+glassfall_07_mid_barrage | FIRING age=159 | fps=30 frame=1.26ms | strikes=1 vertices=6652 dropped=0 particles=140 peak=583 collect=0.149ms custom=true | serverTick=0.58ms
+glassfall_08_third_impact | FIRING age=189 | fps=29 frame=1.48ms | strikes=1 vertices=6332 dropped=0 particles=110 peak=583 collect=0.141ms custom=true | serverTick=0.57ms
+glassfall_09_fourth_descent | FIRING age=209 | fps=29 frame=1.15ms | strikes=1 vertices=7244 dropped=0 particles=168 peak=583 collect=0.152ms custom=true | serverTick=0.57ms
+glassfall_10_final_launch | FIRING age=237 | fps=30 frame=1.16ms | strikes=1 vertices=7316 dropped=0 particles=188 peak=583 collect=0.154ms custom=true | serverTick=0.56ms
+glassfall_11_final_descent | FIRING age=253 | fps=30 frame=1.37ms | strikes=1 vertices=6668 dropped=0 particles=148 peak=583 collect=0.140ms custom=true | serverTick=0.56ms
+glassfall_12_final_impact | IMPACT age=262 | fps=30 frame=2.08ms | strikes=1 vertices=13212 dropped=0 particles=392 peak=583 collect=0.188ms custom=true | serverTick=0.56ms
+glassfall_13_energy_dome | IMPACT age=265 | fps=30 frame=1.74ms | strikes=1 vertices=13116 dropped=0 particles=386 peak=583 collect=0.221ms custom=true | serverTick=0.56ms
+glassfall_14_angular_shock | IMPACT age=271 | fps=27 frame=2.01ms | strikes=1 vertices=12788 dropped=0 particles=380 peak=583 collect=0.225ms custom=true | serverTick=0.57ms
+glassfall_15_aftermath | AFTERMATH age=291 | fps=29 frame=1.92ms | strikes=1 vertices=10124 dropped=0 particles=306 peak=583 collect=0.209ms custom=true | serverTick=0.57ms
+glassfall_16_aftermath_late | AFTERMATH age=331 | fps=30 frame=1.62ms | strikes=1 vertices=7404 dropped=0 particles=235 peak=583 collect=0.156ms custom=true | serverTick=0.56ms
+glassfall_zz_crater_player_view | idle | fps=30 frame=0.84ms | strikes=0 vertices=760 dropped=0 particles=5 peak=583 collect=0.024ms custom=true | serverTick=0.53ms
+colossal_00_ascent | ASCENT age=213 | fps=30 frame=1.17ms | strikes=1 vertices=3468 dropped=0 particles=0 peak=583 collect=0.304ms custom=true | serverTick=0.78ms
+colossal_01_planet | PLANETARY_VIEW age=233 | fps=30 frame=1.36ms | strikes=1 vertices=16844 dropped=0 particles=0 peak=583 collect=0.415ms custom=true | serverTick=0.64ms
+colossal_02_solar_system | SOLAR_SYSTEM_VIEW age=253 | fps=30 frame=1.41ms | strikes=1 vertices=11200 dropped=0 particles=0 peak=583 collect=0.290ms custom=true | serverTick=0.63ms
+colossal_03_galaxy | GALACTIC_VIEW age=273 | fps=30 frame=1.10ms | strikes=1 vertices=2964 dropped=0 particles=0 peak=583 collect=0.266ms custom=true | serverTick=0.53ms
+colossal_04_universe | COSMIC_BOUNDARY_VIEW age=293 | fps=30 frame=0.84ms | strikes=1 vertices=2412 dropped=0 particles=0 peak=583 collect=0.198ms custom=true | serverTick=0.51ms
+colossal_05_mothership_reveal | MOTHERSHIP_REVEAL age=313 | fps=29 frame=1.46ms | strikes=1 vertices=17472 dropped=0 particles=0 peak=583 collect=0.307ms custom=true | serverTick=0.52ms
+colossal_06_deployment | DEPLOYMENT age=333 | fps=30 frame=1.49ms | strikes=1 vertices=17472 dropped=0 particles=0 peak=583 collect=0.295ms custom=true | serverTick=0.52ms
+colossal_07_charging | CHARGING age=353 | fps=29 frame=1.34ms | strikes=1 vertices=17816 dropped=0 particles=78 peak=583 collect=0.313ms custom=true | serverTick=0.52ms
+colossal_08_stellar_lance | FIRING age=373 | fps=29 frame=1.46ms | strikes=1 vertices=18616 dropped=0 particles=90 peak=583 collect=0.346ms custom=true | serverTick=0.51ms
+colossal_09_descent | ATMOSPHERIC_ENTRY age=393 | fps=30 frame=1.73ms | strikes=1 vertices=19692 dropped=0 particles=243 peak=583 collect=0.390ms custom=true | serverTick=0.51ms
+colossal_10_impact | IMPACT age=413 | fps=30 frame=1.84ms | strikes=1 vertices=23264 dropped=0 particles=229 peak=583 collect=0.414ms custom=true | serverTick=0.52ms
+colossal_11_pressure_wall | DEVASTATION_WAVE_1 age=433 | fps=29 frame=1.54ms | strikes=1 vertices=23348 dropped=0 particles=188 peak=583 collect=0.396ms custom=true | serverTick=0.52ms
+colossal_12_aftermath | AFTERMATH age=453 | fps=29 frame=1.18ms | strikes=1 vertices=17380 dropped=0 particles=172 peak=583 collect=0.315ms custom=true | serverTick=0.52ms
+modes_ui_aim_reticle | idle | fps=30 frame=0.87ms | strikes=0 vertices=740 dropped=0 particles=0 peak=583 collect=0.025ms custom=true | serverTick=1.22ms
+modes_ui_settings_screen | idle | fps=29 frame=2.01ms | strikes=0 vertices=740 dropped=0 particles=0 peak=583 collect=0.031ms custom=true | serverTick=1.20ms
+modes_reduced_motion_medium_00_core | ORBITAL_ALIGNMENT age=111 | fps=30 frame=1.38ms | strikes=1 vertices=15208 dropped=0 particles=108 peak=583 collect=0.229ms custom=true | serverTick=0.58ms
+modes_reduced_motion_medium_01_beam | FIRING age=131 | fps=29 frame=1.91ms | strikes=1 vertices=15516 dropped=0 particles=83 peak=583 collect=0.262ms custom=true | serverTick=0.57ms
+modes_reduced_motion_medium_02_impact | IMPACT age=176 | fps=30 frame=1.98ms | strikes=1 vertices=20372 dropped=0 particles=380 peak=583 collect=0.282ms custom=true | serverTick=0.55ms
+modes_reduced_motion_zz_crater_player_view | idle | fps=30 frame=1.25ms | strikes=0 vertices=804 dropped=0 particles=48 peak=583 collect=0.028ms custom=true | serverTick=0.54ms
+modes_low_00_core | ORBITAL_ALIGNMENT age=111 | fps=30 frame=1.32ms | strikes=1 vertices=12324 dropped=0 particles=55 peak=583 collect=0.195ms custom=true | serverTick=0.55ms
+modes_low_01_beam | FIRING age=131 | fps=29 frame=1.47ms | strikes=1 vertices=12408 dropped=0 particles=45 peak=583 collect=0.197ms custom=true | serverTick=0.54ms
+modes_low_02_impact | IMPACT age=176 | fps=30 frame=1.85ms | strikes=1 vertices=13640 dropped=0 particles=95 peak=583 collect=0.220ms custom=true | serverTick=0.54ms
+modes_low_zz_crater_player_view | idle | fps=30 frame=1.20ms | strikes=0 vertices=692 dropped=0 particles=44 peak=583 collect=0.032ms custom=true | serverTick=0.53ms
+modes_improved_transparency_00_core | ORBITAL_ALIGNMENT age=111 | fps=30 frame=1.83ms | strikes=1 vertices=15976 dropped=0 particles=158 peak=583 collect=0.240ms custom=true | serverTick=0.52ms
+modes_improved_transparency_01_beam | FIRING age=131 | fps=29 frame=1.39ms | strikes=1 vertices=16516 dropped=0 particles=131 peak=583 collect=0.249ms custom=true | serverTick=0.52ms
+modes_improved_transparency_02_impact | IMPACT age=176 | fps=30 frame=1.97ms | strikes=1 vertices=23844 dropped=0 particles=578 peak=587 collect=0.340ms custom=true | serverTick=0.51ms
+modes_oit_zz_crater_player_view | idle | fps=30 frame=1.20ms | strikes=0 vertices=1008 dropped=0 particles=67 peak=587 collect=0.031ms custom=true | serverTick=0.50ms
+stress_0_four_concurrent | ATMOSPHERIC_ENTRY age=211 | fps=30 frame=3.46ms | strikes=4 vertices=56160 dropped=8856 particles=1024 peak=1024 collect=1.010ms custom=true | serverTick=1.18ms
+stress_1_four_concurrent | ATMOSPHERIC_ENTRY age=231 | fps=29 frame=3.04ms | strikes=4 vertices=56996 dropped=9000 particles=1023 peak=1024 collect=1.034ms custom=true | serverTick=1.02ms
+stress_2_four_concurrent | ATMOSPHERIC_ENTRY age=251 | fps=29 frame=2.54ms | strikes=4 vertices=49240 dropped=9120 particles=1023 peak=1024 collect=0.871ms custom=true | serverTick=0.72ms
+stress_3_four_concurrent | ATMOSPHERIC_ENTRY age=271 | fps=29 frame=2.80ms | strikes=4 vertices=45736 dropped=6264 particles=895 peak=1024 collect=0.778ms custom=true | serverTick=0.72ms
+stress_4_four_concurrent | ATMOSPHERIC_ENTRY age=291 | fps=29 frame=3.09ms | strikes=4 vertices=54156 dropped=6264 particles=975 peak=1024 collect=0.884ms custom=true | serverTick=0.61ms
+stress_5_four_concurrent | ATMOSPHERIC_ENTRY age=311 | fps=30 frame=2.89ms | strikes=4 vertices=51648 dropped=6264 particles=809 peak=1024 collect=0.874ms custom=true | serverTick=0.59ms

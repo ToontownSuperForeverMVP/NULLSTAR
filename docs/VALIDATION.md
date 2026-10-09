@@ -1,5 +1,72 @@
 # Validation
 
+## Part 2.5B release validation
+
+October 9, 2026. Branch `codex/part25-colossal`; Part 2.5B tested on the revision that follows the Part 2.5A
+engineering commit `1c8e250` and its documentation commit `77d1da0` (resolve both with Git; the handoff tag
+`codex/part-2.5b-complete` points at the Part 2.5B documentation/evidence commit). Recovery `codex/pre-part25-20261009`
+retains Part 2 `c5ef353`; `codex/part-2.5a-complete` retains the 2.5A stage. Versions are unchanged: Minecraft 26.3,
+Java/Temurin 25.0.4+7, Loader 0.19.5, Fabric API 0.162.0+26.3, Loom 1.18.3, Gradle 9.7.1 and JUnit 5.11.4. Every
+world is disposable under `build/run`; no Prism saves, mods or configuration were touched.
+
+Commands run from this checkout with `JAVA_HOME=C:\Users\Shadow\.gradle\jdks\eclipse_adoptium-25-amd64-windows.2`:
+
+```powershell
+.\gradlew.bat clean build
+.\gradlew.bat runClientGameTest
+pwsh -File scripts/verify-artifact.ps1 -Output docs/evidence/part25b/artifact-validation.json
+python -I tools/assets/validate_audio.py docs/evidence/part25b/audio-validation.json
+```
+
+| Check | Result / scope | Evidence |
+| --- | --- | --- |
+| Final release check `clean build` | PASS in 23 s: **61 JUnit, zero failures/errors** and **all 10 required dedicated GameTests passed** | `evidence/part25b/clean-build.log`, `unit-tests/` |
+| Full real-client suite | PASS in 6 m 11 s: regression, dedicated connection, capture (helios, singularity, glassfall, **colossal**, modes, stress) and the colossal lifecycle suite | `evidence/part25b/client-suite.log` |
+| Colossal presentation measurement | PASS: 13 colossal beats captured with per-frame vertex/particle/collect/frame/server-tick diagnostics; **0 dropped primitives** in every beat | `evidence/part25b/renderer-diagnostics.txt`, `frame-metrics.json` |
+| Frame review | PASS (machine): all 103 captured frames carry structure and contrast; lowest content fraction 25.6 %; no flat, empty or washed-out beat | `evidence/part25b/frame-metrics.json` |
+| Real client lifecycle | PASS: five normalized cosmic-act captures, late one-snapshot mothership reconstruction, native K skip, skip after damage commitment, controlled diameter-64 real crater, inert nominal bounds, actual integrated-server close/reopen of an unfinished job | `evidence/part25b/client-suite.log` |
+| Custom pipelines | PASS: 18 programs compiled, `custom=true` in every captured frame, no fallback and no renderer exception | `evidence/part25b/renderer-diagnostics.txt` |
+| Audio assets | PASS: **41** valid mono 44.1 kHz Vorbis files, peaks −3.2..−1.2 dBFS, all referenced by `sounds.json` | `evidence/part25b/audio-validation.json` |
+| Production artifact | PASS: major 69, exact 26.3, both production entrypoints, **0 test classes** | `evidence/part25b/artifact-validation.json` |
+
+Final JUnit totals: EngineTest 13, ColossalEngineTest 13, SerializationTest 5, ColossalSerializationTest 1,
+ClientStateTest 3, CinematicCameraTest 7, CosmicCameraTest 1, PresentationEngineTest 7, TrajectoryTest 2,
+DestructionManagerTest 2, ColossalPersistenceTest 2 and the new ColossalPresentationTest 5. The new class pins the
+colossal presentation contract: the magnitudes derived from the real authoritative profiles, the unchanged STANDARD
+identity, the cosmic act holding through charge/alignment/discharge while every other weapon and phase stays in the
+world, the colossal timeline selecting the cosmic act and the devastation sweeps, and every camera name a generated
+profile can select being registered.
+
+The three added dedicated fixtures from 2.5A still prove radius-500/depth-96 admission and single-use confirmation,
+reservation saturation, a complete 2,000-tick inert preview, real staged jobs with bounded cursors, exact global
+budgets and change caps, and no new corner chunk loading. The nominal APOCALYPSE footprint is logged by the
+engine as 13,248,010 candidate cells in the 575-block annular pass and 6,770,404 in the 650-block pass. The one
+`Timeline cannot rewind` stack trace remains the intentional injected isolation fixture. Windows OSHI/Perflib
+warnings and development Realms placeholder-auth notices are environment noise.
+
+Colossal presentation measurements (ULTRA, one synthetic APOCALYPSE Helios strike, single machine): 2,412–23,348
+submitted vertices per beat, 0 dropped, peak 583 of the 1,024 cosmetic particles, extraction (collect) 0.198–0.415 ms,
+measured frame work 0.84–1.84 ms and server tick 0.51–0.78 ms. The cosmic beats cost the same order of magnitude as
+the Part 2 STANDARD presentation while presenting at roughly 4.4x machinery scale. The unfocused test window is
+pinned to a 30 FPS background limit, so the recorded 29–30 FPS is not a frame-rate measurement; a focused run of the
+same beats measured 111–117 FPS with essentially identical frame times. These are single-machine numbers on a flat
+diorama with one client, not guarantees for dense worlds or weaker GPUs.
+
+Graphical colossal evidence for this stage is the 13-beat colossal measurement pass (ascent, planet, solar system,
+galaxy, observable-universe boundary, mothership reveal, deployment, charging, stellar lance, descent, impact,
+pressure wall, aftermath), the five normalized cosmic-act captures from the lifecycle suite, and the three colossal
+weapon sets. Because the capture client runs at render distance 16, a colossal crater is far wider than the loaded
+region; the real terrain check therefore stays the controlled diameter-64 crater while the nominal 1,000-diameter
+basin is verified as bounded admission, cursor and footprint accounting. The full nominal crater is
+**supported, admitted and budget-tested, not completely excavated in a fully loaded 1,000×1,000 region**. Test-thread
+engine advancement accelerates the 100-second timeline, so these checks prove transitions, rendering, networking,
+lifecycle, bounded terrain and restoration, **not real-time pacing or huge-world performance**. Independent
+multi-client deployment, dense-world timing, third-party integrations, power-loss recovery and human artistic/audio
+approval remain unverified.
+
+Production artifact: `build/libs/nullstar-1.0.0.jar`; exact current SHA-256 in `evidence/part25b/artifact-validation.json`.
+No test mod is distributed.
+
 ## Part 2.5A release validation
 
 October 9, 2026. Branch `codex/part25-colossal`; final tested engineering revision `1c8e250` (resolve with Git). Recovery `codex/pre-part25-20261009` retains Part 2 `c5ef353`. Existing release tags are unchanged. Versions remain Minecraft 26.3, Java/Temurin 25.0.4+7, Loader 0.19.5, Fabric API 0.162.0+26.3, Loom 1.18.3, Gradle 9.7.1 and JUnit 5.11.4. Every world is disposable under `build/run`; no Prism saves/mods/config were changed.

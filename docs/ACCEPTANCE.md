@@ -1,5 +1,35 @@
 # Acceptance
 
+## Part 2.5B colossal presentation acceptance
+
+`PASS` = implemented and verified by the named automated check; `PASS (visual)` = implemented and inspected in
+captured frames; `OPEN` = not verifiable in this environment. Colossal presentation frames come from real rendering
+in a disposable client world, but a machine cannot judge artistry, so the artistic rows stay open on purpose.
+
+| Requirement | Status | Evidence / boundary |
+| --- | --- | --- |
+| Project still builds; all prior validated gameplay intact | PASS | `clean build`: 61 JUnit, 10 dedicated GameTests; regression + dedicated client suites unchanged |
+| Server authority, budgets, caps, protection, preview, cooldowns unchanged | PASS | server presentation change limited to one metadata resolution; dedicated fixtures and prior suites |
+| Helios supports a 90+ second world-to-cosmos cinematic | PASS | APOCALYPSE timeline 2,000 ticks (100 s); the detached cosmic framing runs from tick 270 to the end of the stellar discharge at tick 1,656 (82.8 s of cosmic act, 96.3 s from first lock); 20 authored stages |
+| Cosmic escalation reads as planetary → solar → galactic → observable-universe | PASS (machine + visual) | five normalized-scene captures; 2.4k–16.8k vertices; every beat carries structure and contrast |
+| Mothership reveal is monumental, segmented, animated, with rings, harvest structures, pylons, aperture and nested focusing | PASS (visual) | `colossal_05_mothership_reveal`, `colossal_06_deployment`, `colossal_07_charging`, `colossal_08_stellar_lance`; 17.5k–18.6k vertices |
+| Colossal layered, unstable, electrically violent stellar lance readable at distance | PASS (visual) | `colossal_08_stellar_lance`; three nested tube layers plus ejected edge streaks |
+| Impact and aftermath read as planetary violation, not a dent | PASS (visual) | layered shock systems with re-emanating fronts, pressure wall, debris towers, ash columns, secondary rings, molten pools; 23.3k vertices at the pressure wall |
+| The first attack targets 1,000×1,000 devastation | PASS, admission/budget | radius-500/depth-96 geometry; engine logs 13,248,010 and 6,770,404 candidate cells for the 575/650-block annular passes; full loaded-region excavation NOT performed |
+| Singularity reads as regional spacetime failure with a sink basin | PASS (visual) | `singularity_*` capture set; 4.6k–7.2k vertices, sky-filling anomaly, tori, infalling slabs, release jets |
+| Glassfall reads as a civilization-ending orbital barrage | PASS (visual) | `glassfall_*` capture set; monumental platform, 16 + 1 projectiles on authoritative cues, crystal-blast dome finale |
+| Custom shaders materially improve the spectacle | PASS | four new original textures through the existing 18-program pipelines; opaque depth-writing backdrop; OIT-aware; optional registration with vanilla fallback |
+| Audio scale increased; Part 2 mix preserved | PASS (format only) | 13 new events (41 total), mono 44.1 kHz, peaks −3.2..−1.2 dBFS; Part 2 assets byte-identical; colossal-only accent table |
+| Camera sells enormity with new shots; accessibility preserved | PASS | 13 new bounded colossal shots plus `cosmic_montage`; reduced motion, reduced flashing, camera toggle, native skip and release unchanged and re-tested |
+| Performance bounded at colossal scale | PASS (single machine) | 0 dropped primitives, collect ≤ 0.415 ms, frame ≤ 1.84 ms, particles ≤ 583 of 1,024, server tick ≤ 0.78 ms |
+| Bounded budgets, fallbacks, cleanup, multiplayer authority and cancellation preserved | PASS | per-layer vertex budgets, optional pipelines, cosmetic purge on cancellation, dedicated admission/recovery/budget fixtures |
+| New evidence for the colossal scale, not old Part 2 screenshots | PASS | `evidence/part25b/`: 103 frames, per-frame diagnostics and statistics; Part 2.5A evidence left untouched |
+| Human artistic and audio approval | OPEN | requires the user to watch the sequence and listen to the mix |
+| Full 1,000×1,000 excavation in a fully loaded region | UNVERIFIED | explicitly not represented by the bounded/captured runs |
+| Real-time 100-second pacing and huge-region TPS | UNVERIFIED | test-thread engine advancement accelerates the timeline |
+| Independent graphical clients, dense worlds, third-party mods | UNVERIFIED | one client and synthetic strikes only |
+| The cosmic act is an astronomical simulation or a real sky/level change | NOT CLAIMED | authored illusion composed in view-local space in front of the gameplay camera |
+
 ## Part 2.5A engineering acceptance
 
 The scale layer is implemented; automated engineering checks pass within the explicit boundaries below. The next stage is immense presentation artistry, not an unfinished terrain-cap patch. See `VALIDATION.md` and `PART25_ENGINEERING_REPORT.md`.

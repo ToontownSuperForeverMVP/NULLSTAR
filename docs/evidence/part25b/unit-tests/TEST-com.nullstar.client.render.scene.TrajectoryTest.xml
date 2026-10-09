@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.client.render.scene.TrajectoryTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-09T19:30:04.715Z" hostname="SHADOW-DSNN03OD" time="0.01">
+  <properties/>
+  <testcase name="flightEndsExactlyAtAuthoritativeImpact()" classname="com.nullstar.client.render.scene.TrajectoryTest" time="0.006"/>
+  <testcase name="shakeSignalIsBoundedAndSegmentsScaleWithQuality()" classname="com.nullstar.client.render.scene.TrajectoryTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

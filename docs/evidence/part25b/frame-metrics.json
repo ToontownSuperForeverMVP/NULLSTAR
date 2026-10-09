@@ -1,0 +1,1035 @@
+{
+  "note": "Automated per-frame statistics for the Part 2.5B client capture. Machine observations only: they show every beat carries structure, contrast and colour, and are not artistic approval.",
+  "frames": [
+    {
+      "file": "0000_helios-designation.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 144.1,
+      "stdDevLuma": 51.4,
+      "backgroundLuma": 176,
+      "contentFraction": 0.38,
+      "quantisedColors": 73
+    },
+    {
+      "file": "0001_helios-charge.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 127.8,
+      "stdDevLuma": 72.7,
+      "backgroundLuma": 184,
+      "contentFraction": 0.3923,
+      "quantisedColors": 48
+    },
+    {
+      "file": "0002_helios-firing.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 128.5,
+      "stdDevLuma": 68.6,
+      "backgroundLuma": 176,
+      "contentFraction": 0.3873,
+      "quantisedColors": 80
+    },
+    {
+      "file": "0003_helios-descending-beam.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 135.3,
+      "stdDevLuma": 62.5,
+      "backgroundLuma": 176,
+      "contentFraction": 0.4305,
+      "quantisedColors": 47
+    },
+    {
+      "file": "0004_helios-aftermath.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 143.5,
+      "stdDevLuma": 59.5,
+      "backgroundLuma": 184,
+      "contentFraction": 0.3885,
+      "quantisedColors": 118
+    },
+    {
+      "file": "0005_helios-crater.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 142.3,
+      "stdDevLuma": 58.7,
+      "backgroundLuma": 184,
+      "contentFraction": 0.3801,
+      "quantisedColors": 72
+    },
+    {
+      "file": "0006_singularity-charge.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 103.2,
+      "stdDevLuma": 68.2,
+      "backgroundLuma": 88,
+      "contentFraction": 0.658,
+      "quantisedColors": 68
+    },
+    {
+      "file": "0007_singularity-firing.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 102.5,
+      "stdDevLuma": 65.6,
+      "backgroundLuma": 88,
+      "contentFraction": 0.6292,
+      "quantisedColors": 76
+    },
+    {
+      "file": "0008_singularity-aftermath.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 97.8,
+      "stdDevLuma": 67.0,
+      "backgroundLuma": 184,
+      "contentFraction": 0.7165,
+      "quantisedColors": 65
+    },
+    {
+      "file": "0009_singularity-crater.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 144.0,
+      "stdDevLuma": 59.2,
+      "backgroundLuma": 184,
+      "contentFraction": 0.3614,
+      "quantisedColors": 77
+    },
+    {
+      "file": "0010_glassfall-charge.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 131.9,
+      "stdDevLuma": 74.5,
+      "backgroundLuma": 184,
+      "contentFraction": 0.4225,
+      "quantisedColors": 49
+    },
+    {
+      "file": "0011_glassfall-firing.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 142.6,
+      "stdDevLuma": 70.5,
+      "backgroundLuma": 184,
+      "contentFraction": 0.2878,
+      "quantisedColors": 46
+    },
+    {
+      "file": "0012_glassfall-aftermath.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 122.6,
+      "stdDevLuma": 71.9,
+      "backgroundLuma": 176,
+      "contentFraction": 0.5142,
+      "quantisedColors": 56
+    },
+    {
+      "file": "0013_glassfall-crater.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 144.2,
+      "stdDevLuma": 59.2,
+      "backgroundLuma": 184,
+      "contentFraction": 0.361,
+      "quantisedColors": 67
+    },
+    {
+      "file": "0014_00_diorama.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 126.7,
+      "stdDevLuma": 61.1,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6524,
+      "quantisedColors": 99
+    },
+    {
+      "file": "0015_helios_00_acquire.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 122.6,
+      "stdDevLuma": 61.1,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6711,
+      "quantisedColors": 69
+    },
+    {
+      "file": "0016_helios_01_charge_warning.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 123.4,
+      "stdDevLuma": 75.7,
+      "backgroundLuma": 200,
+      "contentFraction": 0.5829,
+      "quantisedColors": 70
+    },
+    {
+      "file": "0017_helios_02_reveal.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 148.1,
+      "stdDevLuma": 77.9,
+      "backgroundLuma": 200,
+      "contentFraction": 0.3526,
+      "quantisedColors": 71
+    },
+    {
+      "file": "0018_helios_03_descended.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 153.8,
+      "stdDevLuma": 76.7,
+      "backgroundLuma": 200,
+      "contentFraction": 0.2905,
+      "quantisedColors": 58
+    },
+    {
+      "file": "0019_helios_04_align_rings.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 137.9,
+      "stdDevLuma": 81.3,
+      "backgroundLuma": 200,
+      "contentFraction": 0.3776,
+      "quantisedColors": 63
+    },
+    {
+      "file": "0020_helios_05_align_vanes.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 129.3,
+      "stdDevLuma": 82.8,
+      "backgroundLuma": 200,
+      "contentFraction": 0.4477,
+      "quantisedColors": 69
+    },
+    {
+      "file": "0021_helios_06_core_open.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 126.3,
+      "stdDevLuma": 84.0,
+      "backgroundLuma": 200,
+      "contentFraction": 0.5054,
+      "quantisedColors": 78
+    },
+    {
+      "file": "0022_helios_07_discharge.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 138.9,
+      "stdDevLuma": 80.6,
+      "backgroundLuma": 200,
+      "contentFraction": 0.4488,
+      "quantisedColors": 78
+    },
+    {
+      "file": "0023_helios_08_beam_mid.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 148.9,
+      "stdDevLuma": 77.3,
+      "backgroundLuma": 200,
+      "contentFraction": 0.3579,
+      "quantisedColors": 61
+    },
+    {
+      "file": "0024_helios_09_entry.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 125.9,
+      "stdDevLuma": 70.2,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6454,
+      "quantisedColors": 90
+    },
+    {
+      "file": "0025_helios_10_entry_low.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 107.5,
+      "stdDevLuma": 60.7,
+      "backgroundLuma": 200,
+      "contentFraction": 0.8263,
+      "quantisedColors": 104
+    },
+    {
+      "file": "0026_helios_11_impact_flash.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 109.6,
+      "stdDevLuma": 75.8,
+      "backgroundLuma": 200,
+      "contentFraction": 0.7265,
+      "quantisedColors": 95
+    },
+    {
+      "file": "0027_helios_12_impact_core.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 117.7,
+      "stdDevLuma": 79.1,
+      "backgroundLuma": 200,
+      "contentFraction": 0.658,
+      "quantisedColors": 99
+    },
+    {
+      "file": "0028_helios_13_shockwaves.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 121.7,
+      "stdDevLuma": 79.2,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6105,
+      "quantisedColors": 125
+    },
+    {
+      "file": "0029_helios_14_pressure_wave.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 153.2,
+      "stdDevLuma": 84.4,
+      "backgroundLuma": 200,
+      "contentFraction": 0.4183,
+      "quantisedColors": 93
+    },
+    {
+      "file": "0030_helios_15_aftermath.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 148.1,
+      "stdDevLuma": 80.8,
+      "backgroundLuma": 200,
+      "contentFraction": 0.3658,
+      "quantisedColors": 69
+    },
+    {
+      "file": "0031_helios_16_aftermath_late.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 118.2,
+      "stdDevLuma": 75.1,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6258,
+      "quantisedColors": 60
+    },
+    {
+      "file": "0032_helios_zz_crater_player_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 125.1,
+      "stdDevLuma": 61.5,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6693,
+      "quantisedColors": 97
+    },
+    {
+      "file": "0033_singularity_00_formation.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 98.0,
+      "stdDevLuma": 72.9,
+      "backgroundLuma": 200,
+      "contentFraction": 0.736,
+      "quantisedColors": 84
+    },
+    {
+      "file": "0034_singularity_01_accretion.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 97.3,
+      "stdDevLuma": 66.0,
+      "backgroundLuma": 96,
+      "contentFraction": 0.5926,
+      "quantisedColors": 95
+    },
+    {
+      "file": "0035_singularity_02_charged.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 93.9,
+      "stdDevLuma": 64.7,
+      "backgroundLuma": 0,
+      "contentFraction": 0.7929,
+      "quantisedColors": 103
+    },
+    {
+      "file": "0036_singularity_03_attraction.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 92.8,
+      "stdDevLuma": 64.9,
+      "backgroundLuma": 0,
+      "contentFraction": 0.7946,
+      "quantisedColors": 124
+    },
+    {
+      "file": "0037_singularity_04_attraction_late.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 77.0,
+      "stdDevLuma": 52.9,
+      "backgroundLuma": 0,
+      "contentFraction": 0.7872,
+      "quantisedColors": 116
+    },
+    {
+      "file": "0038_singularity_05_destabilize.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 85.6,
+      "stdDevLuma": 58.6,
+      "backgroundLuma": 0,
+      "contentFraction": 0.7989,
+      "quantisedColors": 122
+    },
+    {
+      "file": "0039_singularity_06_contraction.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 89.1,
+      "stdDevLuma": 61.1,
+      "backgroundLuma": 0,
+      "contentFraction": 0.8073,
+      "quantisedColors": 99
+    },
+    {
+      "file": "0040_singularity_07_silence.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 97.9,
+      "stdDevLuma": 60.6,
+      "backgroundLuma": 96,
+      "contentFraction": 0.6426,
+      "quantisedColors": 76
+    },
+    {
+      "file": "0041_singularity_08_implosion.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 99.6,
+      "stdDevLuma": 69.3,
+      "backgroundLuma": 0,
+      "contentFraction": 0.8078,
+      "quantisedColors": 102
+    },
+    {
+      "file": "0042_singularity_09_shockwave.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 96.2,
+      "stdDevLuma": 67.6,
+      "backgroundLuma": 0,
+      "contentFraction": 0.816,
+      "quantisedColors": 89
+    },
+    {
+      "file": "0043_singularity_10_release.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 76.2,
+      "stdDevLuma": 56.7,
+      "backgroundLuma": 0,
+      "contentFraction": 0.798,
+      "quantisedColors": 116
+    },
+    {
+      "file": "0044_singularity_11_aftermath.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 65.9,
+      "stdDevLuma": 44.2,
+      "backgroundLuma": 0,
+      "contentFraction": 0.7885,
+      "quantisedColors": 103
+    },
+    {
+      "file": "0045_singularity_12_aftermath_late.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 64.3,
+      "stdDevLuma": 39.9,
+      "backgroundLuma": 0,
+      "contentFraction": 0.8043,
+      "quantisedColors": 81
+    },
+    {
+      "file": "0046_singularity_zz_crater_player_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 123.2,
+      "stdDevLuma": 62.7,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6749,
+      "quantisedColors": 107
+    },
+    {
+      "file": "0047_glassfall_00_lattice_deploy.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 137.1,
+      "stdDevLuma": 78.5,
+      "backgroundLuma": 200,
+      "contentFraction": 0.4323,
+      "quantisedColors": 82
+    },
+    {
+      "file": "0048_glassfall_01_lattice_lock.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 148.6,
+      "stdDevLuma": 74.1,
+      "backgroundLuma": 200,
+      "contentFraction": 0.2891,
+      "quantisedColors": 41
+    },
+    {
+      "file": "0049_glassfall_02_rails_aim.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 141.0,
+      "stdDevLuma": 81.1,
+      "backgroundLuma": 200,
+      "contentFraction": 0.3746,
+      "quantisedColors": 45
+    },
+    {
+      "file": "0050_glassfall_03_first_launch.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 149.9,
+      "stdDevLuma": 77.5,
+      "backgroundLuma": 200,
+      "contentFraction": 0.3208,
+      "quantisedColors": 65
+    },
+    {
+      "file": "0051_glassfall_04_first_descent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 124.3,
+      "stdDevLuma": 75.2,
+      "backgroundLuma": 200,
+      "contentFraction": 0.5696,
+      "quantisedColors": 55
+    },
+    {
+      "file": "0052_glassfall_05_first_impact.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 105.8,
+      "stdDevLuma": 65.5,
+      "backgroundLuma": 200,
+      "contentFraction": 0.7485,
+      "quantisedColors": 89
+    },
+    {
+      "file": "0053_glassfall_06_second_impact.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 132.3,
+      "stdDevLuma": 78.3,
+      "backgroundLuma": 200,
+      "contentFraction": 0.4654,
+      "quantisedColors": 82
+    },
+    {
+      "file": "0054_glassfall_07_mid_barrage.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 100.6,
+      "stdDevLuma": 64.5,
+      "backgroundLuma": 200,
+      "contentFraction": 0.7809,
+      "quantisedColors": 99
+    },
+    {
+      "file": "0055_glassfall_08_third_impact.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 95.2,
+      "stdDevLuma": 62.3,
+      "backgroundLuma": 200,
+      "contentFraction": 0.8223,
+      "quantisedColors": 102
+    },
+    {
+      "file": "0056_glassfall_09_fourth_descent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 132.1,
+      "stdDevLuma": 76.8,
+      "backgroundLuma": 200,
+      "contentFraction": 0.4722,
+      "quantisedColors": 71
+    },
+    {
+      "file": "0057_glassfall_10_final_launch.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 140.6,
+      "stdDevLuma": 75.8,
+      "backgroundLuma": 200,
+      "contentFraction": 0.42,
+      "quantisedColors": 76
+    },
+    {
+      "file": "0058_glassfall_11_final_descent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 112.5,
+      "stdDevLuma": 71.5,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6893,
+      "quantisedColors": 80
+    },
+    {
+      "file": "0059_glassfall_12_final_impact.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 105.7,
+      "stdDevLuma": 66.7,
+      "backgroundLuma": 8,
+      "contentFraction": 0.812,
+      "quantisedColors": 78
+    },
+    {
+      "file": "0060_glassfall_13_energy_dome.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 107.2,
+      "stdDevLuma": 69.7,
+      "backgroundLuma": 200,
+      "contentFraction": 0.7515,
+      "quantisedColors": 88
+    },
+    {
+      "file": "0061_glassfall_14_angular_shock.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 104.9,
+      "stdDevLuma": 70.7,
+      "backgroundLuma": 0,
+      "contentFraction": 0.8142,
+      "quantisedColors": 103
+    },
+    {
+      "file": "0062_glassfall_15_aftermath.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 101.9,
+      "stdDevLuma": 70.0,
+      "backgroundLuma": 0,
+      "contentFraction": 0.8122,
+      "quantisedColors": 93
+    },
+    {
+      "file": "0063_glassfall_16_aftermath_late.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 96.3,
+      "stdDevLuma": 63.9,
+      "backgroundLuma": 104,
+      "contentFraction": 0.6002,
+      "quantisedColors": 87
+    },
+    {
+      "file": "0064_glassfall_zz_crater_player_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 124.9,
+      "stdDevLuma": 61.6,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6705,
+      "quantisedColors": 89
+    },
+    {
+      "file": "0065_colossal_00_ascent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 143.6,
+      "stdDevLuma": 85.4,
+      "backgroundLuma": 200,
+      "contentFraction": 0.3413,
+      "quantisedColors": 29
+    },
+    {
+      "file": "0066_colossal_01_planet.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 125.4,
+      "stdDevLuma": 92.1,
+      "backgroundLuma": 200,
+      "contentFraction": 0.4433,
+      "quantisedColors": 37
+    },
+    {
+      "file": "0067_colossal_02_solar_system.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 153.7,
+      "stdDevLuma": 81.8,
+      "backgroundLuma": 200,
+      "contentFraction": 0.2727,
+      "quantisedColors": 40
+    },
+    {
+      "file": "0068_colossal_03_galaxy.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 154.7,
+      "stdDevLuma": 81.3,
+      "backgroundLuma": 200,
+      "contentFraction": 0.267,
+      "quantisedColors": 25
+    },
+    {
+      "file": "0069_colossal_04_universe.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 154.8,
+      "stdDevLuma": 81.3,
+      "backgroundLuma": 200,
+      "contentFraction": 0.2659,
+      "quantisedColors": 26
+    },
+    {
+      "file": "0070_colossal_05_mothership_reveal.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 57.3,
+      "stdDevLuma": 82.1,
+      "backgroundLuma": 8,
+      "contentFraction": 0.256,
+      "quantisedColors": 26
+    },
+    {
+      "file": "0071_colossal_06_deployment.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 77.0,
+      "stdDevLuma": 91.4,
+      "backgroundLuma": 8,
+      "contentFraction": 0.3758,
+      "quantisedColors": 26
+    },
+    {
+      "file": "0072_colossal_07_charging.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 72.9,
+      "stdDevLuma": 86.7,
+      "backgroundLuma": 8,
+      "contentFraction": 0.3449,
+      "quantisedColors": 29
+    },
+    {
+      "file": "0073_colossal_08_stellar_lance.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 67.7,
+      "stdDevLuma": 79.7,
+      "backgroundLuma": 8,
+      "contentFraction": 0.3857,
+      "quantisedColors": 56
+    },
+    {
+      "file": "0074_colossal_09_descent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 169.6,
+      "stdDevLuma": 79.6,
+      "backgroundLuma": 200,
+      "contentFraction": 0.4445,
+      "quantisedColors": 29
+    },
+    {
+      "file": "0075_colossal_10_impact.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 193.1,
+      "stdDevLuma": 102.4,
+      "backgroundLuma": 248,
+      "contentFraction": 0.2731,
+      "quantisedColors": 23
+    },
+    {
+      "file": "0076_colossal_11_pressure_wall.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 193.4,
+      "stdDevLuma": 102.3,
+      "backgroundLuma": 248,
+      "contentFraction": 0.2731,
+      "quantisedColors": 22
+    },
+    {
+      "file": "0077_colossal_12_aftermath.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 187.8,
+      "stdDevLuma": 99.6,
+      "backgroundLuma": 248,
+      "contentFraction": 0.2733,
+      "quantisedColors": 23
+    },
+    {
+      "file": "0078_modes_ui_aim_reticle.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 106.1,
+      "stdDevLuma": 55.0,
+      "backgroundLuma": 200,
+      "contentFraction": 0.8117,
+      "quantisedColors": 102
+    },
+    {
+      "file": "0079_modes_ui_settings_screen.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 83.1,
+      "stdDevLuma": 48.0,
+      "backgroundLuma": 72,
+      "contentFraction": 0.564,
+      "quantisedColors": 43
+    },
+    {
+      "file": "0080_modes_reduced_motion_medium_00_core.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 107.9,
+      "stdDevLuma": 52.9,
+      "backgroundLuma": 200,
+      "contentFraction": 0.819,
+      "quantisedColors": 86
+    },
+    {
+      "file": "0081_modes_reduced_motion_medium_01_beam.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 108.6,
+      "stdDevLuma": 52.4,
+      "backgroundLuma": 200,
+      "contentFraction": 0.8205,
+      "quantisedColors": 87
+    },
+    {
+      "file": "0082_modes_reduced_motion_medium_02_impact.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 108.5,
+      "stdDevLuma": 55.3,
+      "backgroundLuma": 104,
+      "contentFraction": 0.5215,
+      "quantisedColors": 107
+    },
+    {
+      "file": "0083_modes_reduced_motion_zz_crater_player_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 105.4,
+      "stdDevLuma": 55.1,
+      "backgroundLuma": 96,
+      "contentFraction": 0.5358,
+      "quantisedColors": 102
+    },
+    {
+      "file": "0084_modes_low_00_core.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 108.5,
+      "stdDevLuma": 53.3,
+      "backgroundLuma": 200,
+      "contentFraction": 0.8155,
+      "quantisedColors": 108
+    },
+    {
+      "file": "0085_modes_low_01_beam.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 109.1,
+      "stdDevLuma": 52.7,
+      "backgroundLuma": 200,
+      "contentFraction": 0.8165,
+      "quantisedColors": 107
+    },
+    {
+      "file": "0086_modes_low_02_impact.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 112.8,
+      "stdDevLuma": 60.7,
+      "backgroundLuma": 104,
+      "contentFraction": 0.5364,
+      "quantisedColors": 123
+    },
+    {
+      "file": "0087_modes_low_zz_crater_player_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 100.7,
+      "stdDevLuma": 49.8,
+      "backgroundLuma": 96,
+      "contentFraction": 0.4927,
+      "quantisedColors": 121
+    },
+    {
+      "file": "0088_modes_improved_transparency_00_core.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 131.6,
+      "stdDevLuma": 82.5,
+      "backgroundLuma": 200,
+      "contentFraction": 0.4416,
+      "quantisedColors": 79
+    },
+    {
+      "file": "0089_modes_improved_transparency_01_beam.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 142.5,
+      "stdDevLuma": 77.5,
+      "backgroundLuma": 200,
+      "contentFraction": 0.3837,
+      "quantisedColors": 72
+    },
+    {
+      "file": "0090_modes_improved_transparency_02_impact.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 122.7,
+      "stdDevLuma": 76.2,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6655,
+      "quantisedColors": 109
+    },
+    {
+      "file": "0091_modes_oit_zz_crater_player_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 99.3,
+      "stdDevLuma": 54.0,
+      "backgroundLuma": 200,
+      "contentFraction": 0.8418,
+      "quantisedColors": 115
+    },
+    {
+      "file": "0092_stress_0_four_concurrent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 139.3,
+      "stdDevLuma": 65.8,
+      "backgroundLuma": 200,
+      "contentFraction": 0.5712,
+      "quantisedColors": 168
+    },
+    {
+      "file": "0093_stress_1_four_concurrent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 136.8,
+      "stdDevLuma": 64.4,
+      "backgroundLuma": 200,
+      "contentFraction": 0.5609,
+      "quantisedColors": 189
+    },
+    {
+      "file": "0094_stress_2_four_concurrent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 134.3,
+      "stdDevLuma": 64.3,
+      "backgroundLuma": 200,
+      "contentFraction": 0.579,
+      "quantisedColors": 164
+    },
+    {
+      "file": "0095_stress_3_four_concurrent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 131.9,
+      "stdDevLuma": 63.5,
+      "backgroundLuma": 200,
+      "contentFraction": 0.5924,
+      "quantisedColors": 142
+    },
+    {
+      "file": "0096_stress_4_four_concurrent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 132.7,
+      "stdDevLuma": 63.3,
+      "backgroundLuma": 200,
+      "contentFraction": 0.605,
+      "quantisedColors": 150
+    },
+    {
+      "file": "0097_stress_5_four_concurrent.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 134.0,
+      "stdDevLuma": 61.2,
+      "backgroundLuma": 200,
+      "contentFraction": 0.6087,
+      "quantisedColors": 141
+    },
+    {
+      "file": "0098_part25_planetary_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 113.7,
+      "stdDevLuma": 82.4,
+      "backgroundLuma": 176,
+      "contentFraction": 0.4711,
+      "quantisedColors": 42
+    },
+    {
+      "file": "0099_part25_solar_system_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 138.9,
+      "stdDevLuma": 72.9,
+      "backgroundLuma": 176,
+      "contentFraction": 0.2914,
+      "quantisedColors": 44
+    },
+    {
+      "file": "0100_part25_galactic_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 138.6,
+      "stdDevLuma": 73.0,
+      "backgroundLuma": 176,
+      "contentFraction": 0.2851,
+      "quantisedColors": 21
+    },
+    {
+      "file": "0101_part25_cosmic_boundary_view.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 138.9,
+      "stdDevLuma": 72.4,
+      "backgroundLuma": 176,
+      "contentFraction": 0.2841,
+      "quantisedColors": 27
+    },
+    {
+      "file": "0102_part25_mothership_reveal.png",
+      "width": 854,
+      "height": 480,
+      "meanLuma": 73.5,
+      "stdDevLuma": 82.1,
+      "backgroundLuma": 176,
+      "contentFraction": 0.6519,
+      "quantisedColors": 23
+    }
+  ]
+}
