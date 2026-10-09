@@ -37,6 +37,10 @@ public final class ColossalGameTest {
             helper.assertTrue(engine.activate(other,"helios",target,true,ScaleTier.APOCALYPSE),"Cinematic-only colossal preview rejected");
             for(int i=0;i<2010;i++)engine.tick(server);
             helper.assertTrue(engine.active().isEmpty()&&engine.destruction().queued()==0&&helper.getLevel().getBlockState(target).is(Blocks.STONE),"Colossal preview changed terrain or did not finish");
+            cfg.publicServerMode=true;cfg.publicMaximumRadius=2;cfg.maximumDepth=2;
+            helper.assertTrue(engine.activate(owner,"glassfall",target,false,ScaleTier.APOCALYPSE),"Public-clipped colossal barrage rejected");
+            for(int i=0;i<2200;i++)engine.tick(server);
+            helper.assertTrue(engine.active().isEmpty()&&engine.destruction().queued()==0&&helper.getLevel().getBlockState(target).isAir(),"Public-clipped barrage did not complete its real center crater");
             Nullstar.LOGGER.info("PART25 runtime: radius-500 admission, confirmation/replay, queue rejection, complete 2000-tick inert preview passed");
         } finally {engine.stop();restore(cfg,previous);server.getPlayerList().remove(owner);server.getPlayerList().remove(other);}
         helper.succeed();

@@ -110,4 +110,16 @@ class ColossalEngineTest {
             }
         }
     }
+    @Test void entireColossalBarrageFitsPublicAndPrivateSafetyEnvelopes() throws Exception {
+        var profile=ScaleCatalog.defaults().get(5);var def=profile.apply(weapons().get("glassfall"));
+        for(int cap:new int[]{1,2,24,48,128,400,768}) {
+            int radius=Math.min(cap,profile.radius());
+            for(var cue:def.events())if(cue.effect().equals("impact")) {
+                var geometry=CraterGeometry.forCue(def.impact(),radius,80,cap,42,cue);if(geometry==null)continue;
+                var offset=ImpactFootprint.offset(cue.x(),cue.z(),profile.radius(),radius,geometry.radius(),cap);
+                assertTrue(Math.hypot(offset.x(),offset.z())+geometry.radius()<=cap,"Child crater escaped the admitted footprint");
+                if(cap==768&&cue.x()!=0)assertEquals(Math.round(cue.x()),offset.x(),"Unclipped private footprint changed");
+            }
+        }
+    }
 }

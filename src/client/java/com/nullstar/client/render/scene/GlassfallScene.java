@@ -64,7 +64,9 @@ public final class GlassfallScene implements WeaponScene {
         int radius=view.scale().footprintRadius();
         for(int i=0;i<count;i++) {
             double angle=i*Math.PI*2/Math.max(1,count),distance=radius*(i%2==0?.65:.92);
-            offsets[i][0]=(float)(Math.cos(angle)*distance);offsets[i][1]=(float)(Math.sin(angle)*distance);
+            var offset=com.nullstar.core.ImpactFootprint.offset(Math.cos(angle)*distance,Math.sin(angle)*distance,radius,radius,
+                    Math.max(1,(int)Math.round(view.radius()*.22)),view.scale().secondaryRadius());
+            offsets[i][0]=offset.x();offsets[i][1]=offset.z();
         }
         for(var event:view.events())if(!event.impact()) {
             int index=0;for(var prior:view.events()){if(prior==event)break;if(!prior.impact())index++;}

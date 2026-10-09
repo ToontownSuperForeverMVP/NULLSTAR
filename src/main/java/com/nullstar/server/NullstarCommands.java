@@ -86,8 +86,10 @@ public final class NullstarCommands {
                 +"; "+profile.subimpacts()+" subimpacts; "+profile.rings()+". Public caps: "+cfg.publicServerMode+". Heights are relative to each resolved surface."),false);
         for(var cue:definition.events())if(cue.effect().equals("impact")) {
             var geometry=com.nullstar.core.CraterGeometry.forCue(definition.impact(),radius,depth,cfg.radiusCap(tier),0,cue);
-            BlockPos center=target.offset((int)Math.round(cue.x()),0,(int)Math.round(cue.z()));
             if(geometry==null){source.sendSuccess(()->Component.literal("Wave "+cue.wave()+" clipped empty"),false);continue;}
+            var offset=tier==ScaleTier.STANDARD?new com.nullstar.core.ImpactFootprint.Offset((int)Math.round(cue.x()),(int)Math.round(cue.z()))
+                    :com.nullstar.core.ImpactFootprint.offset(cue.x(),cue.z(),profile.radius(),radius,geometry.radius(),cfg.radiusCap(tier));
+            BlockPos center=target.offset(offset.x(),0,offset.z());
             source.sendSuccess(()->Component.literal("Wave "+cue.wave()+" center "+center.toShortString()+" outer "+geometry.radius()+" inner "+geometry.innerRadius()+" depth "+geometry.floor()
                     +" bounds "+center.offset(-geometry.radius(),-geometry.floor()-1,-geometry.radius()).toShortString()+".."
                     +center.offset(geometry.radius(),geometry.ceiling(),geometry.radius()).toShortString()

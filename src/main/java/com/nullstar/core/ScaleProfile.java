@@ -32,7 +32,7 @@ public record ScaleProfile(String weapon, ScaleTier tier, int radius, int depth,
     }
     private static boolean finite(double n, double low, double high) { return Double.isFinite(n) && n >= low && n <= high; }
     public int waves() { return 1 + rings.size(); }
-    public int secondaryRadius() { return rings.stream().mapToInt(r -> (int)Math.ceil(radius * r.outerScale())).max().orElse(radius); }
+    public int secondaryRadius() { return Math.max(subimpacts>0?(int)Math.ceil(radius*1.14):radius,rings.stream().mapToInt(r -> (int)Math.ceil(radius * r.outerScale())).max().orElse(radius)); }
 
     public static ScaleProfile standard(WeaponDefinition definition) {
         var impact = definition.impact();

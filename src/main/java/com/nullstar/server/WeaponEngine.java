@@ -170,8 +170,10 @@ public final class WeaponEngine {
                 if(!strike.preview && strike.definition.behavior().equals("singularity") && state.phase()==Phase.FIRING && age%5==0)
                     EntityEffects.attractRadius(level,strike.owner,strike.target,strike.entityRadius,Nullstar.config());
                 for(var cue:advance.cues()) {
-                    BlockPos position=TargetingService.surfaceNear(level,strike.target.offset((int)Math.round(cue.x()),0,(int)Math.round(cue.z())));
                     int radius=Math.max(1,Math.min(strike.radiusCap,(int)Math.round(strike.radius*cue.radiusScale())));
+                    var offset=strike.scale.tier()==ScaleTier.STANDARD?new ImpactFootprint.Offset((int)Math.round(cue.x()),(int)Math.round(cue.z()))
+                            :ImpactFootprint.offset(cue.x(),cue.z(),strike.scale.radius(),strike.radius,radius,strike.radiusCap);
+                    BlockPos position=TargetingService.surfaceNear(level,strike.target.offset(offset.x(),0,offset.z()));
                     int cueIndex=strike.cueIndex++;
                     if(position==null){if(cue.effect().equals("impact")&&!strike.preview) releaseUnusedImpact(strike,cue);continue;}
                     broadcast(server,new VisualPayload(strike.id,cueIndex,cue.effect(),position,radius,
@@ -230,7 +232,7 @@ public final class WeaponEngine {
                 s.definition.presentation().orbitalHeight(),s.definition.presentation().particleScale(),camera==null?"none":camera,terminal,
                 new ColossalMetadata(s.scale.tier(),CinematicScene.forPhase(state.phase()),s.scale.cinematicScale(),s.scale.structureScale(),
                         s.scale.beamWidth(),s.scale.shockwaveRadius(),Math.min(s.radiusCap,(int)Math.ceil(s.radius*s.scale.secondaryRadius()/ (double)s.scale.radius())),
-                        s.blastRadius,s.entityRadius,s.scale.script(),s.scale.anchor(),s.scale.alignmentNodes(),s.scale.subimpacts(),s.scale.radius(),s.scale.waves(),
+                        s.blastRadius,s.entityRadius,s.scale.script(),s.scale.anchor(),s.scale.alignmentNodes(),s.scale.subimpacts(),s.radius,s.scale.waves(),
                         Math.max(0,s.definition.phases().stream().map(WeaponDefinition.Stage::phase).toList().indexOf(state.phase())),s.definition.duration(),s.committed));
     }
     private int observerRange(ActiveStrike strike){return strike.scale.tier()==ScaleTier.STANDARD?256:Nullstar.config().colossalObserverRange;}
