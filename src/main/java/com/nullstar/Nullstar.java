@@ -37,6 +37,7 @@ public final class Nullstar implements ModInitializer {
             var directory=FabricLoader.getInstance().getConfigDir().resolve("nullstar");
             var next=ConfigFiles.load(directory.resolve("server.json"),ServerConfig.class,ServerConfig::new);next.validate();
             var weapons=new WeaponCatalog(directory.resolve("weapons"));
+            weapons.all().forEach(weapon->weapon.scaled(next.cinematicDurationMultiplier));
             config=next;catalog=weapons;
         } catch(Exception exception){throw new IllegalStateException("Invalid NULLSTAR configuration; fix config/nullstar before startup",exception);}
     }

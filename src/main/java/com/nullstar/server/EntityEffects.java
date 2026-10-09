@@ -38,6 +38,6 @@ public final class EntityEffects {
         }
     }
     private static boolean eligible(LivingEntity entity) {
-        return entity.isAlive() && !entity.isSpectator() && !(entity instanceof Player player && player.isCreative());
+        return entity.isAlive() && !entity.isRemoved() && !entity.isSpectator() && !(entity instanceof Player player && player.isCreative());
     }
 }

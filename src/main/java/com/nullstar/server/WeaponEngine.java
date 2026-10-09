@@ -77,8 +77,10 @@ public final class WeaponEngine {
         UUID id=UUID.randomUUID();int impacts=(int)definition.events().stream().filter(c->c.effect().equals("impact")).count();
         boolean cinematic=preview || !config.terrainDestruction;
         if(!destruction.reserve(id,cinematic?0:impacts,config.maximumJobs)){status(player,"Destruction queue is full.");return false;}
+        int radius=Math.min(config.maximumRadius,definition.impact().radius());
+        if(definition.impact().shape().equals("sphere"))radius=Math.min(radius,config.maximumDepth);
         var strike=new ActiveStrike(id,owner,player.level().dimension(),target,definition,tick,
-                player.level().getRandom().nextLong(),cinematic,Math.min(config.maximumRadius,definition.impact().radius()),
+                player.level().getRandom().nextLong(),cinematic,radius,
                 Math.min(config.maximumDepth,definition.impact().depth()));
         active.put(id,strike);targets.remove(owner);selections.put(owner,weapon);
         gate.activate(owner,tick,(int)Math.round(definition.cooldownTicks()*config.cooldownMultiplier));
@@ -136,9 +138,9 @@ public final class WeaponEngine {
     }
     private StatePayload snapshot(ActiveStrike s,Timeline.State state,boolean terminal) {
         String camera=s.definition.phases().stream().filter(p->p.phase()==state.phase()).map(WeaponDefinition.Stage::camera).findFirst().orElse("none");
-        return new StatePayload(s.id,s.owner,s.dimension.identifier().toString(),s.definition.id(),state.phase(),state.age(),state.phaseAge(),state.phaseDuration(),
+        return new StatePayload(s.id,s.owner,s.dimension.identifier().toString(),s.definition.id(),s.definition.name(),state.phase(),state.age(),state.phaseAge(),state.phaseDuration(),
                 tick,s.target,s.radius,s.depth,s.seed,s.preview,destruction.progress(s.id).fraction(),s.definition.presentation().color(),
-                s.definition.presentation().orbitalHeight(),camera==null?"none":camera,terminal);
+                s.definition.presentation().orbitalHeight(),s.definition.presentation().particleScale(),camera==null?"none":camera,terminal);
     }
     private void broadcast(MinecraftServer server,net.minecraft.network.protocol.common.custom.CustomPacketPayload payload) {
         if(server==null)return;
@@ -151,7 +153,7 @@ public final class WeaponEngine {
     }
     public void status(ServerPlayer player,String message) {
         var target=targets.get(player.getUUID());boolean has=target!=null && target.dimension.equals(player.level().dimension());
-        if(ServerPlayNetworking.canSend(player,StatusPayload.TYPE))ServerPlayNetworking.send(player,new StatusPayload(selected(player.getUUID()),message,has,
+        if(ServerPlayNetworking.canSend(player,StatusPayload.TYPE))ServerPlayNetworking.send(player,new StatusPayload(selected(player.getUUID()),Nullstar.catalog().get(selected(player.getUUID())).name(),message,has,
                 has?target.position:BlockPos.ZERO,(int)gate.remaining(player.getUUID(),tick)));
         if(!message.isEmpty())player.sendOverlayMessage(Component.literal("NULLSTAR: "+message));
     }

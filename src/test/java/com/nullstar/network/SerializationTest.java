@@ -17,10 +17,10 @@ class SerializationTest {
         finally{buf.release();}
     }
     @Test void requestRoundTrip() {roundTrip(RequestPayload.CODEC,new RequestPayload(1,7,RequestPayload.ACTIVATE,"helios",false));}
-    @Test void stateRoundTrip() {roundTrip(StatePayload.CODEC,new StatePayload(UUID.randomUUID(),UUID.randomUUID(),"minecraft:overworld","helios",
-            Phase.IMPACT,170,0,10,1234,new BlockPos(-77,64,129),20,13,42,true,.75,0xffaa00,72,"impact",false));}
+    @Test void stateRoundTrip() {roundTrip(StatePayload.CODEC,new StatePayload(UUID.randomUUID(),UUID.randomUUID(),"minecraft:overworld","helios","HELIOS ANNIHILATOR",
+            Phase.IMPACT,170,0,10,1234,new BlockPos(-77,64,129),20,13,42,true,.75,0xffaa00,72,1,"impact",false));}
     @Test void visualRoundTrip(){roundTrip(VisualPayload.CODEC,new VisualPayload(UUID.randomUUID(),2,"projectile",new BlockPos(3,-12,4),16,30));}
-    @Test void statusRoundTrip(){roundTrip(StatusPayload.CODEC,new StatusPayload("singularity","Target ready",true,new BlockPos(4,5,6),600));}
+    @Test void statusRoundTrip(){roundTrip(StatusPayload.CODEC,new StatusPayload("singularity","SINGULARITY ENGINE","Target ready",true,new BlockPos(4,5,6),600));}
     @Test void invalidRequestsAndStatesRejected() {
         assertThrows(IllegalArgumentException.class,()->new RequestPayload(2,1,0,"helios",false));
         assertThrows(IllegalArgumentException.class,()->new RequestPayload(1,1,999,"helios",false));

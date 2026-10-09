@@ -16,11 +16,13 @@ import java.util.UUID;
 public final class EffectRenderer {
     private final Map<UUID,DustParticleOptions> colors=new HashMap<>();
     private int remaining;
+    private int layerRemaining;
     public void tick(Minecraft mc,long tick) {
         remaining=NullstarClient.config().particleBudget;
         colors.keySet().retainAll(NullstarClient.STATE.strikes().keySet());
         for(var strike:NullstarClient.STATE.strikes().values()) {
             var state=strike.state();Vec3 target=Vec3.atCenterOf(state.target()).add(0,1,0);
+            layerRemaining=(int)(NullstarClient.config().particleBudget*.7/Math.max(1,NullstarClient.STATE.strikes().size())*state.particleScale());
             var dust=colors.computeIfAbsent(state.id(),id->new DustParticleOptions(state.color(),1.7f));
             Phase phase=state.phase();double progress=strike.phaseProgress(tick);
             if(phase==Phase.COMPLETE||phase==Phase.COOLDOWN)continue;
@@ -55,6 +57,7 @@ public final class EffectRenderer {
                         target.add(Math.cos(a)*r,0,Math.sin(a)*r),new Vec3(0,.04,0),30);
             }
         }
+        layerRemaining=remaining;
         for(var cue:NullstarClient.STATE.cues()) {
             var strike=NullstarClient.STATE.strikes().get(cue.payload().strike());if(strike==null)continue;
             Vec3 target=Vec3.atCenterOf(cue.payload().position()).add(0,1,0);
@@ -69,6 +72,7 @@ public final class EffectRenderer {
             }
         }
         if(mc.player!=null && mc.player.getMainHandItem().is(com.nullstar.Nullstar.CONTROLLER)) {
+            layerRemaining=remaining;
             var pos=NullstarClient.targetPreview();if(pos!=null)ring(mc,new DustParticleOptions(0x55ddff,1),Vec3.atCenterOf(pos).add(0,1,0),1.7,8,tick*.1,10);
         }
     }
@@ -76,7 +80,7 @@ public final class EffectRenderer {
         for(int i=0;i<points;i++){double a=angle+i*Math.PI*2/points;emit(mc,type,center.add(Math.cos(a)*radius,0,Math.sin(a)*radius),Vec3.ZERO,lifetime);}
     }
     private void emit(Minecraft mc,ParticleOptions type,Vec3 position,Vec3 velocity,int lifetime) {
-        if(remaining<=0||type==null)return;remaining--;
+        if(remaining<=0||layerRemaining<=0||type==null)return;remaining--;layerRemaining--;
         var particle=mc.particleEngine.createParticle(type,position.x,position.y,position.z,velocity.x,velocity.y,velocity.z);
         if(particle!=null)particle.setLifetime(lifetime);
     }

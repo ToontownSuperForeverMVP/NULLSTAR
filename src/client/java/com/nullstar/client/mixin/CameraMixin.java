@@ -28,6 +28,10 @@ public abstract class CameraMixin {
     }
     @Inject(method="extractRenderState",at=@At("RETURN"))
     private void nullstar$detachedState(CameraRenderState state,DeltaTracker tracker,CallbackInfo ci) {
-        if(NullstarClient.CAMERA.applied()){state.isFirstPerson=false;state.smartCull=false;}
+        if(NullstarClient.CAMERA.applied()) {
+            state.isFirstPerson=false;state.smartCull=false;
+            // The 26.3 hand renderer reads the extracted options, independently of the camera state.
+            net.minecraft.client.Minecraft.getInstance().gameRenderer.gameRenderState().optionsRenderState.cameraType=net.minecraft.client.CameraType.THIRD_PERSON_BACK;
+        }
     }
 }

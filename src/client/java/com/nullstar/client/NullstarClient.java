@@ -27,7 +27,7 @@ public final class NullstarClient implements ClientModInitializer {
     private static final EffectRenderer EFFECTS=new EffectRenderer();
     private static ClientConfig config;
     private static long tick,sequence,statusReceived;
-    private static StatusPayload status=new StatusPayload("helios","",false,BlockPos.ZERO,0);
+    private static StatusPayload status=new StatusPayload("helios","HELIOS ANNIHILATOR","",false,BlockPos.ZERO,0);
     private static BlockPos preview;
     private static net.minecraft.client.multiplayer.ClientLevel observedLevel;
     private static KeyMapping activate,select,skip,camera;
@@ -36,6 +36,9 @@ public final class NullstarClient implements ClientModInitializer {
     public static BlockPos targetPreview(){return status.hasTarget()?status.target():preview;}
     public static StatusPayload status(){return status;}
     public static int cooldown(){return Math.max(0,status.cooldown()-(int)(tick-statusReceived));}
+    public static String cinematicHint(){return skip.getTranslatedKeyMessage().getString()+": skip  "+camera.getTranslatedKeyMessage().getString()+": camera";}
+    public static String activationHint(){return "Use/"+activate.getTranslatedKeyMessage().getString()+": target/fire";}
+    public static String selectionHint(){return "Shift-use/"+select.getTranslatedKeyMessage().getString()+": select";}
     @Override public void onInitializeClient() {
         try{config=ConfigFiles.load(FabricLoader.getInstance().getConfigDir().resolve("nullstar/client.json"),ClientConfig.class,ClientConfig::new);config.validate();}
         catch(Exception exception){Nullstar.LOGGER.error("Invalid client settings; using defaults",exception);config=new ClientConfig();}
@@ -55,12 +58,12 @@ public final class NullstarClient implements ClientModInitializer {
     private void tick(Minecraft mc) {
         if(mc.level==null||mc.player==null){reset();return;}
         if(observedLevel!=mc.level){STATE.clear();CAMERA.reset();EFFECTS.clear();PresentationLayers.reset();observedLevel=mc.level;
-            status=new StatusPayload(status.weapon(),"",false,BlockPos.ZERO,status.cooldown());}
+            status=new StatusPayload(status.weapon(),status.displayName(),"",false,BlockPos.ZERO,status.cooldown());}
         if(mc.isPaused())return;
         tick++;STATE.tick(tick,mc.level.dimension().identifier().toString());
         while(skip.consumeClick()){CAMERA.skip();request(RequestPayload.SKIP);}
         while(camera.consumeClick()) {
-            config.cinematicCamera=!config.cinematicCamera;CAMERA.skip();
+            config.cinematicCamera=!config.cinematicCamera;
             try{java.nio.file.Files.writeString(FabricLoader.getInstance().getConfigDir().resolve("nullstar/client.json"),ConfigFiles.JSON.toJson(config));}
             catch(Exception exception){Nullstar.LOGGER.error("Could not save camera preference",exception);}
         }
@@ -82,5 +85,5 @@ public final class NullstarClient implements ClientModInitializer {
     private static void request(int action) {
         if(ClientPlayNetworking.canSend(RequestPayload.TYPE))ClientPlayNetworking.send(new RequestPayload(1,++sequence,action,status.weapon(),false));
     }
-    public static void reset(){STATE.clear();CAMERA.reset();EFFECTS.clear();PresentationLayers.reset();preview=null;observedLevel=null;tick=0;statusReceived=0;status=new StatusPayload("helios","",false,BlockPos.ZERO,0);}
+    public static void reset(){STATE.clear();CAMERA.reset();EFFECTS.clear();PresentationLayers.reset();preview=null;observedLevel=null;tick=0;statusReceived=0;status=new StatusPayload("helios","HELIOS ANNIHILATOR","",false,BlockPos.ZERO,0);}
 }

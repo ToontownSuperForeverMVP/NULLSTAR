@@ -50,10 +50,13 @@ public final class DestructionManager {
             if (level==null) entry.job.cancel();
             else used=entry.job.step(Math.min(left,64),(x,y,z,remove,scorch)-> {
                 BlockPos pos=entry.target.offset(x,y,z);
+                if (y < -config.maximumDepth || x*x+z*z > config.maximumRadius*config.maximumRadius) return false;
                 if (pos.getY()<level.getMinY() || pos.getY()>level.getMaxY() || !level.getWorldBorder().isWithinBounds(pos)
                         || !level.getChunkSource().hasChunk(pos.getX()>>4,pos.getZ()>>4)) return false;
                 var state=level.getBlockState(pos);
+                var actor=server.getPlayerList().getPlayer(entry.owner);
                 if (state.isAir() || state.getDestroySpeed(level,pos)<0 || state.is(PROTECTED) || state.hasBlockEntity()
+                        || (actor!=null && !actor.mayInteract(level,pos))
                         || !ProtectionHooks.allows(level,entry.owner,pos)) return false;
                 var replacement=Blocks.AIR.defaultBlockState();
                 if (!remove) {

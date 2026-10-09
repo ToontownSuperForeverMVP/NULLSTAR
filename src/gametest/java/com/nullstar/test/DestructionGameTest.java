@@ -6,6 +6,7 @@ import com.nullstar.core.CraterGeometry;
 import com.nullstar.server.DestructionManager;
 import com.nullstar.server.EntityEffects;
 import com.nullstar.server.ProtectionHooks;
+import com.nullstar.server.LoadedBlockView;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -14,6 +15,15 @@ import net.minecraft.world.level.block.Blocks;
 import java.util.UUID;
 
 public final class DestructionGameTest {
+    @GameTest(maxTicks=20)
+    public void targetingDoesNotGenerateUnloadedChunks(GameTestHelper helper) {
+        var level=helper.getLevel();var distant=helper.absolutePos(new BlockPos(4000,4,4000));
+        helper.assertFalse(level.getChunkSource().hasChunk(distant.getX()>>4,distant.getZ()>>4),"Fixture chunk already loaded");
+        var view=new LoadedBlockView(level);
+        helper.assertTrue(view.getBlockState(distant).isAir(),"Unloaded block view is not empty");
+        helper.assertTrue(view.getFluidState(distant).isEmpty(),"Unloaded fluid view is not empty");
+        helper.assertFalse(level.getChunkSource().hasChunk(distant.getX()>>4,distant.getZ()>>4),"Targeting generated a chunk");helper.succeed();
+    }
     @GameTest(maxTicks=100)
     public void craterRespectsBudgetAndProtectedBlocks(GameTestHelper helper) {
         var manager=new DestructionManager();var config=new ServerConfig();config.blockOperationsPerTick=16;

@@ -1,9 +1,6 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
-	id "org.jetbrains.kotlin.jvm" version "2.4.20"
 }
 
 repositories {
@@ -26,10 +23,6 @@ loom {
 }
 
 fabricApi {
-	configureDataGeneration {
-		client = true
-		modId = "nullstar"
-	}
     configureTests {
         createSourceSet = true
         modId = 'nullstar-test'
@@ -46,7 +39,6 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-    implementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
     testImplementation platform('org.junit:junit-bom:5.11.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -74,12 +66,6 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 25
-}
-
-kotlin {
-	compilerOptions {
-		jvmTarget = JvmTarget.JVM_25
-	}
 }
 
 java {

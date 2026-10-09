@@ -13,7 +13,7 @@ public record WeaponDefinition(String id, String name, String behavior, Targetin
     public record Presentation(int color, double orbitalHeight, double particleScale, float soundPitch) {}
 
     public WeaponDefinition {
-        if (id == null || !id.matches("[a-z][a-z0-9_]{0,31}") || name == null || name.isBlank()
+        if (id == null || !id.matches("[a-z][a-z0-9_]{0,31}") || name == null || name.isBlank() || name.length()>96
                 || !List.of("helios", "singularity", "glassfall").contains(behavior)
                 || targeting == null || targeting.range < 8 || targeting.range > 192
                 || phases == null || phases.isEmpty() || phases.size() > 16
@@ -22,6 +22,7 @@ public record WeaponDefinition(String id, String name, String behavior, Targetin
         phases = List.copyOf(phases);
         events = List.copyOf(events);
         if (phases.stream().anyMatch(s -> s.phase == null || s.ticks < 1 || s.ticks > 2400
+                || s.camera == null || s.camera.length() > 32 || s.sound == null || s.sound.length() > 128
                 || s.phase == Phase.COMPLETE || s.phase == Phase.CANCELLED)
                 || phases.stream().map(Stage::phase).distinct().count() != phases.size())
             throw new IllegalArgumentException("Invalid or repeated phase");

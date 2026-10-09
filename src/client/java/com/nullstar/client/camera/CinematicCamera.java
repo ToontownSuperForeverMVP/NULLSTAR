@@ -22,12 +22,13 @@ public final class CinematicCamera {
         register("orbital",ctx->{
             double angle=.4+ctx.strike().age(ctx.tick())*.008,r=ctx.strike().state().radius()*1.8+12;
             return new CameraPreset.Frame(ctx.target().add(Math.cos(angle)*r,ctx.strike().state().orbitalHeight()*.55,Math.sin(angle)*r),
-                    ctx.target().add(0,ctx.strike().state().orbitalHeight()*.25,0),50);
+                    ctx.target().add(0,ctx.strike().state().orbitalHeight()*.9,0),50);
         });
         register("beam",ctx->{
-            double progress=ease(ctx.progress());
+            double progress=ease(ctx.progress()),height=ctx.strike().state().orbitalHeight();
+            double head=ctx.strike().state().phase()==com.nullstar.core.Phase.FIRING?height*(1-progress*.55):height*.45*(1-progress);
             return new CameraPreset.Frame(ctx.target().add(ctx.strike().state().radius()+12,
-                    14+ctx.strike().state().orbitalHeight()*(1-progress)*.4,ctx.strike().state().radius()+18),ctx.target().add(0,8,0),65);
+                    Math.max(18,head+8),ctx.strike().state().radius()+18),ctx.target().add(0,head+5,0),65);
         });
         register("impact",ctx->new CameraPreset.Frame(ctx.target().add(ctx.strike().state().radius()*2+12,18,ctx.strike().state().radius()+15),ctx.target(),72));
     }

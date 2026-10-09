@@ -21,7 +21,7 @@ public final class TargetingService {
                 end=eye.lerp(end,Math.max(0,i-1)/(double)range); break;
             }
         }
-        BlockHitResult hit=level.clip(new ClipContext(eye,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,player));
+        BlockHitResult hit=new LoadedBlockView(level).clip(new ClipContext(eye,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,player));
         if (hit.getType()!= HitResult.Type.BLOCK) return null;
         BlockPos target=hit.getBlockPos();
         return valid(player,target,range,groundRequired) ? target.immutable() : null;
