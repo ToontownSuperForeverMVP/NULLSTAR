@@ -8,5 +8,7 @@
   "Common": true,
   "Client": true,
   "ClassMajor": 69,
-  "Sha256": "31C4567128ABE1C37460DEA923901A476DF9D1AEFD328C4E9133F8210D7A29D2"
+  "Sha256": "9BCAB99E59C97062C466C0DED1C1547F1AE2999862D4815436FC2DEA40974B9D",
+  "Generator": "scripts/verify-artifact.ps1",
+  "Command": "pwsh -File scripts/verify-artifact.ps1"
 }

@@ -40,11 +40,13 @@ The HUD displays selection, targeting coordinates, phase/progress, terrain progr
 /nullstar reload
 ```
 
-`give`, `fire` and `reload` require game-master/operator permissions. Preview is non-destructive: no damage, attraction or block changes. Explicit coordinates still obey distance, loaded-ground, border and protection checks. Cancel stops future work; previously changed terrain remains. Reload requires all strikes to have finished or been cancelled.
+`give`, `fire` and `reload` require game-master/operator permissions. Preview obeys the server's `operatorsOnly` activation setting (operators required by default). It emits sound/visual cues and uses a strike slot/cooldown, with no damage, attraction or block changes. Explicit coordinates still obey distance, loaded-ground, border and protection checks. Cancel stops future work; previously changed terrain remains. Reload requires all strikes to have finished or been cancelled.
 
 ## Configuration
 
 Settings are created on first launch in `config/nullstar/server.json` and `config/nullstar/client.json`. Operator weapon overrides can be placed in `config/nullstar/weapons/helios.json`, `singularity.json` and `glassfall.json`, using the bundled files under `src/main/resources/data/nullstar/weapons` as examples.
+
+Bundled definitions are classpath defaults, not data-pack overrides. Unknown override filenames/sound IDs warn in the log. Duration scaling occurs once at load; scaled stages cap at 2400 ticks and cues retain their proportional positions within those stages. Player damage/forces obey PvP and team protection, with blast damage attributed to the owner.
 
 Server defaults: terrain destruction on, operators only, radius/depth caps 24, 1,536 candidate operations globally per tick, four concurrent strikes, 16 outstanding/reserved impact jobs, normal duration/cooldowns/sound volume, 64 living entities processed per interaction. Absolute caps are radius/depth 48 and 8,192 candidate operations/tick. Values are validated/clamped. Setting `terrainDestruction` false makes all strikes cinematic-only.
 
@@ -61,6 +63,7 @@ Use a Java 25 JDK, then:
 $env:JAVA_HOME = 'C:\Users\Shadow\.gradle\jdks\eclipse_adoptium-25-amd64-windows.2'
 .\gradlew.bat clean build
 .\gradlew.bat runClientGameTest
+pwsh -File scripts/verify-artifact.ps1
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 ```

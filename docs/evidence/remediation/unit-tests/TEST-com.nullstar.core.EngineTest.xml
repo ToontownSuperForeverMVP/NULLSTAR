@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.core.EngineTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-10-09T15:21:56.147Z" hostname="SHADOW-DSNN03OD" time="0.233">
+  <properties/>
+  <testcase name="scanningBudgetIncludesEmptySpaceAndCancellationStopsAllWork()" classname="com.nullstar.core.EngineTest" time="0.003"/>
+  <testcase name="spheresAndEllipsoidsHaveCorrectAxes()" classname="com.nullstar.core.EngineTest" time="0.0"/>
+  <testcase name="exactPhaseBoundariesAndCancellation()" classname="com.nullstar.core.EngineTest" time="0.105"/>
+  <testcase name="unsafeGeometryRejected()" classname="com.nullstar.core.EngineTest" time="0.003"/>
+  <testcase name="timelineDeliversExactlyOnceAndCannotRewind()" classname="com.nullstar.core.EngineTest" time="0.004"/>
+  <testcase name="replayGateCooldownAndReconnect()" classname="com.nullstar.core.EngineTest" time="0.001"/>
+  <testcase name="geometryIsSeededBoundedAndRounded()" classname="com.nullstar.core.EngineTest" time="0.015"/>
+  <testcase name="targetingRejectsNanInfinityAndOutOfRange()" classname="com.nullstar.core.EngineTest" time="0.001"/>
+  <testcase name="operatorOverridesScaleOnceAndUnknownFilesDoNotReplaceWeapons(Path)" classname="com.nullstar.core.EngineTest" time="0.052"/>
+  <testcase name="queueCompletesWithoutDuplicateCoordinates()" classname="com.nullstar.core.EngineTest" time="0.007"/>
+  <testcase name="configurationClampsInvalidAndNonFiniteValues()" classname="com.nullstar.core.EngineTest" time="0.001"/>
+  <testcase name="bundledDefinitionsHaveCompleteLifecyclesAndRoundTrip()" classname="com.nullstar.core.EngineTest" time="0.015"/>
+  <testcase name="longStagesScaleSafelyAndKeepCuePositions()" classname="com.nullstar.core.EngineTest" time="0.014"/>
+  <system-out><![CDATA[[11:21:56] [Test worker/WARN]: Ignoring unknown weapon override: C:\Users\Shadow\AppData\Local\Temp\junit-2156957488969759226\heilos.json
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

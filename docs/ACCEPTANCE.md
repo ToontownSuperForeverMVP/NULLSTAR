@@ -2,6 +2,8 @@
 
 Statuses refer to actual checks in this repository. `PASS` is automated unless explicitly marked visual inspection. Final run details and versions are in `VALIDATION.md`.
 
+Part 1.5B engineering readiness: **CONDITIONAL PASS**. All confirmed critical/high defects are resolved (none were reported); targeted repairs pass 27 JUnit tests, seven dedicated GameTests and the expanded real client scenario. Detailed finding classifications and narrow runtime gaps are in `SOL_QA_REMEDIATION.md`.
+
 | Part 1 criterion | Status | Evidence |
 | --- | --- | --- |
 | Fabric 26.3 / Java 25 clean build | PASS | `gradlew clean build` |
@@ -27,6 +29,16 @@ Statuses refer to actual checks in this repository. `PASS` is automated unless e
 | Camera skip and completion restoration | PASS | player camera entity/type/position assertions; real skip |
 | Preview leaves terrain unchanged | PASS | full preview loop and stone block assertion; zero changed-block log |
 | Full engineering handoff and installation README | PASS | required docs and coherent commits |
+| Legal long-stage duration scaling and single application | PASS | long-stage and operator-override JUnit regressions |
+| Unauthorized preview/destructive admission rejected | PASS | dedicated embedded-player authority fixture |
+| Owner attribution and PvP-safe damage/forces | PASS | dedicated PvP off/on and source-attribution assertions |
+| Concurrent owners survive an isolated event failure | PASS, embedded server players | injected timeline fault cancels one; other Glassfall completes a crater; independent graphical clients remain open |
+| Reservation saturation/release/overwrite/overflow | PASS | direct manager JUnit tests and completed-job world accounting |
+| Offhand aiming/designation/key activation | PASS | expanded real graphical Helios scenario |
+| Transient reset retains cooldown | PASS | nonzero cooldown checked across reset before real dimension travel |
+| Camera blend/presets/release/death/unloaded frame | PASS | deterministic frame-input JUnit tests plus real restoration scenario |
+| Disabled terrain destruction stays inert | PASS | dedicated complete Glassfall cycle with terrain disabled |
+| Reproducible artifact evidence and JDK guard | PASS | executable archive inspector; actual Java 21 rejection |
 
 ## Additional acceptance for Part 2
 

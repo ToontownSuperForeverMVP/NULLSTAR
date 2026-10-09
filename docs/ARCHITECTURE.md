@@ -10,13 +10,15 @@ The supplied template was compared with FabricMC's official 26.3 example branch 
 
 `WeaponDefinition` declares targeting, phases, sound IDs, camera preset names, event ticks, impact geometry, presentation metadata and cooldown. Bundled files live in `data/nullstar/weapons`. Operator overrides in `config/nullstar/weapons/<id>.json` are validated before use; invalid data fails startup or retains the prior catalog on reload. Current IDs/behaviors are `helios`, `singularity`, `glassfall`. Adding a fourth behavior currently requires extending the behavior allowlist and dispatch in `WeaponEngine`.
 
-`Timeline` is a pure monotonic server-tick state machine. It delivers cues once, including skipped tick intervals. Phase boundaries and event timestamps scale together with the server duration multiplier. `ActiveStrike` snapshots the validated definition, dimension key, target, geometry caps, seed, owner and start tick. Mutable state is confined to the server thread.
+`Timeline` is a pure monotonic server-tick state machine. It delivers cues once, including skipped tick intervals. `WeaponCatalog(Path,double)` scales and validates immutable definitions once at load; activation uses those snapshots without scaling again. The one-argument constructor retains multiplier 1. Scaled stages cap at 2400 ticks; cue offsets map proportionally within each actual scaled stage. `all()` is an unmodifiable view. `ActiveStrike` snapshots the validated definition, dimension key, target, geometry caps, seed, owner and start tick. Mutable state is confined to the server thread. Bundled `data/` JSON is loaded from the classpath, not through data-pack reload; only the named config files override it. Unknown override files and sound IDs produce diagnostics at load.
 
 `WeaponEngine` shares activation between item, typed request and commands. It recomputes item targeting on the server, verifies loaded terrain, dimension, distance, border, owner permissions, protection and cooldown. It prevents overlapping activations by one owner and reserves future destruction jobs before accepting a strike. Preview/config-disabled destruction suppresses both damage and terrain changes.
 
 Each tick advances active timelines, schedules phase sounds, applies Singularity attraction at five-tick intervals, publishes event cues and queues impacts. Once the timeline ends it waits for queued jobs before publishing terminal completion. Owner death/disconnect/dimension change, unloaded target chunk or missing level cancels remaining work. Completed terrain changes persist normally in world chunk storage. Cancellation is not an undo operation.
 
 The controller first designates a target for 200 ticks, then confirms activation. Sneak-use selects the next weapon. Activation key uses the same confirmed-target flow. Commands with explicit coordinates still validate server-side distance, ground, loaded state and permissions.
+
+Preview obeys the same `operatorsOnly` setting as destructive activation. It intentionally emits shared sound/visual cues and consumes the same bounded event slot and cooldown; it never reserves destructive jobs or mutates blocks/entities. Runtime invariant failures are contained per strike and discard its pending work; failed terrain steps still consume their scanned candidate budget. Re-reserving an admitted strike is rejected. Already changed terrain remains persistent after cancellation/failure.
 
 ## Terrain and entity safety
 
@@ -29,6 +31,8 @@ Mutation skips borders/build limits, negative destroy-speed blocks, `nullstar:pr
 `ProtectionHooks.register` returns an `AutoCloseable` registration and vetoes both block and living-entity effects. Hook exceptions deny the operation. This is an integration seam; no third-party claim mod bridge is bundled. Register adapters before admitting player strikes. The configurable `operatorsOnly` default is true.
 
 `EntityEffects` performs bounded-radius living-entity queries, falloff damage/knockback and bounded Singularity attraction. Creative/spectator players are excluded. The mutation count is bounded by `entityBudget`; the underlying vanilla query may still enumerate a dense population. Client packets cannot create damage or force vectors.
+
+Explosion sources identify the online owner as both direct and causing entity. Other-player damage, knockback and attraction require the `pvp` rule and vanilla team permission; self-forces remain allowed, while self-damage follows vanilla attributed-explosion rules. Without a resolved owner, player effects fail closed, while mob effects remain environmental. Public claim hooks continue to veto both kinds of effect.
 
 On server shutdown, outstanding jobs and strikes are safely discarded and already changed chunks are saved by Minecraft. Jobs do not resume after restart. Cooldowns are session-scoped, retained across disconnect within the same server session, and reset on server restart.
 
@@ -44,6 +48,8 @@ All contracts use typed `CustomPacketPayload` and `StreamCodec<RegistryFriendlyB
 | `nullstar:visual_v1` | server -> observers | strike UUID, monotonic cue index, impact/projectile type, server-resolved position, capped radius and duration. Client deduplicates; transient cues are not replayed on join. |
 
 State goes out on phase changes and at most once per 20 server ticks, plus initial and terminal messages. Recipients are owner and same-dimension players within 256 blocks. Join and periodic state resync cover late observers and dimension entry. Owner status updates at one Hz after a selection. No per-block or per-render-frame custom packets. Vanilla chunk updates carry terrain changes.
+
+Broadcast rejects payload types/unassociated strike IDs before enumerating recipients; join snapshots apply the same observer range. Transient client-level reset clears presentation/target but retains authoritative cooldown and its clock baseline. Actual disconnect clears the entire session. Controller aiming/effects/HUD accept either hand.
 
 `ClientStrikeState` interpolates from reception ticks, caps cache size, rejects older state, deduplicates cues and expires state after 100 silent client ticks. During singleplayer pause client visual time pauses too. Disconnect and new client-level identity clear all transient presentation.
 

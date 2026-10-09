@@ -1,62 +1,55 @@
-# Final Part 1 validation
+# Part 1.5B validation
 
-Validated on October 9, 2026, in this workspace. Implementation commit: `45d64a5e87f9463e0e8b6fc4ea6cedc7f97a4ecb`. Tests ran in disposable Gradle worlds; the user's Prism instance, mods and saves were not modified.
+Validated October 9, 2026, in disposable Gradle worlds. Production repair: `f2f8f563147db6425f7095e13b43290b3bb02838`; final tested engineering revision: `554df5378f2fd094407be18f384e164838639b14`. Final handoff revision: tag `codex/part-1.5b-complete`. Prism mods, configuration and saves were untouched. Engineering decision: **CONDITIONAL PASS**; see `SOL_QA_REMEDIATION.md` for all finding classifications and remaining evidence boundaries.
 
-## Environment and final commands
+## Environment and commands
 
-Minecraft 26.3, Temurin 25.0.4+7, Fabric Loader 0.19.5, Fabric API 0.162.0+26.3, Loom 1.18.3, Gradle 9.7.1 and JUnit 5.11.4.
+Minecraft 26.3, Temurin 25.0.4+7, Fabric Loader 0.19.5, Fabric API 0.162.0+26.3, Loom 1.18.3, Gradle 9.7.1, JUnit 5.11.4. Versions were retained and API signatures checked in the installed generated sources.
 
 ```powershell
 Set-Location 'C:\Users\Shadow\Desktop\NULLSTAR'
 $env:JAVA_HOME = 'C:\Users\Shadow\.gradle\jdks\eclipse_adoptium-25-amd64-windows.2'
-.\gradlew.bat clean build --console=plain
-.\gradlew.bat runClientGameTest --console=plain
+.\gradlew.bat clean build
+.\gradlew.bat runClientGameTest
+pwsh -File scripts/verify-artifact.ps1
+git rev-parse codex/part-1.5b-complete
+# Generate sources separately when needed:
+.\gradlew.bat genSources
 ```
 
-Both final invocations exited successfully. Clean build took 20 seconds; the graphical client test invocation took 2 minutes 9 seconds. These are task durations, not frame-time or server-performance benchmarks. `genSources` was run separately during API investigation and must remain a separate invocation.
+`clean build` passed in 24 seconds. The final graphical invocation passed in 2 minutes 12 seconds; an earlier expanded run also passed in 2 minutes 13 seconds. These are task durations, not performance benchmarks. The Java 21 guard was independently invoked and failed with the intended JDK 25 / JAVA_HOME message before Loom configuration.
 
-## Results and reproducible evidence
+## Results
 
-| Check | Final result | Evidence |
+| Check | Result | Evidence |
 | --- | --- | --- |
-| Unit tests | 19 passed, zero skipped/failures/errors | [EngineTest: 11](evidence/unit-tests/TEST-com.nullstar.core.EngineTest.xml), [SerializationTest: 5](evidence/unit-tests/TEST-com.nullstar.network.SerializationTest.xml), [ClientStateTest: 3](evidence/unit-tests/TEST-com.nullstar.client.ClientStateTest.xml) |
-| Dedicated server GameTests | All five required tests passed | [Clean build log](evidence/clean-build.log) |
-| Real graphical client GameTest | Full scenario passed | [Client log](evidence/client-test-run.log), `src/gametest/java/com/nullstar/test/StrikeClientGameTest.java` |
-| Production artifact | Correct metadata, Java 25, no test classes | [Artifact inspection](evidence/artifact-validation.json) |
+| Initial baseline build | PASS, original five dedicated tests; JUnit up-to-date | `evidence/remediation/baseline-build.log` |
+| Release clean build | PASS; 27 JUnit, zero failures/errors/skips | `evidence/remediation/clean-build.log`, `evidence/remediation/unit-tests/TEST-*.xml` |
+| Dedicated server GameTests | All seven required tests passed | same release log; six NULLSTAR tests plus one Fabric framework test |
+| Final graphical client scenario | PASS, real disposable integrated server/client | `evidence/remediation/client-final.log` |
+| Java 21 negative startup | Expected failure with actionable guard | `evidence/remediation/jdk21-rejection.log` |
+| Artifact inspection | PASS; production classes, exact 26.3, major 69, zero test entries | executable `scripts/verify-artifact.ps1`, `evidence/artifact-validation.json` |
 
-The dedicated test count includes four NULLSTAR world tests and one Fabric framework test. NULLSTAR tests verify global candidate-budget enforcement, actual block mutation, protected bedrock/chest/claim-veto preservation, cancellation, living-entity damage/knockback/gravity, and collision targeting without generating unloaded chunks.
+JUnit counts: EngineTest 13, SerializationTest 5, ClientStateTest 3, CinematicCameraTest 4, DestructionManagerTest 2. Added coverage checks long-stage scaling, one-time catalog scaling, ignored override files, immutable catalog exposure, yaw wrapping, easing, release/skip/preset/dead/unloaded camera behavior and reservation admission/enqueue/release/cancel/overflow.
 
-Pure tests cover seeded geometry and radial falloff, monotonic phases and one-time/scaled timeline cues, resumable/cancelled queue progress, configuration clamps and definition validation, duplicate/replayed activation and cooldown rejection, finite/range targeting, typed packet round trips and malformed input, and client snapshot age/dimension/terminal cleanup.
+Dedicated tests exercise real protected/container/bedrock terrain mutation, candidate budgets and completed-job accounting, cancellation, loaded-only targeting, entity damage/gravity, PvP off/on and owner attribution. Embedded server players prove unauthorized preview/destructive requests consume no strike, replay and duplicate rejection, two-owner concurrency after an injected invariant failure, cooldown rejection, inert preview and a complete disabled-terrain Glassfall loop. Tests briefly change config in their synchronous local-engine fixture and restore it in `finally`; production authorization remains intact.
 
-The graphical scenario enters a disposable world, grants the registered controller, uses the item to designate a real block surface, and activates via the native key mapping. It checks all three weapon loops, resulting terrain, preview with zero mutations, explicit cancellation, camera skip, camera entity/type/position restoration, dimension-transition cancellation and crater persistence after saving and reopening the world. It uses a native stone fixture and test cheats to exercise the default operator permission gate. Production authorization was not weakened for testing.
+The final graphical scenario designates Helios with a controller in the offhand and an empty main hand, asserts aiming preview, and activates through the native keybind. All three weapons complete real terrain-changing loops. Logged changed-block totals for the final run: Helios 10,220; Singularity 6,606; Glassfall 5,562. Preview logs zero changes; both command/dimension cancellations log zero changes. A final Helios crater (10,213 changes) survives save/reopen. Camera skip, completion, cancellation and dimension restoration are asserted; a transient reset during charging retains a nonzero cooldown.
 
-## Screenshots inspected
+## Screenshots and artifact
 
-These images came from the final Minecraft client run. The charging source, descending gold beam, violet anomaly and cyan aftermath were visually inspected. Rendering is the intended basic Part 1 implementation using native particles; it is not final authored Part 2 art.
-
-- [Helios designation](evidence/0000_helios-designation.png)
-- [Helios charging source](evidence/0001_helios-charge.png)
-- [Helios descending beam](evidence/0003_helios-descending-beam.png)
-- [Helios completed crater](evidence/0005_helios-crater.png)
-- [Singularity firing](evidence/0007_singularity-firing.png)
-- [Singularity crater](evidence/0009_singularity-crater.png)
-- [Glassfall aftermath](evidence/0012_glassfall-aftermath.png)
-- [Glassfall crater](evidence/0013_glassfall-crater.png)
-
-All fourteen captured images are retained in `docs/evidence`.
-
-## Artifact
+Fourteen fresh captures from the final run are retained under `evidence/remediation/screenshots`. Helios descending beam (`0003`), Singularity firing (`0007`) and Glassfall aftermath (`0012`) were inspected: native gold beam, violet anomaly and cyan crater effects remain visible. These are basic Part 1 effects, without final artistic/audio approval. Older root evidence/screenshots and original Part 1 logs remain historical; their old artifact hash describes the pre-remediation build, not this release.
 
 Production: `build/libs/nullstar-1.0.0.jar`; sources: `build/libs/nullstar-1.0.0-sources.jar`. Production SHA-256:
 
 ```text
-31C4567128ABE1C37460DEA923901A476DF9D1AEFD328C4E9133F8210D7A29D2
+9BCAB99E59C97062C466C0DED1C1547F1AE2999862D4815436FC2DEA40974B9D
 ```
 
-Archive inspection confirmed version 1.0.0, exact Minecraft `=26.3` dependency, `com.nullstar.Nullstar` entrypoint, common/client classes, Java class major 69, and zero packaged test classes. The artifact hash applies to this final build; rebuilding may change archive bytes.
+The archive generator verifies metadata, entrypoint class presence, Java class major and absence of test entries, then writes JSON with its own reproducible command. The separate `nullstar-test` mod is not distributed.
 
 ## Evidence boundaries
 
-The passing logs contain native Windows OSHI/Perflib performance-counter diagnostics, development Realms placeholder-auth warnings and a native end-of-frame warning. No NULLSTAR exception remains in these passing runs.
+The dedicated suite intentionally logs one injected timeline exception, isolates it and continues another owner's real strike. Its rapidly advanced local engine is synthetic fault/admission testing, not a tick-throughput benchmark. Native OSHI performance-counter diagnostics, initial disposable-server properties/EULA messages, development Realms placeholder-auth and render-buffer notices do not fail the suites. No NULLSTAR exception occurred in the graphical final run.
 
-Human sound-quality assessment, final art approval, multiple independent clients, third-party claim/render/shader integrations, survival-owner death and dense real-world performance were not tested. The four-millisecond destruction deadline is cooperative, not a benchmark or hard timing guarantee. Basic native cues and synchronized visual projectiles exist; custom audio, mesh/shader spectacle and physical debris remain Part 2. See [acceptance](ACCEPTANCE.md) and [project state](PROJECT_STATE.md) for precise status.
+A real client fixture captures missing/malformed sound warnings and zero-count cancellation feedback, and asserts that an unsupported broadcast and a distant non-owner join snapshot do not reach its presentation state. These synthetic packet-boundary tests preserve production schemas. Multiple independent graphical clients, late observer production joins, survival-owner death, dense-world frame/tick timing, third-party claim/render/shader integration, cross-machine reproducibility and human audio/art approval remain open. The four-millisecond destruction deadline is cooperative, not a hard timing guarantee. Embedded two-owner coverage does not replace those scenarios.

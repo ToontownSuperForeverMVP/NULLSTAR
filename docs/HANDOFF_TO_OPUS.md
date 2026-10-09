@@ -1,16 +1,29 @@
 # Part 2 handoff to Claude Opus 5.5
 
-NULLSTAR Part 1 is a functional Java 25 / Fabric 26.3 foundation with three playable server-owned weapon loops and native visuals. Expand the art and presentation while retaining the validated engine contracts.
+NULLSTAR Part 1.5B is a remediated Java 25 / Fabric 26.3 foundation with three playable server-owned weapon loops and native visuals. Engineering decision: **CONDITIONAL PASS**. No confirmed critical/high defect remains; independent multi-client deployment, dense-world timing and third-party integrations remain unverified. Expand the art and presentation while retaining the validated engine contracts.
 
 ## Build and evidence
 
-Validated implementation commit: `45d64a5e87f9463e0e8b6fc4ea6cedc7f97a4ecb` (the documentation/evidence commit follows it). Resolve the current checkout with `git rev-parse HEAD`; the implementation identifier deliberately avoids a self-referential documentation commit.
+Validated production repair commit: `f2f8f563147db6425f7095e13b43290b3bb02838`. Final tested engineering revision: `554df5378f2fd094407be18f384e164838639b14` (diagnostic/network fixture expansion). Final handoff revision: Git tag `codex/part-1.5b-complete`; resolve its exact commit with `git rev-parse codex/part-1.5b-complete`. It includes the subsequent documentation/evidence commit. Recovery branch `codex/pre-remediation-20261009` preserves the original `0e07887` baseline; `7c7cf71` preserves the original four audit reports. `SOL_QA_REMEDIATION.md` supersedes their old fix priorities without rewriting the historical audit.
 
 Tested versions: Minecraft **26.3**, Temurin **25.0.4+7**, Fabric Loader **0.19.5**, Fabric API **0.162.0+26.3**, Loom **1.18.3**, Gradle **9.7.1**, JUnit **5.11.4**. Dependency versions are pinned; wrapper distribution has SHA-256 verification. Kotlin was removed after replacing the unused template stubs with Java.
 
 Production artifact: `build/libs/nullstar-1.0.0.jar`. Source artifact: `build/libs/nullstar-1.0.0-sources.jar`. Install only the production artifact plus Fabric API into a 26.3 Fabric instance; the separate `nullstar-test` mod is not packaged. The JAR metadata/entrypoints and absence of test classes were checked.
 
 `docs/VALIDATION.md` records final commands, test counts and artifact hash. `docs/evidence` contains logs and representative client screenshots. These are actual automated graphical gameplay runs, not mockups or offscreen simulations. Human audio quality, final artistic polish, a multi-client production deployment and third-party compatibility are not approved by those tests.
+
+Final release checks: 27 JUnit tests, seven dedicated GameTests and the expanded graphical scenario pass. All three weapons complete; preview and disabled terrain remain inert; save/reopen persists the crater. Embedded two-owner tests cover authorization, replay, cooldown and event fault isolation, and real-world tests cover PvP/owner attribution. Embedded players are not independent graphical clients.
+
+## Remediation contracts and remaining observations
+
+- `WeaponCatalog(Path,double)` now stores scaled, validated definitions; activation does not scale again. The original one-argument constructor remains multiplier 1. Scaled stage lengths cap at 2400 ticks; cues map proportionally within each actual destination stage. `all()` cannot remove catalog entries. Operator defaults/overrides remain classpath/config based, not data-pack reloadable.
+- Preview now obeys `operatorsOnly` and intentionally retains shared sound/visual cues, bounded event slots and cooldowns. It never creates destructive work. Do not reopen a permission bypass for preview effects.
+- Blast damage attributes the online owner with both explosion source fields. Other-player damage and forces require PvP plus vanilla team permission. Missing owners cannot affect players; self-forces remain allowed, self-damage follows vanilla attributed-explosion rules, and mob interactions remain allowed.
+- Runtime event failures cancel that event and release its pending work while other strikes continue. Terrain step failure accounting still charges scanned candidates. Reservations reject repeated IDs and overflow-sized admissions.
+- Offhand controller UI matches server acceptance. Transient level resets preserve the authoritative cooldown clock; actual disconnect clears it. Unsupported broadcasts fail closed, and join snapshots obey observer range.
+- `CinematicCamera` retains its public Minecraft sampler and preset APIs, with an additional explicit frame-input sampler for deterministic tests. The Mixin seam and all v1 wire schemas are unchanged.
+
+There are no reproduced unresolved engineering defects. A real client fixture also verifies missing/malformed sound diagnostics, zero-count cancellation feedback, rejected unsupported broadcasts and filtered distant non-owner join snapshots. These synthetic boundary tests do not replace the broader independent multi-client, survival-death, compatibility and performance acceptance below.
 
 ## Exact commands
 
@@ -19,6 +32,8 @@ Set-Location 'C:\Users\Shadow\Desktop\NULLSTAR'
 $env:JAVA_HOME = 'C:\Users\Shadow\.gradle\jdks\eclipse_adoptium-25-amd64-windows.2'
 .\gradlew.bat clean build
 .\gradlew.bat runClientGameTest
+pwsh -File scripts/verify-artifact.ps1
+git rev-parse codex/part-1.5b-complete
 .\gradlew.bat runClient
 .\gradlew.bat runServer
 # Generate API sources in a separate invocation:
@@ -52,7 +67,7 @@ Defaults: maximum radius/depth 24, 1,536 **candidates**, four active strikes and
 
 The manager processes round-robin slices of 64 under one global tick budget plus a cooperative four-millisecond deadline. The deadline is not a measured hard real-time guarantee. Unloaded cells are skipped and target unloading cancels remaining work. Containers, unbreakable/tagged blocks, vanilla interaction protection and registered claim vetoes are respected. No arbitrary chunk force-loading is permitted. Changed chunks are persistent; jobs/cooldowns are not serialized across restart. Cancellation is not terrain rollback.
 
-Living-entity interaction count is bounded; dense vanilla query enumeration remains a performance consideration. Block updates suppress neighbor-shape propagation and loot to avoid uncontrolled cascades. Keep that property if adding fluids, physics or debris. Add independent bounded queues for any expensive new server effects.
+Living-entity interaction count is bounded; dense vanilla query enumeration remains a performance consideration. Block updates suppress neighbor-shape propagation and loot to avoid uncontrolled cascades. Keep that property if adding fluids, physics or debris. Add independent bounded queues for any expensive new server effects. Unit reservation/camera tests and the dedicated injected-failure fixture protect these extension seams; retain them when extending event behavior.
 
 ## Most valuable Part 2 work
 
@@ -68,6 +83,6 @@ Living-entity interaction count is bounded; dense vanilla query enumeration rema
 
 No final orbital machinery, shader effects, custom audio, physical debris, realistic fluid aftermath or optical lensing is present. Glassfall trajectories are synchronized visual cues, not physics projectile entities. Singularity affects living entities, not arbitrary block/item debris. These are intentional Part 2 content/art boundaries.
 
-Manual final-art/audio review, multiple independent clients, third-party render/shader/claim mods, survival-owner death, and worst-case dense-world frame/tick performance remain unverified. Reduced-flashing is enabled by default; the optional brighter impact wash is implemented but not artistically approved. Native Windows performance-counter diagnostics and development Realms placeholder-auth warnings appear in logs without failing the tests; no NULLSTAR exception remains in the passing runs.
+Manual final-art/audio review, multiple independent clients, third-party render/shader/claim mods, survival-owner death, and worst-case dense-world frame/tick performance remain unverified. Reduced-flashing is enabled by default; the optional brighter impact wash is implemented but not artistically approved. Native Windows performance-counter diagnostics and development Realms placeholder-auth warnings appear without failing tests. The passing dedicated log intentionally contains one injected `Timeline cannot rewind` exception, followed by isolated cancellation and a surviving completed strike; the graphical log contains no NULLSTAR exception.
 
 Read `PROJECT_STATE.md`, `WEAPON_SPECIFICATIONS.md`, `ACCEPTANCE.md` and `RESEARCH.md` before expanding scope. Keep evidence accurate when replacing the current basic visuals.

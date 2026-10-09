@@ -1,6 +1,10 @@
-# Project state — Part 1
+# Project state — Part 1.5B
 
 The functional engineering foundation is implemented. This is a playable development release with basic native visuals, not the final artistic release.
+
+Engineering remediation: **CONDITIONAL PASS**, final tested engineering revision `554df5378f2fd094407be18f384e164838639b14` (production repair `f2f8f563147db6425f7095e13b43290b3bb02838`), final handoff tag `codex/part-1.5b-complete`. All 13 audit findings are individually triaged in `SOL_QA_REMEDIATION.md`; confirmed repairs are implemented. No confirmed critical/high defect remains. Release validation now covers 27 JUnit tests, seven dedicated GameTests and the expanded graphical scenario. See `VALIDATION.md` for evidence.
+
+Definitions are scaled/validated once at catalog load. Scaled stages cap at 2400 ticks, with proportionally remapped cues. Preview obeys the configured activation permission gate and shares bounded strike slots/cooldowns, while remaining cinematic-only. Player damage is attributed to the owner; damage and forces respect PvP/team policy. Strike failures cancel their own work without stopping other events; reservation overwrite/overflow, offhand UI and transient cooldown reset are repaired. Unknown override filenames/sounds warn, unsupported broadcast payloads fail closed, and artifact inspection is scripted.
 
 ## Implemented
 
