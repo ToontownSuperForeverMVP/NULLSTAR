@@ -57,6 +57,21 @@ public final class GlassfallScene implements WeaponScene {
         for(var cue:catalog.get("glassfall").events())if(cue.effect().equals("projectile"))list.add(new float[]{(float)cue.x(),(float)cue.z()});
         return list.isEmpty()?DEFAULT_OFFSETS:list.toArray(float[][]::new);
     }
+    static float[][] offsets(StrikeView view) {
+        if(view.scale().tier()==com.nullstar.core.ScaleTier.STANDARD)return offsets();
+        int count=view.scale().subimpacts();float[][] offsets=new float[count+1][2];
+        // The profile footprint is independent of safety-clipped crater radii.
+        int radius=view.scale().footprintRadius();
+        for(int i=0;i<count;i++) {
+            double angle=i*Math.PI*2/Math.max(1,count),distance=radius*(i%2==0?.65:.92);
+            offsets[i][0]=(float)(Math.cos(angle)*distance);offsets[i][1]=(float)(Math.sin(angle)*distance);
+        }
+        for(var event:view.events())if(!event.impact()) {
+            int index=0;for(var prior:view.events()){if(prior==event)break;if(!prior.impact())index++;}
+            if(index<offsets.length){offsets[index][0]=(float)(event.position().x-view.target().x);offsets[index][1]=(float)(event.position().z-view.target().z);}
+        }
+        return offsets;
+    }
     static float latticeY(StrikeView v) {
         double descend=smoother(range(v.through(Phase.CHARGING),0,.6));
         double ascend=smoother(range(v.through(Phase.AFTERMATH),.2,1));
@@ -92,7 +107,7 @@ public final class GlassfallScene implements WeaponScene {
     /** Camera focus: tracks the incoming crystal along its real flight curve, then its impact, else the target. */
     public static Vec3 cameraFocus(StrikeView v) {
         Vec3 focus=v.target().add(0,2,0);
-        float[][] offsets=offsets();
+        float[][] offsets=offsets(v);
         int projectiles=0;
         for(var e:v.events())if(!e.impact())projectiles++;
         for(int i=v.events().size()-1;i>=0;i--) {
@@ -117,7 +132,7 @@ public final class GlassfallScene implements WeaponScene {
     @Override public void render(StrikeView v,Canvas c,ClientConfig.Quality q) {
         build();
         double t=v.age();
-        float[][] offsets=offsets();
+        float[][] offsets=offsets(v);
         float ly=latticeY(v);
         boolean visible=!v.before(Phase.CHARGING)&&!v.atOrAfter(Phase.COOLDOWN)&&!v.atOrAfter(Phase.COMPLETE);
         if(visible)drawLattice(v,c,q,t,ly,offsets);

@@ -78,8 +78,8 @@ class EngineTest {
         assertFalse(ellipsoid.removes(0,4,0));
     }
     @Test void unsafeGeometryRejected() {
-        assertThrows(IllegalArgumentException.class, () -> new CraterGeometry("crater",49,10,0,1));
-        assertThrows(IllegalArgumentException.class, () -> new CraterGeometry("crater",10,49,0,1));
+        assertThrows(IllegalArgumentException.class, () -> new CraterGeometry("crater",1025,10,0,1));
+        assertThrows(IllegalArgumentException.class, () -> new CraterGeometry("crater",10,385,0,1));
         assertThrows(IllegalArgumentException.class, () -> new CraterGeometry("crater",10,10,Double.NaN,1));
     }
     @Test void scanningBudgetIncludesEmptySpaceAndCancellationStopsAllWork() {

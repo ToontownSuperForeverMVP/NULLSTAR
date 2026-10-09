@@ -26,6 +26,8 @@ public record StrikeView(ClientStrikeState.Strike strike,StatePayload state,Phas
         public boolean impact(){return payload.effect().equals("impact");}
     }
     public String weapon(){return state.weapon();}
+    public com.nullstar.core.ColossalMetadata scale(){return state.scale();}
+    public com.nullstar.core.CinematicScene cinematicScene(){return state.scale().scene();}
     /** 0 before the phase, its progress during it, 1 once a later phase is active. Missing phases count as complete. */
     public double through(Phase stage) {
         if(phase==Phase.CANCELLED||phase==Phase.COMPLETE)return 1;

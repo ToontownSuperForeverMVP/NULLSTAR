@@ -34,6 +34,7 @@ public final class EffectScene implements PresentationLayers.Layer {
     private final Map<UUID,Phase> lastPhase=new HashMap<>();
     private final Map<String,WeaponScene> scenes=Map.of("helios",new HeliosScene(),"singularity",new SingularityScene(),"glassfall",new GlassfallScene());
     private final TargetingScene targeting=new TargetingScene();
+    private final com.nullstar.client.render.scene.CosmicMontageScene montage=new com.nullstar.client.render.scene.CosmicMontageScene();
     private final PoseStack identity=new PoseStack();
     private int lastVertices,lastDropped,lastStrikes;
     private double frameMillis;
@@ -107,6 +108,11 @@ public final class EffectScene implements PresentationLayers.Layer {
                 var scene=scenes.get(strike.state().weapon());
                 if(scene==null)continue;
                 StrikeView view=view(strike,now,player);
+                if(view.owned()&&mc.gui.screen()==null&&NullstarClient.config().cinematicCamera&&!NullstarClient.config().reducedMotion&&NullstarClient.CAMERA.detached(strike)) {
+                    var forward=camera.orientation.transform(new org.joml.Vector3f(0,0,-1));
+                    canvas.origin(camera.pos.add(forward.x*32,forward.y*32,forward.z*32));
+                    montage.render(view,canvas,config.quality);strikes++;continue;
+                }
                 double reach=Math.max(view.radius()*3.5,48);
                 AABB bounds=new AABB(view.target().x-reach,view.target().y-view.depth()-8,view.target().z-reach,
                         view.target().x+reach,view.target().y+view.height()+48,view.target().z+reach);

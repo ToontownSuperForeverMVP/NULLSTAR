@@ -1,0 +1,19 @@
+{
+  "terrainDestruction": true,
+  "operatorsOnly": true,
+  "defaultScale": "STANDARD",
+  "apocalypseEnabled": true,
+  "publicServerMode": false,
+  "colossalCinematicOnly": false,
+  "requireColossalConfirmation": true,
+  "maximumColossalDiameter": 1536,
+  "maximumColossalDepth": 192,
+  "maximumDevastationWaves": 8,
+  "maximumSimultaneousColossalJobs": 2,
+  "maximumJobs": 32,
+  "maximumChangedBlocks": 100000000,
+  "maximumEntityRadius": 128,
+  "colossalObserverRange": 2048,
+  "blockOperationsPerTick": 8192,
+  "persistDestructionJobs": true
+}

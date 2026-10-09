@@ -25,6 +25,7 @@ public final class CinematicCamera {
     private float camFov,camRoll;
     private double lastSample,releaseStart=-1;
     private boolean applied;
+    private boolean virtualScene;
     public CinematicCamera() {
         register("orbital",ctx->{
             double angle=.4+ctx.strike().age(ctx.tick())*.008,r=ctx.strike().state().radius()*1.8+12;
@@ -43,8 +44,9 @@ public final class CinematicCamera {
     public boolean has(String id){return presets.containsKey(id);}
     public void skip(){skip(NullstarClient.STATE,Minecraft.getInstance().player==null?null:Minecraft.getInstance().player.getUUID());}
     public void skip(ClientStrikeState state,UUID owner){state.strikes().values().stream().filter(s->s.state().owner().equals(owner)).forEach(s->skipped.add(s.state().id()));}
-    public void reset(){last=null;camPos=null;camLook=null;skipped.clear();releaseStart=-1;applied=false;}
+    public void reset(){last=null;camPos=null;camLook=null;skipped.clear();releaseStart=-1;applied=false;virtualScene=false;}
     public boolean applied(){return applied;}
+    public boolean virtualScene(){return applied&&virtualScene;}
     /** Current blended roll (degrees) for the camera seam; zero when no cinematic pose is applied. */
     public float roll(){return applied&&last!=null?last.roll():0;}
     public Pose sample(Vec3 vanilla,float yaw,float pitch,float fov,double tick) {
@@ -65,20 +67,26 @@ public final class CinematicCamera {
     /** @param clear lifts a desired camera position out of solid terrain; identity in tests. */
     public Pose sample(Vec3 vanilla,float yaw,float pitch,float fov,double tick,ClientStrikeState state,UUID owner,
                        boolean alive,boolean enabled,double shakeIntensity,java.util.function.Predicate<Vec3> loaded,UnaryOperator<Vec3> clear) {
-        applied=false;
+        applied=false;virtualScene=false;
         if(!alive || owner==null){reset();return null;}
         skipped.retainAll(state.strikes().keySet());
         ClientStrikeState.Strike strike=state.strikes().values().stream().filter(s->s.state().owner().equals(owner)
                 && !skipped.contains(s.state().id()) && presets.containsKey(s.state().camera())).findFirst().orElse(null);
         CameraPreset.Frame frame=null;
+        boolean detached=false;
         if(enabled&&strike!=null) {
             Vec3 target=Vec3.atCenterOf(strike.state().target());
-            frame=presets.get(strike.state().camera()).sample(new CameraPreset.Context(strike,tick,target,strike.phaseProgress(tick)));
-            if(frame!=null&&!(valid(frame.position())&&valid(frame.lookAt())&&loaded.test(frame.position())))frame=null;
+            detached=strike.state().scale().scene()!=com.nullstar.core.CinematicScene.WORLD && strike.state().camera().equals("cosmic_montage");
+            if(detached)frame=new CameraPreset.Frame(vanilla,vanilla.add(forward(yaw,pitch).scale(16)),(float)(65-25*ease(strike.phaseProgress(tick))));
+            else {
+                frame=presets.get(strike.state().camera()).sample(new CameraPreset.Context(strike,tick,target,strike.phaseProgress(tick)));
+                if(frame!=null&&!(valid(frame.position())&&valid(frame.lookAt())&&loaded.test(frame.position())))frame=null;
+            }
         }
         if(frame!=null) {
             releaseStart=-1;
-            Vec3 desiredPos=clear.apply(frame.position());
+            Vec3 desiredPos=detached?vanilla:clear.apply(frame.position());
+            if(detached){camPos=vanilla;camLook=frame.lookAt();camRoll=0;}
             if(last==null||camPos==null) {
                 camPos=vanilla;camLook=vanilla.add(forward(yaw,pitch).scale(12));camFov=fov;camRoll=0;
             }
@@ -95,7 +103,7 @@ public final class CinematicCamera {
             float lookPitch=(float)(-Math.toDegrees(Math.atan2(direction.y,Math.hypot(direction.x,direction.z))));
             last=new Pose(camPos.add(offset),lookYaw+(float)(noise(tick,3.1,2.2)*shake*1.6),lookPitch+(float)(noise(tick,2.7,1.9)*shake),
                     camFov+(float)(punch*7),camRoll+(float)(noise(tick,1.1,3.7)*shake*2.2));
-            applied=true;return last;
+            applied=true;virtualScene=detached;return last;
         }
         if(last!=null) {
             if(releaseStart<0)releaseStart=tick;
@@ -105,6 +113,9 @@ public final class CinematicCamera {
         }
         return null;
     }
+    /** Authoritative scene metadata plus the applied owner camera determine detached-scene visibility. */
+    public boolean detached(ClientStrikeState.Strike strike){return virtualScene()&&!skipped.contains(strike.state().id())
+            &&strike.state().scale().scene()!=com.nullstar.core.CinematicScene.WORLD&&strike.state().camera().equals("cosmic_montage");}
     private static boolean valid(Vec3 v){return Double.isFinite(v.x)&&Double.isFinite(v.y)&&Double.isFinite(v.z);}
     /** Deterministic band-limited shake signal in [-1,1]. */
     static double noise(double tick,double a,double b){return (Math.sin(tick*a)+Math.sin(tick*b+1.3)*.6+Math.sin(tick*(a+b)*.71+2.1)*.4)/2;}

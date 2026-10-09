@@ -75,6 +75,11 @@ public final class Canvas {
     public void billboard(Layer layer,float x,float y,float z,float size,float rotation,int argb) {
         billboard(layer,x,y,z,size,size,rotation,argb,0,0,1,1);
     }
+    /** View-local composition; positive depth faces the camera from the selected scene origin. */
+    public void sceneBillboard(Layer layer,float x,float y,float depth,float width,float height,float rotation,int argb) {
+        float bx=ry*uz-rz*uy,by=rz*ux-rx*uz,bz=rx*uy-ry*ux;
+        billboard(layer,rx*x+ux*y+bx*depth,ry*x+uy*y+by*depth,rz*x+uz*y+bz*depth,width,height,rotation,argb,0,0,1,1);
+    }
     /** Smoke sheet frame (2x2 atlas). */
     public void smoke(float x,float y,float z,float size,float rotation,int argb,int frame) {
         float u=(frame&1)*.5f,v=((frame>>1)&1)*.5f;

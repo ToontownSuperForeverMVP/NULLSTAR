@@ -1,5 +1,17 @@
 # Architecture
 
+## Part 2.5A scale layer
+
+`ScaleCatalog` loads six validated `ScaleProfile` records from `config/nullstar/scales.json`. STANDARD resolves the existing definition; TITANIC/APOCALYPSE generate longer authoritative phases, deterministic larger barrage locations and annular secondary waves. Independent scene/structure/beam/shockwave descriptors remain cosmetic. Server caps, exact-target confirmation, replay/permissions/cooldown/targeting and pre-reservations precede admission. Snapshot scale/profile/caps are immutable per event. Details and limits: `PART25_ENGINEERING_REPORT.md`.
+
+`CraterGeometry.forCue` is shared by actual execution, plan accounting and inert footprint inspection. Radius-500/depth-96 Helios is real geometry, not a smaller crater hidden under effects. `basin` adds broad seeded depth irregularity; `ring` excludes an explicit inner annulus. `DestructionJob` uses constant-memory, world-chunk-aligned tiles/columns and validated checkpoints. Missing columns fast-forward logical cells while charging every candidate. The round-robin manager still shares one global candidate budget and a cooperative deadline; later waves wait on lower-wave queued work. The per-event changed-block ceiling is enforced inside the mutation visitor. Diagnostics/history are bounded; chunk counts describe tile visits over passes, not distinct worldwide chunks.
+
+Optional per-world `data/nullstar-jobs-v1.json` checkpoints restore already-queued terrain work after graceful restart, under current radius/depth/apocalypse/operator/concurrency policy. Recovered work pauses for absent/dead/unauthorized/different-dimension owners and releases capacity on completion. Future cues/timelines/cooldowns are not persisted. This is not a crash-consistent transaction across JSON and chunk saves. No chunks are retained or force-loaded.
+
+`state_v2` / `visual_v2` replace the earlier state/visual wire contracts; request/status remain v1. `ColossalMetadata` sends normalized scene, tier, independent dimensions, script/anchor/nodes, barrage footprint/count, wave/checkpoint/duration and commitment. Representative packets remain below 512 bytes. Cadence stays phase transitions plus one Hz; large events use configurable same-dimension observer range (default 2,048). Join reconstructs current scene/phase; transient accents are not replayed.
+
+`StrikeView.scale()` exposes this contract. `CosmicMontageScene` is a minimal normalized-scene foundation routed before terrain frustum culling; `Canvas.sceneBillboard` maps through the camera basis. `CameraScripts` registers `cosmic_montage`; the sampler keeps camera position at the gameplay camera, excludes the self-avatar generically in the existing Mixin seam and applies frame-local FOV/options. No astronomical terrain queries or teleports occur. Skip/accessibility/disabled camera/screens/lifecycle restoration still apply. Colossal HUD age uses authoritative duration; Glassfall's rail pattern uses server footprint metadata/actual cues.
+
 ## Build and ownership
 
 The supplied template was compared with FabricMC's official 26.3 example branch and built before implementation. The project retains its Minecraft/API/Loader/Gradle versions, pins its resolved Loom snapshot to 1.18.3, and replaces unused Kotlin example stubs with Java 25 entrypoints. Kotlin runtime is no longer required. Source sets are split by environment.
@@ -22,7 +34,7 @@ Preview obeys the same `operatorsOnly` setting as destructive activation. It int
 
 ## Terrain and entity safety
 
-`CraterGeometry` provides deterministic angular noise, layered radial falloff, bowls, spheres and ellipsoids. Hard limits are radius/depth 48; no noise extends beyond the selected radius. `DestructionJob` scans a constant-memory bounding volume incrementally; its cursor has a deterministic ordering and every candidate consumes budget. No giant position list is allocated.
+`CraterGeometry` provides deterministic angular noise, layered radial falloff, bowls, spheres, ellipsoids, seeded mega-basins and annular cuts. Absolute geometry limits are radius 1,024/depth 384; no noise extends beyond the selected radius. STANDARD server radius/depth caps still clamp at 48. Colossal caps are independently validated and default to public clipping. `DestructionJob` scans chunk tiles incrementally with a deterministic checkpointable cursor; every candidate consumes budget. No giant position list is allocated.
 
 `DestructionManager` round-robins at most 64 candidates per slice across all dimensions within a global candidate cap and cooperative four-millisecond deadline. This deadline is cooperative, not a hard real-time guarantee. Individual block updates/protection callbacks can take longer. Chunk keys/positions are retained, not chunks. Unloaded cells are skipped, never force-loaded or retried indefinitely.
 
@@ -34,11 +46,11 @@ Mutation skips borders/build limits, negative destroy-speed blocks, `nullstar:pr
 
 Explosion sources identify the online owner as both direct and causing entity. Other-player damage, knockback and attraction require the `pvp` rule and vanilla team permission; self-forces remain allowed, while self-damage follows vanilla attributed-explosion rules. Without a resolved owner, player effects fail closed, while mob effects remain environmental. Public claim hooks continue to veto both kinds of effect.
 
-On server shutdown, outstanding jobs and strikes are safely discarded and already changed chunks are saved by Minecraft. Jobs do not resume after restart. Cooldowns are session-scoped, retained across disconnect within the same server session, and reset on server restart.
+On server shutdown, the optional terrain-job checkpoint runs before in-memory state is discarded; Minecraft saves changed chunks. With persistence off, pending work is discarded as before. With it on, only already-queued jobs resume. Cooldowns are session-scoped, retained across disconnect within the same server session, and reset on server restart.
 
-## Networking v1
+## Networking baseline and v2 changes
 
-All contracts use typed `CustomPacketPayload` and `StreamCodec<RegistryFriendlyByteBuf,...>`. Channel suffix `_v1` versions the schema. Decoders constrain strings/numbers. Round-trip tests bound each current packet below 512 bytes.
+All contracts use typed `CustomPacketPayload` and `StreamCodec<RegistryFriendlyByteBuf,...>`. Version suffixes constrain schemas. Decoders constrain strings/numbers. Round-trip tests bound representative current packets below 512 bytes. The table below records the original fields; state now uses `state_v2` with `ColossalMetadata`, larger validated dimensions and expanded phase enum, and visual uses `visual_v2` for radius/index expansion. Mixed v1/v2 clients are not supported.
 
 | Channel | Owner/direction | Fields and use |
 | --- | --- | --- |

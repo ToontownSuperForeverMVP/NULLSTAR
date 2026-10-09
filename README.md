@@ -1,5 +1,7 @@
 # NULLSTAR: Cataclysm Engine
 
+Part 2.5A adds colossal scale engineering while retaining STANDARD and the Part 2 renderer. Apocalypse Helios supports a real radius-500/depth-96 basin and a 100-second cosmic timeline; Singularity and Glassfall have larger, longer regional devastation. Final cosmic/mothership art is the next presentation stage. See [engineering report](docs/PART25_ENGINEERING_REPORT.md) and [current handoff](docs/HANDOFF_TO_OPUS_PART25.md).
+
 An original Minecraft **26.3** Fabric mod with three server-authoritative orbital weapons, persistent terrain deformation and bounded destruction queues, presented with a custom RenderPearl effects engine: an asymmetric golden orbital collector and layered stellar beam (Helios), a lensed gravitational anomaly that implodes (Singularity) and a crystalline orbital lattice firing a synchronized barrage (Glassfall). Directed camera shots, original procedural textures, synthesized sound design, a holographic HUD, quality presets and accessibility options are included. See `docs/PART2_RELEASE_REPORT.md` for what is verified and what still needs human review.
 
 ## Install
@@ -41,17 +43,33 @@ The HUD displays the weapon icon and name, an animated targeting reticle with lo
 /nullstar status
 /nullstar cancel
 /nullstar reload
+/nullstar scale apocalypse
+/nullstar bounds helios apocalypse [<x> <y> <z>]
+/nullstar preview helios apocalypse [<x> <y> <z>]
+/nullstar fire helios apocalypse [<x> <y> <z>]
+/nullstar confirm
+/nullstar diagnostics
+/nullstar abort <strike-uuid>
+/nullstar emergency_abort
 ```
 
 `give`, `fire` and `reload` require game-master/operator permissions. Preview obeys the server's `operatorsOnly` activation setting (operators required by default). It emits sound/visual cues and uses a strike slot/cooldown, with no damage, attraction or block changes. Explicit coordinates still obey distance, loaded-ground, border and protection checks. Cancel stops future work; previously changed terrain remains. Reload requires all strikes to have finished or been cancelled.
+
+Scale selection/bounds/confirmation/diagnostics/abort/emergency abort require operators. `bounds` is inert and prints main/secondary envelopes, annuli, subimpact centers and candidate counts. Existing fire/preview commands use the selected scale; the tier-taking forms select one activation. Destructive colossal requests require a target-bound, single-use `/nullstar confirm` within ten seconds by default. Cinematic skip keeps authoritative damage running. Status reports UUID/progress/change/time/backlog, including resumed jobs. Reload also requires queued recovered work to be finished/cancelled.
 
 ## Configuration
 
 Settings are created on first launch in `config/nullstar/server.json` and `config/nullstar/client.json`. Operator weapon overrides can be placed in `config/nullstar/weapons/helios.json`, `singularity.json` and `glassfall.json`, using the bundled files under `src/main/resources/data/nullstar/weapons` as examples.
 
+Colossal profiles are created in `config/nullstar/scales.json`. `defaultScale` is STANDARD, `apocalypseEnabled` false, `publicServerMode` true, and `requireColossalConfirmation` true. To permit true private-world mega-craters, enable Apocalypse and disable public mode, with suitable `maximumColossalDiameter` / `maximumColossalDepth`. Defaults permit private main radius 500 and secondary radius 650 when public clipping is off. Independent scene, structure, beam and shockwave fields do not change damage. `colossalCinematicOnly` makes all larger profiles physically inert. Operator examples: [private Apocalypse](docs/config-examples/private-apocalypse.server.json), [public server](docs/config-examples/public-server.server.json).
+
+`maximumDevastationWaves`, `maximumSimultaneousColossalJobs` (composite events), `maximumJobs` (individual impact reservations), `maximumChangedBlocks` and `maximumEntityRadius` bound physical work. At most 8,192 candidates/tick are allowed globally, including air/unloaded/protected cells; no new chunks are force-loaded. A nominal 1,000-diameter crater unfolds over many ticks and missing chunks are skipped permanently. Full loaded-region completion is not runtime-verified.
+
+Optional `persistDestructionJobs` saves committed queued terrain cursors under the world's `data/nullstar-jobs-v1.json`. Graceful restart recovery is tested; it waits for the authorized owner to return. Future cinematic cues/events/cooldowns do not resume, and this is not a power-loss transaction journal coordinated with world chunks.
+
 Bundled definitions are classpath defaults, not data-pack overrides. Unknown override filenames/sound IDs warn in the log. Duration scaling occurs once at load; scaled stages cap at 2400 ticks and cues retain their proportional positions within those stages. Player damage/forces obey PvP and team protection, with blast damage attributed to the owner.
 
-Server defaults: terrain destruction on, operators only, radius/depth caps 24, 1,536 candidate operations globally per tick, four concurrent strikes, 16 outstanding/reserved impact jobs, normal duration/cooldowns/sound volume, 64 living entities processed per interaction. Absolute caps are radius/depth 48 and 8,192 candidate operations/tick. Values are validated/clamped. Setting `terrainDestruction` false makes all strikes cinematic-only.
+STANDARD server defaults: terrain destruction on, operators only, radius/depth caps 24, 1,536 candidate operations globally per tick, four concurrent strikes, 16 outstanding/reserved impact jobs, normal duration/cooldowns/sound volume, 64 living entities processed per interaction. Standard caps clamp at radius/depth 48; colossal geometry independently supports absolute radius 1,024/depth 384 under policy. The global absolute budget stays 8,192 candidate operations/tick. Values are validated/clamped. Setting `terrainDestruction` false makes all strikes cinematic-only.
 
 Client defaults: quality MEDIUM, particle intensity 100%, cinematic camera enabled, shake 0.35, reduced motion off, reduced flashing **on**, screen distortion on, glow 100%, cinematic audio 100%, letterbox on, native particle budget 192/tick (used by the LOW preset and the fallback). Reduced motion keeps the player's own view while all effects still play; reduced flashing replaces bright flashes with a soft tint; particle intensity 0 removes cosmetic particles and debris. Settings save from the N screen or the camera toggle; none of them reach the server or change destruction limits.
 

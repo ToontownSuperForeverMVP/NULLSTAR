@@ -27,6 +27,7 @@ public final class CameraScripts {
     private CameraScripts() {}
 
     public static void register(CinematicCamera camera) {
+        camera.register("cosmic_montage",ctx->null); // Generic normalized-scene mode is resolved at the gameplay camera.
         // HELIOS ------------------------------------------------------------------------------------------
         camera.register("helios_establish",shot((v,a)->{
             double p=v.progress();

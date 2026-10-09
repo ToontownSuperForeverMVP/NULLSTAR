@@ -1,4 +1,10 @@
-# Project state — Part 2
+# Project state — Part 2.5A
+
+The colossal engineering expansion is implemented on `codex/part25-colossal`, preserving the Part 2 presentation and STANDARD gameplay. TITANIC/APOCALYPSE profiles support all three larger weapons. Apocalypse Helios has a nominal 1,000-diameter/depth-96 basin and a 100-second sequence with normalized planet/solar-system/galaxy/cosmic-boundary/mothership checkpoints. Chunk-aligned candidate queues, staged annular passes, planned-volume progress, strict change limits, public/private safeguards, explicit confirmation, diagnostics, v2 compact state and optional graceful restart recovery are in place.
+
+Physical Apocalypse is opt-in (`apocalypseEnabled`); public caps stay enabled by default. No arbitrary chunks are loaded. The new normalized-scene imagery is a basic engineering foundation; immense final visuals/audio belong to Part 2.5B. Read `PART25_ENGINEERING_REPORT.md` and `HANDOFF_TO_OPUS_PART25.md` for the current architecture and source seams. Current validation/acceptance sections below distinguish controlled runtime evidence from the uncompleted full loaded 1,000×1,000 crater.
+
+## Historical Part 2 baseline
 
 NULLSTAR is a feature-complete three-weapon release candidate: the Part 1.5B server-authoritative engine, unchanged in its guarantees, now drives an original presentation layer (custom 26.3 render pipelines, authored procedural machinery, directed camera shots, synthesized audio, holographic HUD, settings screen, quality presets). Engineering decision for this stage: **PASS with documented open items** (human art/audio approval, multiple independent graphical clients and third-party mod compatibility). See `PART2_RELEASE_REPORT.md` for the release summary and `VALIDATION.md` for exact commands and results.
 

@@ -1,5 +1,25 @@
 # Weapon specifications
 
+## Part 2.5A scale profiles
+
+STANDARD preserves the timings/presentation specified below. `config/nullstar/scales.json` supplies validated TITANIC/APOCALYPSE profiles independent of standard weapon overrides. Private-world caps must allow the dimensions below; default public mode clips them and physical Apocalypse requires `apocalypseEnabled`. `/nullstar preview <weapon> apocalypse` is always physically inert under ordinary authorization.
+
+| Weapon | TITANIC radius / depth / duration | APOCALYPSE radius / depth / duration |
+| --- | --- | --- |
+| Helios | 128 / 48 / 70 s | **500 / 96 / 100 s** |
+| Singularity | 96 / 64 / 60 s | 320 / 160 / 90 s |
+| Glassfall | 112 / 40 / 70 s | 360 / 80 / 100 s |
+
+Helios's nominal **1,000-diameter** basin has seeded floor ridges and at most 4% boundary contraction, plus annular passes extending to 575 and 650 blocks. Its twenty-stage sequence includes normalized ascent, planet, solar system, galaxy, cosmic boundary and stellar mothership reveal/deployment before charging/alignment/beam/descent/impact/waves/aftermath. Default impact tick 1,756; duration 2,000 ticks. Apocalypse Helios remains at least 90 seconds even with a shortened duration multiplier.
+
+Singularity has a much deeper ellipsoidal collapse region, independently capped attraction field, longer buildup/pull/release and two fracture/collapse rings. Glassfall TITANIC has eight peripheral projectiles, APOCALYPSE sixteen, plus a final center projectile and two rings. Peripheral sites alternate between 65% and 92% of footprint radius; their crater radii/depths use 22% of the main geometry. Apocalypse reserves 19 impacts before admission. Default rings are outer/inner 1.15/0.88 and 1.30/1.08 with depth scales 0.30/0.12.
+
+Astronomical scene/structure scale, beam width, shockwave extent, blast radius, entity radius, anchor, alignment nodes and script are independent validated profile fields. They are compact metadata for Part 2.5B, not real remote world positions. Current normalized art is deliberately a foundation. Destruction can continue well beyond the cinematic: the radius-500 main candidate envelope contains 146,292,146 cells before secondary passes. Missing chunks are skipped; protections can leave islands. No claim of full loaded-region excavation or final artistic approval is made.
+
+See `PART25_ENGINEERING_REPORT.md` for policy/limits, persistence and exact runtime evidence; `HANDOFF_TO_OPUS_PART25.md` identifies visual hooks.
+
+## STANDARD weapon behavior
+
 The three identities and their implementations are original. Part 2 replaced the native particle presentation with authored procedural machinery, custom RenderPearl shaders, original procedural textures and synthesized sound effects (generators in `tools/assets`). No reference-mod code, models, textures, music, sounds or cinematic sequences are incorporated. Gameplay timings below are unchanged and authoritative; presentation is derived from them.
 
 ## Shared gameplay

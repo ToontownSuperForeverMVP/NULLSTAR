@@ -5,7 +5,7 @@
   "name": "NULLSTAR Integration Tests",
   "environment": "*",
   "entrypoints": {
-    "fabric-gametest": ["com.nullstar.test.DestructionGameTest"],
-    "fabric-client-gametest": ["com.nullstar.test.StrikeClientGameTest", "com.nullstar.test.DedicatedServerClientGameTest", "com.nullstar.test.VisualCaptureClientGameTest"]
+    "fabric-gametest": ["com.nullstar.test.DestructionGameTest", "com.nullstar.test.ColossalGameTest"],
+    "fabric-client-gametest": ["com.nullstar.test.StrikeClientGameTest", "com.nullstar.test.DedicatedServerClientGameTest", "com.nullstar.test.VisualCaptureClientGameTest", "com.nullstar.test.ColossalClientGameTest"]
   }
 }

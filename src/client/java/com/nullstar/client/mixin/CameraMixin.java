@@ -33,7 +33,7 @@ public abstract class CameraMixin {
     private void nullstar$apply(DeltaTracker tracker,CallbackInfo ci) {
         var pose=NullstarClient.CAMERA.sample(position,yRot,xRot,fov,NullstarClient.tickCount()+tracker.getGameTimeDeltaPartialTick(true));
         if(pose!=null) {
-            setPosition(pose.position());setRotation(pose.yaw(),pose.pitch());fov=pose.fov();detached=true;
+            setPosition(pose.position());setRotation(pose.yaw(),pose.pitch());fov=pose.fov();detached=!NullstarClient.CAMERA.virtualScene();
             if(Math.abs(pose.roll())>1e-3f) {
                 // Roll about the view axis; recompute the basis vectors vanilla derives from the rotation.
                 rotation.rotateZ((float)Math.toRadians(pose.roll()));
@@ -45,7 +45,7 @@ public abstract class CameraMixin {
     @Inject(method="extractRenderState",at=@At("RETURN"))
     private void nullstar$detachedState(CameraRenderState state,DeltaTracker tracker,CallbackInfo ci) {
         if(NullstarClient.CAMERA.applied()) {
-            state.isFirstPerson=false;state.smartCull=false;
+            state.isFirstPerson=NullstarClient.CAMERA.virtualScene();state.smartCull=false;
             // The 26.3 hand renderer reads the extracted options, independently of the camera state.
             net.minecraft.client.Minecraft.getInstance().gameRenderer.gameRenderState().optionsRenderState.cameraType=net.minecraft.client.CameraType.THIRD_PERSON_BACK;
         }

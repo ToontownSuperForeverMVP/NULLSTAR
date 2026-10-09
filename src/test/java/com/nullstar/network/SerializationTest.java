@@ -24,7 +24,7 @@ class SerializationTest {
     @Test void invalidRequestsAndStatesRejected() {
         assertThrows(IllegalArgumentException.class,()->new RequestPayload(2,1,0,"helios",false));
         assertThrows(IllegalArgumentException.class,()->new RequestPayload(1,1,999,"helios",false));
-        assertThrows(IllegalArgumentException.class,()->new VisualPayload(UUID.randomUUID(),1,"impact",BlockPos.ZERO,999,20));
+        assertThrows(IllegalArgumentException.class,()->new VisualPayload(UUID.randomUUID(),1,"impact",BlockPos.ZERO,1025,20));
         var buf=new RegistryFriendlyByteBuf(Unpooled.buffer(),RegistryAccess.EMPTY);
         try{buf.writeVarInt(1);buf.writeLong(1);buf.writeVarInt(0);buf.writeUtf("x".repeat(33));buf.writeBoolean(false);
             assertThrows(io.netty.handler.codec.DecoderException.class,()->RequestPayload.CODEC.decode(buf));}

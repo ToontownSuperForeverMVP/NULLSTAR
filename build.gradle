@@ -46,8 +46,8 @@ dependencies {
 
 tasks.withType(Test).configureEach { useJUnitPlatform() }
 
-// Client suite selection: -Ptests=regression,dedicated,capture (default all); -Pcapture=helios,modes selects capture scenes.
-def clientTests = providers.gradleProperty('tests').getOrElse(providers.gradleProperty('captureOnly').isPresent() ? 'capture' : 'regression,dedicated,capture')
+// Client suite selection: -Ptests=regression,dedicated,capture,colossal (default all); -Pcapture=helios,modes selects capture scenes.
+def clientTests = providers.gradleProperty('tests').getOrElse(providers.gradleProperty('captureOnly').isPresent() ? 'capture' : 'regression,dedicated,capture,colossal')
 def captureSelection = providers.gradleProperty('capture').getOrElse('helios,singularity,glassfall,modes,stress')
 tasks.matching { it.name == 'runClientGameTest' }.configureEach {
     jvmArgs "-Dnullstar.capture=${captureSelection}", "-Dnullstar.tests=${clientTests}"

@@ -98,6 +98,12 @@ public final class NullstarHud {
     private static void timeline(GuiGraphicsExtractor g,com.nullstar.core.WeaponDefinition def,ClientStrikeState.Strike own,int x,int y,int w,int rgb,double now) {
         g.fill(x,y,x+w,y+6,0xff141c26);
         Phase current=own.state().phase();double progress=own.phaseProgress(now);
+        if(own.state().scale().tier()!=com.nullstar.core.ScaleTier.STANDARD) {
+            double age=Math.min(1,own.age(now)/own.state().scale().duration());
+            int fill=(int)(w*age);g.fill(x,y,x+fill,y+6,argb(1,rgb));
+            for(int i=1;i<20;i++)g.fill(x+w*i/20,y,x+w*i/20+1,y+6,0xff05080c);
+            return;
+        }
         if(def==null){g.fill(x,y,x+(int)(w*progress),y+6,argb(1,rgb));return;}
         int total=def.duration(),cursor=x;
         for(var stage:def.phases()) {
