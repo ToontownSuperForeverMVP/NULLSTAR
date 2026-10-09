@@ -46,6 +46,14 @@ dependencies {
 
 tasks.withType(Test).configureEach { useJUnitPlatform() }
 
+// Visual evidence iteration: -PcaptureOnly skips the long regression scenario; -Pcapture=helios,modes selects scenes.
+def captureOnly = providers.gradleProperty('captureOnly').isPresent()
+def captureSelection = providers.gradleProperty('capture').getOrElse('helios,singularity,glassfall,modes')
+tasks.matching { it.name == 'runClientGameTest' }.configureEach {
+    jvmArgs "-Dnullstar.capture=${captureSelection}"
+    if (captureOnly) jvmArgs '-Dnullstar.captureOnly=true'
+}
+
 def mainRuntime = sourceSets.main.runtimeClasspath
 def clientRuntime = sourceSets.client.runtimeClasspath
 tasks.register('writeRuntimeClasspath') {

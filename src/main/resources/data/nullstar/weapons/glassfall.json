@@ -2,13 +2,13 @@
   "id": "glassfall", "name": "GLASSFALL ARRAY", "behavior": "glassfall",
   "targeting": {"range": 128, "groundRequired": true},
   "phases": [
-    {"phase": "ACQUIRING", "ticks": 20, "camera": "none", "sound": "block.beacon.activate"},
-    {"phase": "CHARGING", "ticks": 50, "camera": "orbital", "sound": "block.amethyst_block.resonate"},
-    {"phase": "ORBITAL_ALIGNMENT", "ticks": 20, "camera": "orbital", "sound": "block.respawn_anchor.charge"},
-    {"phase": "FIRING", "ticks": 170, "camera": "beam", "sound": "entity.firework_rocket.launch"},
-    {"phase": "IMPACT", "ticks": 15, "camera": "impact", "sound": "entity.generic.explode"},
-    {"phase": "AFTERMATH", "ticks": 100, "camera": "impact", "sound": "block.glass.break"},
-    {"phase": "COOLDOWN", "ticks": 20, "camera": "none", "sound": "block.beacon.deactivate"}
+    {"phase": "ACQUIRING", "ticks": 20, "camera": "none", "sound": "nullstar:glassfall.activate"},
+    {"phase": "CHARGING", "ticks": 50, "camera": "glassfall_reveal", "sound": "nullstar:glassfall.charge"},
+    {"phase": "ORBITAL_ALIGNMENT", "ticks": 20, "camera": "glassfall_lattice", "sound": "nullstar:glassfall.align"},
+    {"phase": "FIRING", "ticks": 170, "camera": "glassfall_barrage", "sound": "nullstar:glassfall.barrage"},
+    {"phase": "IMPACT", "ticks": 15, "camera": "glassfall_final", "sound": "nullstar:glassfall.final"},
+    {"phase": "AFTERMATH", "ticks": 100, "camera": "glassfall_aftermath", "sound": "nullstar:glassfall.aftermath"},
+    {"phase": "COOLDOWN", "ticks": 20, "camera": "none", "sound": "nullstar:glassfall.align"}
   ],
   "events": [
     {"tick": 90, "effect": "projectile", "x": -9, "z": -7, "radiusScale": 0.35},

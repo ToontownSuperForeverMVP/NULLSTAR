@@ -1,0 +1,254 @@
+{
+  "helios.activate": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/activate",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.activate"
+  },
+  "helios.charge": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/charge",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.charge"
+  },
+  "helios.align": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/align",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.align"
+  },
+  "helios.ring_lock": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/ring_lock",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.ring_lock"
+  },
+  "helios.pulse": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/pulse",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.pulse"
+  },
+  "helios.fire": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/fire",
+        "attenuation_distance": 40
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.fire"
+  },
+  "helios.descent": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/descent",
+        "attenuation_distance": 32
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.descent"
+  },
+  "helios.impact": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/impact",
+        "attenuation_distance": 48
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.impact"
+  },
+  "helios.aftershock": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/aftershock",
+        "attenuation_distance": 48
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.aftershock"
+  },
+  "helios.aftermath": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/aftermath",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.aftermath"
+  },
+  "helios.shutdown": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/shutdown",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.shutdown"
+  },
+  "singularity.activate": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/activate",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.activate"
+  },
+  "singularity.charge": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/charge",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.charge"
+  },
+  "singularity.pull": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/pull",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.pull"
+  },
+  "singularity.collapse": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/collapse",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.collapse"
+  },
+  "singularity.implode": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/implode",
+        "attenuation_distance": 48
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.implode"
+  },
+  "singularity.aftermath": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/aftermath",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.aftermath"
+  },
+  "glassfall.activate": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/activate",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.activate"
+  },
+  "glassfall.charge": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/charge",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.charge"
+  },
+  "glassfall.align": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/align",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.align"
+  },
+  "glassfall.barrage": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/barrage",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.barrage"
+  },
+  "glassfall.launch": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/launch",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.launch"
+  },
+  "glassfall.whistle": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/whistle",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.whistle"
+  },
+  "glassfall.strike": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/strike",
+        "attenuation_distance": 32
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.strike"
+  },
+  "glassfall.final": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/final",
+        "attenuation_distance": 48
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.final"
+  },
+  "glassfall.aftermath": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/aftermath",
+        "attenuation_distance": 24
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.aftermath"
+  },
+  "ui.lock": {
+    "sounds": [
+      {
+        "name": "nullstar:ui/lock",
+        "attenuation_distance": 8
+      }
+    ],
+    "subtitle": "subtitles.nullstar.ui.lock"
+  },
+  "ui.select": {
+    "sounds": [
+      {
+        "name": "nullstar:ui/select",
+        "attenuation_distance": 8
+      }
+    ],
+    "subtitle": "subtitles.nullstar.ui.select"
+  }
+}

@@ -2,12 +2,12 @@
   "id": "singularity", "name": "SINGULARITY ENGINE", "behavior": "singularity",
   "targeting": {"range": 112, "groundRequired": true},
   "phases": [
-    {"phase": "ACQUIRING", "ticks": 20, "camera": "none", "sound": "block.beacon.activate"},
-    {"phase": "CHARGING", "ticks": 80, "camera": "orbital", "sound": "block.portal.ambient"},
-    {"phase": "FIRING", "ticks": 120, "camera": "impact", "sound": "entity.enderman.stare"},
-    {"phase": "IMPACT", "ticks": 15, "camera": "impact", "sound": "entity.warden.sonic_boom"},
-    {"phase": "AFTERMATH", "ticks": 100, "camera": "impact", "sound": "block.respawn_anchor.deplete"},
-    {"phase": "COOLDOWN", "ticks": 20, "camera": "none", "sound": "block.beacon.deactivate"}
+    {"phase": "ACQUIRING", "ticks": 20, "camera": "none", "sound": "nullstar:singularity.activate"},
+    {"phase": "CHARGING", "ticks": 80, "camera": "singularity_form", "sound": "nullstar:singularity.charge"},
+    {"phase": "FIRING", "ticks": 120, "camera": "singularity_pull", "sound": "nullstar:singularity.pull"},
+    {"phase": "IMPACT", "ticks": 15, "camera": "singularity_implode", "sound": "nullstar:singularity.implode"},
+    {"phase": "AFTERMATH", "ticks": 100, "camera": "singularity_aftermath", "sound": "nullstar:singularity.aftermath"},
+    {"phase": "COOLDOWN", "ticks": 20, "camera": "none", "sound": "nullstar:singularity.collapse"}
   ],
   "events": [{"tick": 220, "effect": "impact", "x": 0, "z": 0, "radiusScale": 1}],
   "impact": {"shape": "ellipsoid", "radius": 13, "depth": 18, "irregularity": 0.08, "damage": 45, "knockback": 0.7, "scorch": true},

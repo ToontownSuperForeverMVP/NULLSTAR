@@ -43,6 +43,7 @@ public final class Nullstar implements ModInitializer {
         } catch(Exception exception){throw new IllegalStateException("Invalid NULLSTAR configuration; fix config/nullstar before startup",exception);}
     }
     @Override public void onInitialize() {
+        NullstarSounds.initialize();
         reload();
         var key=ResourceKey.create(Registries.ITEM,id("controller"));
         CONTROLLER=Registry.register(BuiltInRegistries.ITEM,key,new WeaponControllerItem(new Item.Properties().setId(key).stacksTo(1)));

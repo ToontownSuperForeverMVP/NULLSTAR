@@ -17,6 +17,7 @@ import java.nio.file.Path;
 public final class StrikeClientGameTest implements FabricClientGameTest {
     private static final BlockPos TARGET=new BlockPos(0,80,0);
     @Override public void runTest(ClientGameTestContext context) {
+        if(Boolean.getBoolean("nullstar.captureOnly"))return;
         net.fabricmc.fabric.api.client.gametest.v1.world.TestWorldSave saved;
         try(TestSingleplayerContext world=context.worldBuilder().adjustSettings(settings->settings.setAllowCommands(true)).create()) {
             saved=world.getWorldSave();
