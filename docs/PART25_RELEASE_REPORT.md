@@ -152,7 +152,9 @@ single strike and 40k–52k vertices with the cosmetic particle cap held at 1,02
 cosmetic particles across the whole final capture session were 583 of the 1,024 ULTRA cap. The
 colossal act therefore costs the same order of magnitude as the Part 2 presentation while presenting at ~4.4x
 machinery scale, because the cosmic stages are depth-composed billboard shells rather than high-poly geometry, and
-every layer keeps its pre-existing budget. No layer dropped a primitive in any colossal beat. These are
+every layer keeps its pre-existing budget. Zero primitives were dropped in any colossal beat, and zero were dropped
+across all 69 strike frames of the whole capture session (STANDARD Helios peaked at 25,500 vertices, Glassfall at
+13,212, Singularity at 7,160). These are
 single-machine measurements on a flat diorama with one client, not guarantees for dense worlds or weaker GPUs.
 
 ## 7. Tests run
