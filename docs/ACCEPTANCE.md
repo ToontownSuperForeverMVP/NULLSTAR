@@ -1,5 +1,33 @@
 # Acceptance
 
+## Part 2.5A engineering acceptance
+
+The scale layer is implemented; automated engineering checks pass within the explicit boundaries below. The next stage is immense presentation artistry, not an unfinished terrain-cap patch. See `VALIDATION.md` and `PART25_ENGINEERING_REPORT.md`.
+
+| Requirement | Status | Evidence / boundary |
+| --- | --- | --- |
+| Preserve 26.3/Java 25/Part 2 and STANDARD | PASS | clean build; original regression/dedicated/capture suites |
+| All three weapons support larger configurable tiers | PASS | six validated profiles; generated definitions/math/cue tests |
+| Helios nominal 1,000-diameter/depth-96 physical job | PASS, capability/admission | radius-500 geometry, real server admission/bounded scans; full region not excavated |
+| Helios at least 90-second sequence | PASS | 2,000-tick default; tested integer-safe floor under duration multipliers |
+| Cosmic scenes without world traversal | PASS, foundation | five real normalized-scene captures; camera remains at gameplay position |
+| Gigantic structure/beam/anchor/checkpoint metadata | PASS | v2 round-trip; `StrikeView.scale()` / scene hook; final giant art belongs to 2.5B |
+| Chunk-aware, constant-memory, globally bounded/fair destruction | PASS | cursor/column tests; simultaneous huge scans; real job budgets |
+| Secondary passes/rings and broad synchronized barrage | PASS | wave dependency/cue tests; staged mutations; clipped public Glassfall real loop |
+| Public/private caps including child centers, change and admission ceilings | PASS | geometry/footprint/config tests; confirmation/queue/change fixtures |
+| Non-destructive full-size bounds/preview | PASS | nominal 1,000-diameter command; complete inert 2,000-tick preview |
+| Cancellation, diagnostic causes and emergency/operator/owner abort | PASS | isolated cancellation, bounded history, terminal lifecycle; completed terrain stays changed |
+| Graceful queued-job persistence/recovery | PASS | file/cursor tests; actual world close/reopen; authorization pause and capacity release |
+| Compact versioned state, late reconstruction, authority/replay | PASS | state_v2/visual_v2 tests; one current snapshot; prior request_v1 authority fixtures |
+| Skip restores camera and preserves committed damage | PASS | unit release/owner tests and real native K after commitment; controlled crater still completes |
+| Tests/artifact/handoff | PASS | 56 JUnit, 10 dedicated tests, four client suites + final focused run; zero packaged test classes; current handoff |
+| Complete physical excavation of a loaded 1,000×1,000 region | UNVERIFIED | explicitly not represented by smaller/synthetic runs |
+| Huge-region completion timing/TPS, dense entities, independent graphical clients | UNVERIFIED | no invented benchmark or deployment claim |
+| Power-loss transaction recovery | NOT CLAIMED | atomic checkpoint document is not synchronized atomically with chunk saves |
+| Final cosmic/mothership visuals, long-form audio, artistic/pacing approval | PART 2.5B | the current normalized composition is engineering scaffolding |
+
+Historical acceptance sections below retain their original scope and results.
+
 Part 2 release decision: **PASS with documented open items** (see the OPEN rows).
 
 ## Part 2 acceptance

@@ -1,8 +1,8 @@
 # NULLSTAR: Cataclysm Engine
 
-This repository contains the Fabric 26.3 NULLSTAR mod: the Part 1 engineering foundation plus the Part 2 presentation release. Start with `AGENTS.md`, then `docs/PART2_RELEASE_REPORT.md`, `docs/PROJECT_STATE.md` and `docs/ARCHITECTURE.md`; `docs/HANDOFF_TO_OPUS.md` is historical.
+This repository contains the Fabric 26.3 NULLSTAR mod: the preserved Part 2 presentation release plus the Part 2.5A colossal engineering expansion. Start with `AGENTS.md`, `docs/PROJECT_STATE.md`, `docs/PART25_ENGINEERING_REPORT.md`, `docs/ARCHITECTURE.md` and `docs/HANDOFF_TO_OPUS_PART25.md`. The Part 2 release report and old handoff remain historical.
 
-Part 2 added the custom RenderPearl effects engine, authored weapon scenes, directed camera shots, original synthesized audio, HUD and settings while preserving server authority, safe destruction budgets and the three playable weapon loops. Read `docs/PART2_RELEASE_REPORT.md` for the current state; vanilla particles remain only as the LOW/fallback layer.
+Part 2 added the custom RenderPearl effects engine, authored weapon scenes, directed camera shots, original synthesized audio, HUD and settings while preserving server authority, safe destruction budgets and the three playable weapon loops. Part 2.5A adds validated colossal profiles, long timelines, staged terrain jobs, restart recovery and normalized cosmic scene hooks. Vanilla particles remain the LOW/fallback layer.
 
 Build with Java 25: `./gradlew clean build`. Launch development client: `./gradlew runClient`. Automated graphical test: `./gradlew runClientGameTest`. Generate API sources separately: `./gradlew genSources`.
 

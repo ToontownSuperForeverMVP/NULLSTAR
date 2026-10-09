@@ -1,5 +1,39 @@
 # Validation
 
+## Part 2.5A release validation
+
+October 9, 2026. Branch `codex/part25-colossal`; final tested engineering revision `1c8e250` (resolve with Git). Recovery `codex/pre-part25-20261009` retains Part 2 `c5ef353`. Existing release tags are unchanged. Versions remain Minecraft 26.3, Java/Temurin 25.0.4+7, Loader 0.19.5, Fabric API 0.162.0+26.3, Loom 1.18.3, Gradle 9.7.1 and JUnit 5.11.4. Every world is disposable under `build/run`; no Prism saves/mods/config were changed.
+
+Commands run from this checkout with `JAVA_HOME=C:\Users\Shadow\.gradle\jdks\eclipse_adoptium-25-amd64-windows.2`:
+
+```powershell
+.\gradlew.bat build
+.\gradlew.bat runClientGameTest '-Ptests=regression,dedicated,capture,colossal'
+.\gradlew.bat clean build
+.\gradlew.bat runClientGameTest -Ptests=colossal
+pwsh -File scripts/verify-artifact.ps1 -Output docs/evidence/part25/artifact-validation.json
+```
+
+| Check | Result / scope | Evidence |
+| --- | --- | --- |
+| Part 2 baseline build | PASS, 7 dedicated tests; prior JUnit up-to-date | `evidence/part25/baseline-build.log` |
+| Final clean release build | PASS, **56 JUnit**, **10 dedicated GameTests** including Fabric framework test | `evidence/part25/clean-build.log`, `unit-tests/` |
+| All four client suites | PASS: regression, dedicated connection, Part 2 capture and colossal; run before final focused hardening | `evidence/part25/client-suite.log` |
+| Final colossal client suite | PASS on final engineering revision after column-cache, footprint and camera-release/timeline-floor hardening | `evidence/part25/client-release.log` |
+| Production artifact | PASS: major 69, exact 26.3, both production entrypoints/classes, **0 test classes** | `evidence/part25/artifact-validation.json` |
+
+Final JUnit totals: EngineTest 13, ColossalEngineTest 13, SerializationTest 5, ColossalSerializationTest 1, ClientStateTest 3, CinematicCameraTest 7, CosmicCameraTest 1, PresentationEngineTest 7, TrajectoryTest 2, DestructionManagerTest 2, ColossalPersistenceTest 2. All assertions pass. New coverage includes exact world-chunk cursor replay, column math equivalence, radius-500 envelopes, public/private child-center bounds, the 90-second minimum after integer stage rounding, profile/config safety, complete one-time timelines, cue pairings, compact metadata, owner camera/skip/stale handling and persistence policy/structure rejection.
+
+The three added dedicated fixtures prove: radius-500/depth-96 admission and explicit single-use confirmation/replay; reservation saturation; complete 2,000-tick inert preview; a real clipped public Glassfall loop; smaller real staged jobs and cursor recovery; unauthorized recovered-owner pause; completed recovery releasing capacity; exact change caps; fair simultaneous radius-500 scans under the global budget; cancellation isolation; and no new corner chunk loading. Existing protected/container/bedrock/PvP/replay/cooldown/timeline-fault fixtures still pass. The expected injected `Timeline cannot rewind` exception is intentional isolation evidence, not an unhandled defect. Windows OSHI/Perflib warnings remain environment noise.
+
+Graphical colossal evidence includes five actual scene captures (`frames/0000..0004`), eye-local camera assertions, no self-avatar in virtual scenes, one-snapshot mothership reconstruction, native K skip/restoration, server-event survival after skip, a controlled diameter-64 real crater, skip after damage commitment, inert nominal 1,000-diameter bounds and actual integrated-server close/reopen of an unfinished job. The final run logs the resumed cursor; exact counts vary by ticks elapsed during shutdown/join. Test-thread engine advancement accelerates the long timeline, so these checks prove transitions/rendering/network/lifecycle and real bounded terrain, **not 100-second real-time pacing or huge-world performance**.
+
+The full client run also completed all STANDARD weapons, offhand targeting/key activation, preview, cancellation, dimension return, save/reopen, real dedicated disconnect/reconnect and the existing modes/four-strike stress captures. Those captures are transient build outputs; historical curated Part 2 art remains in `evidence/part2`, and the new normalized scene captures are retained in `evidence/part25/frames`. Original assets were not changed, so no new generator/audio quality claim is made.
+
+The full nominal 1,000-diameter crater is **supported/admitted/budget-tested, not completely excavated in a fully loaded real 1,000×1,000 region**. Unloaded cells are skipped permanently; no chunk forcing is hidden behind the fixture. Time-to-completion calculations in the engineering report are arithmetic lower bounds, not benchmarks. Independent multi-client/dense-world performance, third-party integrations, final cosmic/structure artwork/audio/pacing, every survival-death phase and power-loss transaction recovery remain unverified. Graceful restart recovery, not a cross-file crash journal, is tested.
+
+Production artifact: `build/libs/nullstar-1.0.0.jar`; exact current SHA-256 in `evidence/part25/artifact-validation.json`. Final handoff tag: `codex/part-2.5a-complete`. Resolve the tag after the documentation/evidence commit; no test mod is distributed.
+
 ## Part 2 release validation
 
 Validated October 9, 2026, on branch `part2/cinematic-release` (base: tag `codex/part-1.5b-complete` = `5ba60f1`). Disposable worlds under `build/run`; Prism data untouched. Versions unchanged: Minecraft 26.3, Temurin 25.0.4+7, Fabric Loader 0.19.5, Fabric API 0.162.0+26.3, Loom 1.18.3, Gradle 9.7.1, JUnit 5.11.4. Test machine: AMD EPYC 9354, NVIDIA RTX 2000 Ada (driver 595.79), Windows 11, graphics preset "fancy", render distance 16, 854x480 test window.

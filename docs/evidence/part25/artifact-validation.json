@@ -1,0 +1,14 @@
+{
+  "Version": "1.0.0",
+  "Entrypoint": [
+    "com.nullstar.Nullstar"
+  ],
+  "Minecraft": "=26.3",
+  "TestClasses": 0,
+  "Common": true,
+  "Client": true,
+  "ClassMajor": 69,
+  "Sha256": "208AFF0229AAB27924AB40B8913A783DEEDC74F33978E83EEF638C25DDB81152",
+  "Generator": "scripts/verify-artifact.ps1",
+  "Command": "pwsh -File scripts/verify-artifact.ps1"
+}

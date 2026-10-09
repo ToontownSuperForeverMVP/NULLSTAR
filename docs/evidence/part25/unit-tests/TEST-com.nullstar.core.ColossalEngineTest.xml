@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.core.ColossalEngineTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-10-09T18:18:09.932Z" hostname="SHADOW-DSNN03OD" time="0.482">
+  <properties/>
+  <testcase name="corruptCursorCannotRewindAJob()" classname="com.nullstar.core.ColossalEngineTest" time="0.006"/>
+  <testcase name="hugeSkippedScanChargesEveryCandidateAndUsesConstantMemory()" classname="com.nullstar.core.ColossalEngineTest" time="0.002"/>
+  <testcase name="privateAndPublicCapsAndInvalidNumbersFailClosed()" classname="com.nullstar.core.ColossalEngineTest" time="0.0"/>
+  <testcase name="cachedColumnsMatchTheOriginalContinuousGeometryMath()" classname="com.nullstar.core.ColossalEngineTest" time="0.164"/>
+  <testcase name="footprintPreviewSharesExactGeometryAndNeverVisitsAWorld()" classname="com.nullstar.core.ColossalEngineTest" time="0.15"/>
+  <testcase name="chunkTraversalIsCompleteAndCheckpointRestoresExactOrder()" classname="com.nullstar.core.ColossalEngineTest" time="0.034"/>
+  <testcase name="glassfallHasSixteenDistributedImpactsAndFinalCenter()" classname="com.nullstar.core.ColossalEngineTest" time="0.007"/>
+  <testcase name="profileOverridesRejectDuplicatesAndShortApocalypse(Path)" classname="com.nullstar.core.ColossalEngineTest" time="0.041"/>
+  <testcase name="megaGeometryNeverEscapesItsBoundsAndRingExcludesTheCore()" classname="com.nullstar.core.ColossalEngineTest" time="0.001"/>
+  <testcase name="heliosHasThousandDiameterAndNinetySecondCosmicTimeline()" classname="com.nullstar.core.ColossalEngineTest" time="0.007"/>
+  <testcase name="apocalypseHeliosCannotRoundBelowNinetySeconds()" classname="com.nullstar.core.ColossalEngineTest" time="0.006"/>
+  <testcase name="entireColossalBarrageFitsPublicAndPrivateSafetyEnvelopes()" classname="com.nullstar.core.ColossalEngineTest" time="0.005"/>
+  <testcase name="allScaleProfilesAreValidatedAndStandardIsUnchanged(Path)" classname="com.nullstar.core.ColossalEngineTest" time="0.044"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

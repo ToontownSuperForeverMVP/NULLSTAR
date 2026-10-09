@@ -2,7 +2,7 @@
 
 The colossal engineering expansion is implemented on `codex/part25-colossal`, preserving the Part 2 presentation and STANDARD gameplay. TITANIC/APOCALYPSE profiles support all three larger weapons. Apocalypse Helios has a nominal 1,000-diameter/depth-96 basin and a 100-second sequence with normalized planet/solar-system/galaxy/cosmic-boundary/mothership checkpoints. Chunk-aligned candidate queues, staged annular passes, planned-volume progress, strict change limits, public/private safeguards, explicit confirmation, diagnostics, v2 compact state and optional graceful restart recovery are in place.
 
-Physical Apocalypse is opt-in (`apocalypseEnabled`); public caps stay enabled by default. No arbitrary chunks are loaded. The new normalized-scene imagery is a basic engineering foundation; immense final visuals/audio belong to Part 2.5B. Read `PART25_ENGINEERING_REPORT.md` and `HANDOFF_TO_OPUS_PART25.md` for the current architecture and source seams. Current validation/acceptance sections below distinguish controlled runtime evidence from the uncompleted full loaded 1,000×1,000 crater.
+Physical Apocalypse is opt-in (`apocalypseEnabled`); public caps stay enabled by default. No arbitrary chunks are loaded. The new normalized-scene imagery is a basic engineering foundation; immense final visuals/audio belong to Part 2.5B. Read `PART25_ENGINEERING_REPORT.md` and `HANDOFF_TO_OPUS_PART25.md` for the current architecture and source seams. The current sections in `VALIDATION.md` and `ACCEPTANCE.md` distinguish controlled runtime evidence from the uncompleted full loaded 1,000×1,000 crater.
 
 ## Historical Part 2 baseline
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nullstar.client.camera.CosmicCameraTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-09T18:18:09.868Z" hostname="SHADOW-DSNN03OD" time="0.002">
+  <properties/>
+  <testcase name="detachedSceneNeverQueriesTerrainAndSkipRestoresGameplay()" classname="com.nullstar.client.camera.CosmicCameraTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
