@@ -3,7 +3,14 @@ package com.nullstar.test;
 import com.nullstar.Nullstar;
 import com.nullstar.client.ClientConfig;
 import com.nullstar.client.NullstarClient;
+import com.nullstar.core.CinematicScene;
+import com.nullstar.core.ColossalMetadata;
 import com.nullstar.core.Phase;
+import com.nullstar.core.ScaleCatalog;
+import com.nullstar.core.ScaleProfile;
+import com.nullstar.core.ScaleTier;
+import com.nullstar.network.StatePayload;
+import net.minecraft.core.BlockPos;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
@@ -21,6 +28,8 @@ import java.util.List;
 public final class VisualCaptureClientGameTest implements FabricClientGameTest {
     static final int GROUND=-40;
     private static final Path OUT=Path.of("build/evidence/part2");
+    /** Part 2.5B colossal frames and their measurements are kept apart from the Part 2 capture set. */
+    private static final Path COLOSSAL_OUT=Path.of("build/evidence/part25b");
     private final List<String> diagnostics=new ArrayList<>();
     private TestSingleplayerContext current;
 
@@ -30,7 +39,7 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         if(!selected("capture"))return;
         String selection=System.getProperty("nullstar.capture","helios,singularity,glassfall");
         // Each scene gets a fresh, identical diorama so earlier craters never invalidate later targets.
-        for(String scene:new String[]{"helios","singularity","glassfall","modes","stress"}) {
+        for(String scene:new String[]{"helios","singularity","glassfall","colossal","modes","stress"}) {
             if(!selection.contains(scene))continue;
             try(TestSingleplayerContext world=context.worldBuilder().adjustSettings(settings->settings.setAllowCommands(true)).create()) {
                 current=world;
@@ -39,13 +48,16 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
                     case "helios" -> {shot(context,"00_diorama");helios(context,world);}
                     case "singularity" -> singularity(context,world);
                     case "glassfall" -> glassfall(context,world);
+                    case "colossal" -> colossal(context,world);
                     case "stress" -> stress(context,world);
                     default -> modes(context,world);
                 }
                 world.getServer().runOnServer(server->Nullstar.config().cooldownMultiplier=1);
             }
         }
-        try{Files.createDirectories(OUT);Files.write(OUT.resolve("renderer-diagnostics.txt"),diagnostics);}catch(Exception exception){throw new RuntimeException(exception);}
+        try{Files.createDirectories(OUT);Files.createDirectories(COLOSSAL_OUT);var recorded=List.copyOf(diagnostics);
+            Files.write(OUT.resolve("renderer-diagnostics.txt"),recorded);
+            Files.write(COLOSSAL_OUT.resolve("renderer-diagnostics.txt"),recorded);}catch(Exception exception){throw new RuntimeException(exception);}
     }
     private static void prepare(ClientGameTestContext context,TestSingleplayerContext world) {
         world.getConnection().waitForChunksDownload();
@@ -176,6 +188,63 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         context.runOnClient(mc->NullstarClient.STATE.clear());
     }
 
+    /** One authored beat of the colossal measurement pass: the phase, the normalized scene it stages and its shot. */
+    private record Beat(Phase phase,CinematicScene scene,double progress,String name,String camera) {}
+
+    /**
+     * Part 2.5B colossal presentation measurement. One synthetic APOCALYPSE Helios strike is injected into the client
+     * presentation cache at every magnitude boundary the client derives from the authoritative operator profile, so
+     * the cosmic act and the colossal world devastation are captured and their vertex/particle/extraction/frame cost
+     * is recorded instead of estimated. Client-only, exactly like the existing stress scene: no server strike is
+     * created, no terrain changes and no client value becomes gameplay input.
+     */
+    private void colossal(ClientGameTestContext context,TestSingleplayerContext world) {
+        try{Files.createDirectories(COLOSSAL_OUT);}catch(Exception exception){throw new RuntimeException(exception);}
+        world.getServer().runCommand("tp @p 150 -20 150 225 22");
+        world.getServer().runCommand("time set noon");
+        context.runOnClient(mc->{var c=NullstarClient.config();c.quality=ClientConfig.Quality.ULTRA;
+            c.particleIntensity=1;c.cinematicCamera=true;c.reducedMotion=false;});
+        context.waitTicks(30);world.getConnection().waitForChunksRender();
+        ScaleProfile profile=ScaleCatalog.defaults().stream()
+                .filter(p->p.weapon().equals("helios")&&p.tier()==ScaleTier.APOCALYPSE).findFirst().orElseThrow();
+        // The strike is owned by the local player: ownership decides camera detachment and the detached cosmic act.
+        java.util.UUID id=java.util.UUID.randomUUID();
+        String dimension=world.getServer().computeOnServer(server->
+                world.getConnection().getServerLevel().dimension().identifier().toString());
+        Beat[] beats={
+                new Beat(Phase.ASCENT,CinematicScene.ASCENT,.55,"00_ascent","cosmic_montage"),
+                new Beat(Phase.PLANETARY_VIEW,CinematicScene.PLANET,.50,"01_planet","cosmic_montage"),
+                new Beat(Phase.SOLAR_SYSTEM_VIEW,CinematicScene.SOLAR_SYSTEM,.50,"02_solar_system","cosmic_montage"),
+                new Beat(Phase.GALACTIC_VIEW,CinematicScene.GALAXY,.50,"03_galaxy","cosmic_montage"),
+                new Beat(Phase.COSMIC_BOUNDARY_VIEW,CinematicScene.COSMIC_BOUNDARY,.50,"04_universe","cosmic_montage"),
+                new Beat(Phase.MOTHERSHIP_REVEAL,CinematicScene.STELLAR_MOTHERSHIP,.45,"05_mothership_reveal","cosmic_montage"),
+                new Beat(Phase.DEPLOYMENT,CinematicScene.STELLAR_MOTHERSHIP,.90,"06_deployment","cosmic_montage"),
+                new Beat(Phase.CHARGING,CinematicScene.STELLAR_MOTHERSHIP,.70,"07_charging","cosmic_montage"),
+                new Beat(Phase.FIRING,CinematicScene.STELLAR_MOTHERSHIP,.60,"08_stellar_lance","cosmic_montage"),
+                new Beat(Phase.ATMOSPHERIC_ENTRY,CinematicScene.WORLD,.50,"09_descent","helios_pursuit"),
+                new Beat(Phase.IMPACT,CinematicScene.WORLD,.35,"10_impact","helios_annihilation"),
+                new Beat(Phase.DEVASTATION_WAVE_1,CinematicScene.WORLD,.60,"11_pressure_wall","helios_pressure"),
+                new Beat(Phase.AFTERMATH,CinematicScene.WORLD,.50,"12_aftermath","helios_sweep")};
+        for(int i=0;i<beats.length;i++) {
+            final Beat beat=beats[i];final int index=i;final int duration=profile.durationTicks();
+            context.runOnClient(mc->{
+                long tick=NullstarClient.tickCount();
+                java.util.UUID owner=mc.player.getUUID();
+                var metadata=new ColossalMetadata(profile.tier(),beat.scene(),profile.cinematicScale(),profile.structureScale(),
+                        profile.beamWidth(),profile.shockwaveRadius(),profile.secondaryRadius(),profile.blastRadius(),profile.entityRadius(),
+                        profile.script(),profile.anchor(),profile.alignmentNodes(),profile.subimpacts(),profile.radius(),profile.waves(),0,
+                        duration,false);
+                long stamp=tick+index*20L;
+                NullstarClient.STATE.snapshot(new StatePayload(id,owner,dimension,"helios","HELIOS ANNIHILATOR",beat.phase(),
+                        200+index*20,(int)Math.min(duration-1,duration*beat.progress()),duration,stamp,new BlockPos(0,GROUND,0),
+                        profile.radius(),profile.depth(),7L,false,beat.progress(),0xffaa00,72,1,beat.camera(),false,metadata),tick);
+            });
+            context.waitTicks(12);
+            shot(context,"colossal_"+beat.name(),COLOSSAL_OUT);
+        }
+        context.runOnClient(mc->NullstarClient.STATE.clear());
+    }
+
     private static void waitStrike(ClientGameTestContext context) {
         context.waitFor(mc->!NullstarClient.STATE.strikes().isEmpty(),200);
     }
@@ -199,7 +268,12 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         shot(context,label+"_zz_crater_player_view");
         context.waitTicks(80);
     }
-    private void shot(ClientGameTestContext context,String name) {
+    private void shot(ClientGameTestContext context,String name) {shot(context,name,OUT);}
+    /**
+     * Captures one frame and records the renderer diagnostics beside it: phase, age, FPS, measured frame time,
+     * extraction cost, submitted/dropped vertices and the live cosmetic particle count.
+     */
+    private void shot(ClientGameTestContext context,String name,Path destination) {
         context.runOnClient(mc->mc.gui.hud.getChat().clearMessages(true));
         context.waitTick();
         String info=context.computeOnClient(mc->{
@@ -209,6 +283,6 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         });
         if(current!=null){double mspt=current.getServer().computeOnServer(server->server.getAverageTickTimeNanos()/1e6);info+=String.format(" | serverTick=%.2fms",mspt);}
         diagnostics.add(info);
-        context.takeScreenshot(TestScreenshotOptions.of(name).withDestinationDir(OUT));
+        context.takeScreenshot(TestScreenshotOptions.of(name).withDestinationDir(destination));
     }
 }

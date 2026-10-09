@@ -228,7 +228,7 @@ public final class WeaponEngine {
         return new StatePayload(s.id,s.owner,s.dimension.identifier().toString(),s.definition.id(),s.definition.name(),state.phase(),state.age(),state.phaseAge(),state.phaseDuration(),
                 tick,s.target,s.radius,s.depth,s.seed,s.preview,destruction.progress(s.id).fraction(),s.definition.presentation().color(),
                 s.definition.presentation().orbitalHeight(),s.definition.presentation().particleScale(),camera==null?"none":camera,terminal,
-                new ColossalMetadata(s.scale.tier(),CinematicScene.forPhase(state.phase()),s.scale.cinematicScale(),s.scale.structureScale(),
+                new ColossalMetadata(s.scale.tier(),CinematicScene.forPhase(state.phase(),s.definition.id(),s.scale.tier()),s.scale.cinematicScale(),s.scale.structureScale(),
                         s.scale.beamWidth(),s.scale.shockwaveRadius(),Math.min(s.radiusCap,(int)Math.ceil(s.radius*s.scale.secondaryRadius()/ (double)s.scale.radius())),
                         s.blastRadius,s.entityRadius,s.scale.script(),s.scale.anchor(),s.scale.alignmentNodes(),s.scale.subimpacts(),s.radius,s.scale.waves(),
                         Math.max(0,s.definition.phases().stream().map(WeaponDefinition.Stage::phase).toList().indexOf(state.phase())),s.definition.duration(),s.committed));

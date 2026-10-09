@@ -113,9 +113,12 @@ public final class EffectScene implements PresentationLayers.Layer {
                     canvas.origin(camera.pos.add(forward.x*32,forward.y*32,forward.z*32));
                     montage.render(view,canvas,config.quality);strikes++;continue;
                 }
-                double reach=Math.max(view.radius()*3.5,48);
+                // Generous bounds: colossal machinery hangs far above its target, so the box must cover the
+                // emitter altitude, the lance and the shock reach instead of only the local crater.
+                double reach=Math.max(PresentationScale.shockReach(view)*1.05,Math.max(view.radius()*3.5,48));
+                double top=view.target().y+PresentationScale.altitude(view)+22*PresentationScale.structure(view)+64;
                 AABB bounds=new AABB(view.target().x-reach,view.target().y-view.depth()-8,view.target().z-reach,
-                        view.target().x+reach,view.target().y+view.height()+48,view.target().z+reach);
+                        view.target().x+reach,top,view.target().z+reach);
                 if(!camera.cullFrustum.isVisible(bounds))continue;
                 canvas.origin(view.target());
                 scene.render(view,canvas,config.quality);

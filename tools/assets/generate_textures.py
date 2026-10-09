@@ -175,6 +175,47 @@ def crystal():
     save("effect/crystal.png", rgba)
 
 
+# ---------------------------------------------------------------- cosmic scale materials
+def star():
+    """Soft additive point light: bright core, four-point diffraction cross, wide halo."""
+    s = 128
+    c = (s - 1) / 2
+    y, x = np.mgrid[0:s, 0:s].astype(float)
+    dx, dy = (x - c) / c, (y - c) / c
+    r = np.hypot(dx, dy)
+    core = np.exp(-(r / .1) ** 2)
+    halo = np.exp(-(r / .42) ** 2) * .38
+    cross = (np.exp(-(np.abs(dx) / .015) ** 2) + np.exp(-(np.abs(dy) / .015) ** 2)) * np.exp(-(r / .6) ** 2) * .3
+    a = np.clip(core + halo + cross, 0, 1) * np.clip(1 - r, 0, 1) ** .35
+    rgba = np.stack([np.full((s, s), 255.0)] * 3 + [a * 255], -1)
+    save("effect/star.png", rgba)
+
+
+def gas():
+    """Soft tiling nebula/vapour cloud: turbulent rgb detail with a radial alpha falloff."""
+    s = 256
+    coarse = normalize(fbm(s, s, 3, 3, 5, RNG, .55))
+    fine = normalize(fbm(s, s, 7, 7, 4, RNG, .5))
+    filaments = (1 - np.abs(normalize(fbm(s, s, 11, 11, 4, RNG)) * 2 - 1)) ** 4
+    radius = radial(s) + (coarse - .5) * .5
+    mask = np.clip(1 - radius, 0, 1) ** 1.25
+    a = np.clip(mask * (.55 + .9 * coarse + .5 * filaments), 0, 1)
+    rgba = np.stack([(coarse * .6 + fine * .4) * 255, (fine * .55 + filaments * .45) * 255, (filaments * .7 + coarse * .3) * 255, a * 255], -1)
+    save("effect/gas.png", rgba)
+
+
+def lance():
+    """Colossal beam fabric. u wraps the circumference, v runs along the beam and tiles vertically."""
+    h, w = 256, 96
+    ridged = 1 - np.abs(normalize(fbm(h, w, 5, 3, 5, RNG, .55)) * 2 - 1)
+    ribbed = 1 - np.abs(normalize(fbm(h, w, 14, 2, 3, RNG)) * 2 - 1)
+    streaks = normalize(fbm(h, w, 3, 26, 4, RNG, .6))
+    body = normalize(ridged ** 1.6 * .55 + ribbed ** 2 * .5)
+    rgba = np.stack([np.clip(body * 1.1, 0, 1) * 255, np.clip(ribbed * .9 + streaks * .35, 0, 1) * 255,
+                     np.clip(streaks * .8 + ribbed * .4, 0, 1) * 255, np.full((h, w), 255.0)], -1)
+    save("effect/lance.png", rgba)
+
+
 def rubble():
     s = 64
     d1, d2 = voronoi(s, 14, RNG)
@@ -344,7 +385,9 @@ if __name__ == "__main__":
     if not os.path.isdir(os.path.join(ROOT, "src")):
         sys.exit("run from the NULLSTAR repository")
     plasma(); flow(); glow(); shock(); smoke(); void(); halo(); crystal(); rubble()
+    star(); gas(); lance()
     hull("helios_hull", (58, 56, 54), (196, 150, 52), (255, 196, 78), 22, "line", 11)
     hull("glassfall_hull", (54, 62, 72), (140, 170, 190), (110, 236, 255), 18, "chevron", 23)
     hull("singularity_hull", (26, 22, 32), (90, 60, 130), (196, 110, 255), 26, "line", 37)
+    hull("cosmic_hull", (46, 44, 50), (150, 126, 84), (255, 214, 140), 34, "line", 53)
     controller(); icons(); mod_icon()

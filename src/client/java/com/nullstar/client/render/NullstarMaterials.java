@@ -40,6 +40,11 @@ public final class NullstarMaterials {
     public static final Identifier RUBBLE=Nullstar.id("textures/effect/rubble.png");
     public static final Identifier VOID=Nullstar.id("textures/effect/void.png");
     public static final Identifier HALO=Nullstar.id("textures/effect/halo.png");
+    /** Part 2.5B cosmic materials: point stars, nebula gas and the colossal stellar-lance fabric. */
+    public static final Identifier STAR=Nullstar.id("textures/effect/star.png");
+    public static final Identifier GAS=Nullstar.id("textures/effect/gas.png");
+    public static final Identifier LANCE=Nullstar.id("textures/effect/lance.png");
+    public static final Identifier COSMIC_HULL=Nullstar.id("textures/machine/cosmic_hull.png");
     public static final Identifier HELIOS_HULL=Nullstar.id("textures/machine/helios_hull.png");
     public static final Identifier GLASSFALL_HULL=Nullstar.id("textures/machine/glassfall_hull.png");
     public static final Identifier SINGULARITY_HULL=Nullstar.id("textures/machine/singularity_hull.png");

@@ -15,6 +15,10 @@ public final class NullstarSounds {
         "singularity.activate","singularity.charge","singularity.pull","singularity.collapse","singularity.implode","singularity.aftermath",
         "glassfall.activate","glassfall.charge","glassfall.align","glassfall.barrage","glassfall.launch","glassfall.whistle",
         "glassfall.strike","glassfall.final","glassfall.aftermath",
+        // Part 2.5B colossal-scale direction: the cosmic act, the star mothership and the immense releases.
+        "cosmic.ascend","cosmic.reveal","cosmic.vast","cosmic.mothership","cosmic.deploy","cosmic.charge",
+        "cosmic.align","cosmic.fire","cosmic.invoke",
+        "singularity.vacuum","singularity.release","glassfall.lattice_charge","glassfall.dome",
         "ui.lock","ui.select"
     };
     private NullstarSounds() {}

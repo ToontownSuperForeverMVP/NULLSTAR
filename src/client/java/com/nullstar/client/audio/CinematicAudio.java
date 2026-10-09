@@ -40,6 +40,23 @@ public final class CinematicAudio implements PresentationLayers.Layer {
                     new Accent(Phase.FIRING,.8,"singularity.collapse",3.5f,.6f,false)),
             "glassfall",List.of(
                     new Accent(Phase.ORBITAL_ALIGNMENT,.95,"ui.lock",2,.7f,true)));
+    /** Colossal-only accents. STANDARD events never receive them, so the Part 2 audio mix is untouched. */
+    private static final Map<String,List<Accent>> COLOSSAL_ACCENTS=Map.of(
+            "helios",List.of(
+                    new Accent(Phase.MOTHERSHIP_REVEAL,.35,"cosmic.deploy",3,.7f,false),
+                    new Accent(Phase.DEPLOYMENT,.2,"helios.ring_lock",2.6f,.72f,false),
+                    new Accent(Phase.DEPLOYMENT,.42,"helios.ring_lock",2.6f,.9f,false),
+                    new Accent(Phase.DEPLOYMENT,.64,"helios.ring_lock",2.6f,1.1f,false),
+                    new Accent(Phase.DEPLOYMENT,.88,"cosmic.align",2.8f,1f,false),
+                    new Accent(Phase.CHARGING,.55,"cosmic.charge",3,1f,false),
+                    new Accent(Phase.FIRING,.05,"cosmic.fire",3.5f,1f,false)),
+            "singularity",List.of(
+                    new Accent(Phase.FIRING,.35,"singularity.vacuum",2.8f,1f,false),
+                    new Accent(Phase.FIRING,.9,"singularity.release",3,1f,false)),
+            "glassfall",List.of(
+                    new Accent(Phase.ORBITAL_ALIGNMENT,.4,"glassfall.lattice_charge",3,1f,false),
+                    new Accent(Phase.FIRING,.08,"glassfall.barrage",3.2f,1f,true),
+                    new Accent(Phase.IMPACT,.02,"glassfall.dome",3.4f,1f,false)));
     private static final int MAX_INSTANCES=10;
     private final Map<UUID,Phase> lastPhase=new HashMap<>();
     private final Map<UUID,Double> lastProgress=new HashMap<>();
@@ -69,10 +86,10 @@ public final class CinematicAudio implements PresentationLayers.Layer {
             lastProgress.put(id,view.progress());
             // A strike first seen mid-phase (late join) must not replay the accents it already passed.
             if(first&&view.progress()>0)before=view.progress();
-            if(volume>0)for(var accent:ACCENTS.getOrDefault(view.weapon(),List.of())) {
-                if(accent.phase!=view.phase()||accent.at<=before||accent.at>view.progress())continue;
-                Vec3 at=view.target().add(0,accent.orbital?view.height():2,0);
-                play(mc,accent.sound,at,(float)(accent.volume*volume),accent.pitch,0);
+            if(volume>0) {
+                boolean colossal=com.nullstar.client.render.PresentationScale.colossal(view)>0;
+                for(var accent:ACCENTS.getOrDefault(view.weapon(),List.of())) playAccent(mc,view,accent,before,volume);
+                if(colossal)for(var accent:COLOSSAL_ACCENTS.getOrDefault(view.weapon(),List.of())) playAccent(mc,view,accent,before,volume);
             }
             var events=NullstarClient.SCENE.events(id);
             Integer seen=lastCue.get(id);
@@ -88,6 +105,12 @@ public final class CinematicAudio implements PresentationLayers.Layer {
             }
             lastCue.put(id,seen);
         }
+    }
+    /** Plays one authored accent when the strike crosses its trigger inside a phase. */
+    private void playAccent(Minecraft mc,StrikeView view,Accent accent,double before,double volume) {
+        if(accent.phase!=view.phase()||accent.at<=before||accent.at>view.progress())return;
+        Vec3 at=view.target().add(0,accent.orbital?view.height():2,0);
+        play(mc,accent.sound,at,(float)(accent.volume*volume),accent.pitch,0);
     }
     private void cue(Minecraft mc,StrikeView view,StrikeView.Event event,double volume) {
         Vec3 at=event.position();

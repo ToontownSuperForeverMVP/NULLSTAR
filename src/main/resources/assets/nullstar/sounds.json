@@ -233,6 +233,123 @@
     ],
     "subtitle": "subtitles.nullstar.glassfall.aftermath"
   },
+  "cosmic.ascend": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/ascend",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.ascend"
+  },
+  "cosmic.reveal": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/reveal",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.reveal"
+  },
+  "cosmic.vast": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/vast",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.vast"
+  },
+  "cosmic.mothership": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/mothership",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.mothership"
+  },
+  "cosmic.deploy": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/deploy",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.deploy"
+  },
+  "cosmic.charge": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/charge",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.charge"
+  },
+  "cosmic.align": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/align",
+        "attenuation_distance": 48
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.align"
+  },
+  "cosmic.fire": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/fire",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.fire"
+  },
+  "cosmic.invoke": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/invoke",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.invoke"
+  },
+  "singularity.vacuum": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/vacuum",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.vacuum"
+  },
+  "singularity.release": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/release",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.release"
+  },
+  "glassfall.lattice_charge": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/lattice_charge",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.lattice_charge"
+  },
+  "glassfall.dome": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/dome",
+        "attenuation_distance": 64
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.dome"
+  },
   "ui.lock": {
     "sounds": [
       {

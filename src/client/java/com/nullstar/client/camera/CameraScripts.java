@@ -4,6 +4,7 @@ import com.nullstar.client.NullstarClient;
 import com.nullstar.client.render.StrikeView;
 import com.nullstar.client.render.scene.GlassfallScene;
 import com.nullstar.client.render.scene.HeliosScene;
+import com.nullstar.client.render.scene.SingularityScene;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
@@ -53,7 +54,7 @@ public final class CameraScripts {
         camera.register("helios_follow",shot((v,a)->{
             double p=v.progress();
             double headY=HeliosScene.beamHead(v);
-            double side=16+v.radius()*.35;
+            double side=Math.min(16+v.radius()*.35,200);
             Vec3 head=v.target().add(0,headY,0);
             Vec3 pos=head.add(Math.cos(a+1.45)*side,7,Math.sin(a+1.45)*side);
             if(pos.y<v.target().y+10+v.radius()*.25)pos=new Vec3(pos.x,v.target().y+10+v.radius()*.25,pos.z);
@@ -73,23 +74,23 @@ public final class CameraScripts {
         // SINGULARITY -------------------------------------------------------------------------------------
         camera.register("singularity_form",shot((v,a)->{
             double p=smooth(v.progress());
-            Vec3 core=v.target().add(0,4,0);
+            Vec3 core=v.target().add(0,SingularityScene.coreY(v),0);
             Vec3 pos=around(v,a+.3*p,v.radius()+20-5*p,9-1.5*p);
             return new CameraPreset.Frame(pos,core,(float)(60-8*p),0,0);
         }));
         camera.register("singularity_pull",shot((v,a)->{
             double p=v.progress();
-            Vec3 core=v.target().add(0,4,0);
+            Vec3 core=v.target().add(0,SingularityScene.coreY(v),0);
             // Final beat: a dolly zoom (moving in while widening) makes space itself feel like it is stretching.
             double zoom=smooth(range(p,.72,1));
-            double distance=(v.radius()+16)*(1-.3*smooth(p))*(1-.38*zoom);
+            double distance=Math.min((v.radius()+16)*(1-.3*smooth(p))*(1-.38*zoom),200);
             Vec3 pos=around(v,a+.3+.95*p,distance,6-2*p);
             float fov=(float)(52+26*zoom);
             float roll=(float)(7*Math.sin(v.age()*.07)*p);
             return new CameraPreset.Frame(pos,core,fov,roll,(float)(.15+.55*p));
         }));
         camera.register("singularity_implode",shot((v,a)->{
-            Vec3 core=v.target().add(0,4,0);
+            Vec3 core=v.target().add(0,SingularityScene.coreY(v),0);
             Vec3 pos=around(v,a+1.25,v.radius()+12,8);
             return new CameraPreset.Frame(pos,core,70,0,.3f);
         }));
@@ -101,14 +102,14 @@ public final class CameraScripts {
         // GLASSFALL ---------------------------------------------------------------------------------------
         camera.register("glassfall_reveal",shot((v,a)->{
             double p=v.progress();
-            Vec3 lattice=v.target().add(0,v.height(),0);
+            Vec3 lattice=v.target().add(0,GlassfallScene.latticeY(v),0);
             Vec3 pos=around(v,a+.2*p,v.radius()*1.8+40,9+5*p);
-            Vec3 look=lerp(v.target().add(0,6,0),v.target().add(0,v.height()*.62,0),smoother(range(p,.1,.8)));
+            Vec3 look=lerp(v.target().add(0,6,0),lattice.add(0,-2,0),smoother(range(p,.1,.8)));
             return new CameraPreset.Frame(pos,look,(float)(68-4*p),0,0);
         }));
         camera.register("glassfall_lattice",shot((v,a)->{
             double p=v.progress();
-            Vec3 lattice=v.target().add(0,v.height(),0);
+            Vec3 lattice=v.target().add(0,GlassfallScene.latticeY(v),0);
             Vec3 pos=lattice.add(Math.cos(a+.6+.35*p)*36,-10,Math.sin(a+.6+.35*p)*36);
             return new CameraPreset.Frame(pos,lattice.add(0,-2,0),58,(float)(-3*p),.1f);
         }));
@@ -127,6 +128,82 @@ public final class CameraScripts {
             double p=smooth(v.progress());
             Vec3 pos=around(v,a+1.35+.5*p,(v.radius()*2.2+16)*(1-.1*p),5+v.radius()*.3+p*(v.radius()+10));
             return new CameraPreset.Frame(pos,v.target().add(0,v.radius()*.45*(1-p)-v.depth()*.3*p,0),(float)(74-8*p),0,0);
+        }));
+        // PART 2.5B colossal vocabulary: horizon-spanning reveals, colossal mechanical detail, beam pursuit,
+        // scale-comparison framing, pressure waves and long basin sweeps. Every distance is bounded so a colossal
+        // shot stays inside the player's loaded region instead of asking the client to render unloaded terrain.
+        camera.register("helios_horizon",shot((v,a)->{ // horizon-spanning reveal with the machine above the horizon
+            double p=v.progress();
+            Vec3 machine=v.target().add(0,HeliosScene.collectorHeight(v),0);
+            Vec3 pos=around(v,a+.35*p,v.radius()*3.4+80,20+v.radius()*.16);
+            return new CameraPreset.Frame(pos,lerp(v.target().add(0,v.radius()*.2,0),machine,.6),75,0,.12f);
+        }));
+        camera.register("helios_monolith",shot((v,a)->{ // huge mechanical detail shot along the hull
+            double p=v.progress();
+            Vec3 machine=v.target().add(0,HeliosScene.collectorHeight(v),0);
+            double radius=24+16*p;
+            Vec3 pos=machine.add(Math.cos(a+.9+.5*p)*radius,-5+3*p,Math.sin(a+.9+.5*p)*radius);
+            return new CameraPreset.Frame(pos,machine.add(0,-4,0),56,(float)(-3*Math.sin(p*Math.PI)),(float)(.12+.3*p));
+        }));
+        camera.register("helios_pursuit",shot((v,a)->{ // beam pursuit down the descent column
+            double p=v.progress();
+            double headY=HeliosScene.beamHead(v);
+            double side=Math.min(18+v.radius()*.5,180);
+            Vec3 head=v.target().add(0,headY,0);
+            Vec3 pos=head.add(Math.cos(a+1.45)*side,5+v.radius()*.2,Math.sin(a+1.45)*side);
+            Vec3 look=lerp(head.add(0,Math.max(8,headY*.3),0),v.target().add(0,1,0),smooth(range(p,.6,1)));
+            return new CameraPreset.Frame(pos,look,(float)(70+10*p),(float)(6*Math.sin(p*Math.PI)),(float)(.4+.5*p));
+        }));
+        camera.register("helios_annihilation",shot((v,a)->{ // the machine and the blast in one frame
+            Vec3 pos=around(v,a+1.9,v.radius()*3.2+30,v.radius()*.5+30);
+            return new CameraPreset.Frame(pos,v.target().add(0,v.radius()*.3,0),80,0,.35f);
+        }));
+        camera.register("helios_pressure",shot((v,a)->{ // ground-hugging pressure wall sweeping past
+            double p=smooth(v.progress());
+            Vec3 pos=around(v,a+1.9,v.radius()*2.2+16,14+v.radius()*.22+p*v.radius()*.3);
+            return new CameraPreset.Frame(pos,v.target().add(0,v.radius()*.1,0),(float)(78+6*p),0,(float)(.3+.4*p));
+        }));
+        camera.register("helios_crater",shot((v,a)->{ // basin overview with the rim as the scale reference
+            double p=smooth(v.progress());
+            Vec3 pos=around(v,a+2.3,140+70*p,70+v.radius()*.16+p*40);
+            return new CameraPreset.Frame(pos,v.target().add(0,-v.depth()*.25,0),(float)(82-12*p),0,.1f);
+        }));
+        camera.register("helios_sweep",shot((v,a)->{ // long aftermath sweep over the devastated region
+            double p=smooth(v.progress());
+            Vec3 pos=around(v,a+2.3+1.1*p,160+80*p,80+p*40);
+            return new CameraPreset.Frame(pos,v.target().add(0,-v.depth()*.4*p,0),(float)(84-14*p),(float)(2*Math.sin(p*4)),0);
+        }));
+        camera.register("singularity_sky",shot((v,a)->{ // the anomaly occupying the whole sky
+            double p=v.progress();
+            Vec3 core=v.target().add(0,SingularityScene.coreY(v),0);
+            Vec3 pos=around(v,a+.4*p,Math.min(v.radius()*1.6+30,200),14+8*p);
+            return new CameraPreset.Frame(pos,core,(float)(52+18*p),(float)(4*Math.sin(v.age()*.05)),.1f);
+        }));
+        camera.register("singularity_sink",shot((v,a)->{ // sink-basin fracture rings
+            double p=smooth(v.progress());
+            Vec3 pos=around(v,a+1.6,120+70*p,60+v.depth()*.3+p*40);
+            return new CameraPreset.Frame(pos,v.target().add(0,-v.depth()*.45,0),(float)(80-12*p),0,.1f);
+        }));
+        camera.register("singularity_sweep",shot((v,a)->{ // long gravitational-ruin sweep
+            double p=smooth(v.progress());
+            Vec3 pos=around(v,a+1.6+.9*p,140+70*p,70+p*40);
+            return new CameraPreset.Frame(pos,v.target().add(0,-v.depth()*.5*p,0),(float)(82-14*p),(float)(2*Math.sin(p*4)),0);
+        }));
+        camera.register("glassfall_platform",shot((v,a)->{ // monumental platform detail
+            double p=v.progress();
+            Vec3 lattice=v.target().add(0,GlassfallScene.latticeY(v),0);
+            Vec3 pos=lattice.add(Math.cos(a+.8+.4*p)*(34+10*p),-16+8*p,Math.sin(a+.8+.4*p)*(34+10*p));
+            return new CameraPreset.Frame(pos,lattice.add(0,-3,0),52,(float)(-4*p),.1f);
+        }));
+        camera.register("glassfall_crater",shot((v,a)->{ // barrage aftermath across linked craters
+            double p=smooth(v.progress());
+            Vec3 pos=around(v,a+1.6,140+70*p,64+v.radius()*.14+p*36);
+            return new CameraPreset.Frame(pos,v.target().add(0,-v.depth()*.2,0),(float)(82-12*p),0,.1f);
+        }));
+        camera.register("glassfall_sweep",shot((v,a)->{ // long crystalline aftermath sweep
+            double p=smooth(v.progress());
+            Vec3 pos=around(v,a+1.6+.9*p,155+70*p,74+p*40);
+            return new CameraPreset.Frame(pos,v.target().add(0,-v.depth()*.35*p,0),(float)(84-14*p),(float)(2*Math.sin(p*4)),0);
         }));
     }
 
@@ -177,8 +254,13 @@ public final class CameraScripts {
         }
         return false;
     }
+    /**
+     * Orbital position around the strike. The distance is bounded because a colossal crater is far wider than the
+     * client's loaded region: framing it from further away would simply point the camera at unloaded terrain.
+     */
     static Vec3 around(StrikeView v,double angle,double distance,double height) {
-        return v.target().add(Math.cos(angle)*distance,height,Math.sin(angle)*distance);
+        double bounded=Math.min(distance,240);
+        return v.target().add(Math.cos(angle)*bounded,height,Math.sin(angle)*bounded);
     }
     static Vec3 lerp(Vec3 a,Vec3 b,double t){return a.lerp(b,Math.max(0,Math.min(1,t)));}
 }

@@ -142,6 +142,73 @@ final class Fx {
                     Math.cos(a)*speed*p.random(),speed*(.4+p.random()),Math.sin(a)*speed*p.random(),50+p.random()*70,.18f+p.random()*.3f,0xff000000|rgb);
         }
     }
+    // ------------------------------------------------------------------ colossal aftermath helpers
+    /**
+     * Layered expanding shock system for a colossal impact: a white-hot leading edge, progressively slower and
+     * redder trailing rings, a ground-hugging pressure wall and an upward pressure dome. All radii come from the
+     * authoritative shockwave reach, never from a hardcoded world size.
+     */
+    static void colossalShock(Canvas c,float x,float y,float z,float reach,double age,int rgb,double alpha,int layers,float spin,ClientConfig.Quality q) {
+        if(alpha<=0||reach<=0)return;
+        int rings=Math.max(1,Math.min(layers,q.level==2?6:q.level==1?4:2));
+        for(int i=0;i<rings;i++) {
+            double t=Math.max(0,age-i*2.2),span=14+i*7;
+            if(t>span)continue;
+            float r=reach*(.18f+.82f*easeOut(t/span));
+            double a=alpha*(1-t/span)*(1-i*.11);
+            int col=Canvas.lerpRgb(0xfff4e0,rgb,i/(double)rings);
+            shockRing(c,x,y+.4f+i*.7f,z,r,2.2f+i*1.5f,col,a,spin*(i%2==0?1:-1),q);
+        }
+        double wall=(1-age/18);
+        if(wall>0)shockWall(c,x,y,z,reach*.55f*easeOut(age/16),reach*.02f*(float)wall,rgb,alpha*.7*wall,q,spin*.05f);
+        double dome=(1-age/24);
+        if(dome>0&&q.level>=1) {
+            float r=reach*.7f*easeOut(age/22);
+            c.sphere(Layer.RIM_PLASMA,x,y,z,r*.55f,argb(alpha*.16*dome,rgb),(float)(age*.03),0,q.level==2);
+        }
+    }
+
+    /** Towering debris/dust column: a tapering trunk of ash with a spreading frontal head. */
+    static void ashColumn(Canvas c,float x,float y,float z,float radius,float height,int rgb,double alpha,float scroll,int slices,ClientConfig.Quality q) {
+        if(alpha<=0||height<=0||radius<=0)return;
+        int pieces=Math.max(1,Math.min(slices,q.level==2?6:q.level==1?4:2));
+        for(int i=0;i<pieces;i++) {
+            float y0=y+height*i/pieces,y1=y+height*(i+1)/pieces;
+            float w0=radius*(1+.55f*i/pieces),w1=radius*(1+.55f*(i+1)/pieces);
+            double a=alpha*(1-(double)i/pieces);
+            c.tube(Layer.SMOKE,x,y0,z,x,y1,z,w0,w1,Math.max(4,segments(q,20)),argb(a,rgb),argb(a*.45,rgb),2,scroll+i*.4f,(float)i/pieces,(float)(i+1)/pieces);
+        }
+        c.tube(Layer.RIM_FLOW,x,y,z,x,y+height,z,radius*.35f,radius*.9f,segments(q,16),argb(alpha*.5,rgb),argb(0,rgb),1,scroll,0,1);
+    }
+
+    /** Molten residue pooling in a new basin: uneven additive patches of hot material. */
+    static void moltenPool(Canvas c,float x,float y,float z,float radius,int rgb,double alpha,float scroll,int blobs) {
+        if(alpha<=0||radius<=0)return;
+        groundGlow(c,x,y,z,radius,rgb,alpha*.45);
+        for(int i=0;i<blobs;i++) {
+            double a=scroll*1.7+i*2.399;float r=(float)(radius*(.2+.75*frac(i*.618+scroll*.11)));
+            float px=x+(float)Math.cos(a)*r,pz=z+(float)Math.sin(a)*r;
+            groundGlow(c,px,y,pz,radius*(.14f+.12f*frac(i*.37)),Canvas.lerpRgb(rgb,0xfff0c0,frac(i*.71)),alpha*(.25+.3*frac(i*.53))*Math.max(0,1-r/radius));
+        }
+    }
+
+    /** Ash dome hanging over a devastated region; shelled billboards read as a settled smoke ceiling. */
+    static void dustDome(Canvas c,float x,float y,float z,float radius,float height,int rgb,double alpha,int shells,ClientConfig.Quality q) {
+        if(alpha<=0||radius<=0||height<=0)return;
+        int rings=Math.max(1,Math.min(shells,q.level==2?3:q.level==1?2:1));
+        for(int s=0;s<rings;s++) {
+            int n=Math.max(4,segments(q,10));
+            double band=(s+.5)/rings;float rr=(float)(radius*(.35+.65*band));
+            float hh=(float)(height*(1-band*.75));
+            float size=(float)(radius*(.35f+.3f*band));
+            for(int i=0;i<n;i++) {
+                double a=i*Math.PI*2/n+s*.4;
+                c.smoke(x+(float)Math.cos(a)*rr,y+hh,z+(float)Math.sin(a)*rr,size,(float)(a*.5),argb(alpha*(1-band*.6),rgb),s&3);
+            }
+            c.tube(Layer.SMOKE,x,y+(float)(height*(1-band)*.3),z,x,y+hh,z,rr*1.02f,rr,Math.max(4,segments(q,12)),argb(alpha*.2*(1-band),rgb),argb(0,rgb),3,(float)band*3,0,.7f);
+        }
+    }
+
     static void sparks(CosmeticParticles p,int owner,Vec3 at,int count,float speed,int rgb) {
         for(int i=0;i<count;i++) {
             double a=p.random()*Math.PI*2,e=p.random()*1.2;

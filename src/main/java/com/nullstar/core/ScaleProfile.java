@@ -31,6 +31,79 @@ public record ScaleProfile(String weapon, ScaleTier tier, int radius, int depth,
         if (subimpacts + rings.size() + 1 > 32) throw new IllegalArgumentException("Too many reserved impacts");
     }
     private static boolean finite(double n, double low, double high) { return Double.isFinite(n) && n >= low && n <= high; }
+    /**
+     * Authored colossal shot vocabulary. Every name here is registered in `CameraScripts`; an unregistered name
+     * simply declines to the player's own view, so this stays a presentation choice rather than a hard dependency.
+     */
+    private String cameraFor(Phase phase) {
+        if (weapon.equals("helios")) return switch (phase) {
+            case ACQUIRING, TARGET_CONFIRMATION, PRELUDE -> "helios_establish";
+            case ASCENT, EXOATMOSPHERIC_TRANSITION, PLANETARY_VIEW, SOLAR_SYSTEM_VIEW, GALACTIC_VIEW,
+                 COSMIC_BOUNDARY_VIEW, MOTHERSHIP_REVEAL, DEPLOYMENT, CHARGING, ORBITAL_ALIGNMENT,
+                 FIRING -> "cosmic_montage";
+            case ATMOSPHERIC_ENTRY -> "helios_pursuit";
+            case IMPACT -> "helios_annihilation";
+            case DEVASTATION_WAVE_1 -> "helios_pressure";
+            case DEVASTATION_WAVE_2 -> "helios_crater";
+            case AFTERMATH -> "helios_sweep";
+            default -> "none";
+        };
+        if (weapon.equals("singularity")) return switch (phase) {
+            case ACQUIRING -> "singularity_form";
+            case CHARGING -> "singularity_sky";
+            case ORBITAL_ALIGNMENT, FIRING -> "singularity_pull";
+            case IMPACT -> "singularity_implode";
+            case DEVASTATION_WAVE_1 -> "singularity_sink";
+            case DEVASTATION_WAVE_2 -> "singularity_aftermath";
+            case AFTERMATH -> "singularity_sweep";
+            default -> "none";
+        };
+        return switch (phase) {
+            case ACQUIRING -> "glassfall_reveal";
+            case CHARGING -> "glassfall_platform";
+            case ORBITAL_ALIGNMENT -> "glassfall_lattice";
+            case FIRING, ATMOSPHERIC_ENTRY -> "glassfall_barrage";
+            case IMPACT -> "glassfall_final";
+            case DEVASTATION_WAVE_1 -> "glassfall_crater";
+            case DEVASTATION_WAVE_2, AFTERMATH -> "glassfall_sweep";
+            default -> "none";
+        };
+    }
+    /**
+     * New colossal-scale audio direction for TITANIC/APOCALYPSE. Only phases that genuinely need a larger sound
+     * are listed; every other phase keeps the validated Part 2 sound for its phase.
+     */
+    private java.util.Map<Phase,String> colossalSounds() {
+        var map = new java.util.EnumMap<Phase,String>(Phase.class);
+        boolean apocalypse = tier==ScaleTier.APOCALYPSE;
+        switch (weapon) {
+            case "helios" -> {
+                map.put(Phase.ASCENT, "nullstar:cosmic.ascend");
+                map.put(Phase.EXOATMOSPHERIC_TRANSITION, "nullstar:cosmic.ascend");
+                map.put(Phase.PLANETARY_VIEW, "nullstar:cosmic.reveal");
+                map.put(Phase.SOLAR_SYSTEM_VIEW, "nullstar:cosmic.reveal");
+                map.put(Phase.GALACTIC_VIEW, "nullstar:cosmic.vast");
+                map.put(Phase.COSMIC_BOUNDARY_VIEW, "nullstar:cosmic.vast");
+                map.put(Phase.MOTHERSHIP_REVEAL, "nullstar:cosmic.mothership");
+                map.put(Phase.DEPLOYMENT, "nullstar:cosmic.deploy");
+                map.put(Phase.CHARGING, "nullstar:cosmic.charge");
+                map.put(Phase.ORBITAL_ALIGNMENT, "nullstar:cosmic.align");
+                map.put(Phase.FIRING, "nullstar:cosmic.fire");
+                map.put(Phase.IMPACT, "nullstar:cosmic.invoke");
+                if (apocalypse) map.put(Phase.AFTERMATH, "nullstar:cosmic.invoke");
+            }
+            case "singularity" -> {
+                map.put(Phase.FIRING, "nullstar:singularity.vacuum");
+                map.put(Phase.IMPACT, "nullstar:singularity.release");
+            }
+            case "glassfall" -> {
+                map.put(Phase.ORBITAL_ALIGNMENT, "nullstar:glassfall.lattice_charge");
+                map.put(Phase.IMPACT, "nullstar:glassfall.dome");
+            }
+            default -> { }
+        }
+        return map;
+    }
     public int waves() { return 1 + rings.size(); }
     public int secondaryRadius() { return Math.max(subimpacts>0?(int)Math.ceil(radius*1.14):radius,rings.stream().mapToInt(r -> (int)Math.ceil(radius * r.outerScale())).max().orElse(radius)); }
 
@@ -48,22 +121,23 @@ public record ScaleProfile(String weapon, ScaleTier tier, int radius, int depth,
             Phase[] preparation = {Phase.ACQUIRING, Phase.TARGET_CONFIRMATION, Phase.PRELUDE, Phase.ASCENT,
                     Phase.EXOATMOSPHERIC_TRANSITION, Phase.PLANETARY_VIEW, Phase.SOLAR_SYSTEM_VIEW,
                     Phase.GALACTIC_VIEW, Phase.COSMIC_BOUNDARY_VIEW, Phase.MOTHERSHIP_REVEAL, Phase.DEPLOYMENT};
-            for (Phase phase : preparation) stages.add(new WeaponDefinition.Stage(phase, durationTicks/22,
-                    CinematicScene.forPhase(phase)==CinematicScene.WORLD ? "helios_establish" : "cosmic_montage", ""));
-        } else stages.add(new WeaponDefinition.Stage(Phase.ACQUIRING, durationTicks/12, weapon+"_"+(weapon.equals("singularity")?"form":"reveal"), ""));
-        stages.add(new WeaponDefinition.Stage(Phase.CHARGING, durationTicks/8, weapon+"_"+(helios?"mechanism":weapon.equals("singularity")?"form":"lattice"), ""));
-        stages.add(new WeaponDefinition.Stage(Phase.ORBITAL_ALIGNMENT, durationTicks/12, helios?"helios_mechanism":weapon.equals("singularity")?"singularity_pull":"glassfall_lattice", ""));
+            for (Phase phase : preparation) stages.add(new WeaponDefinition.Stage(phase, durationTicks/22, cameraFor(phase), ""));
+        } else stages.add(new WeaponDefinition.Stage(Phase.ACQUIRING, durationTicks/12, cameraFor(Phase.ACQUIRING), ""));
+        // The colossal Helios holds the detached cosmic act through charge, alignment and discharge: the stellar
+        // lance is fired in the star-mothership framing and only cuts back to the world for the descent.
+        stages.add(new WeaponDefinition.Stage(Phase.CHARGING, durationTicks/8, cameraFor(Phase.CHARGING), ""));
+        stages.add(new WeaponDefinition.Stage(Phase.ORBITAL_ALIGNMENT, durationTicks/12, cameraFor(Phase.ORBITAL_ALIGNMENT), ""));
         int firingStart = stages.stream().mapToInt(WeaponDefinition.Stage::ticks).sum();
         int firingLength = durationTicks/8;
-        stages.add(new WeaponDefinition.Stage(Phase.FIRING, firingLength, helios?"helios_discharge":weapon.equals("singularity")?"singularity_pull":"glassfall_barrage", ""));
-        stages.add(new WeaponDefinition.Stage(Phase.ATMOSPHERIC_ENTRY, durationTicks/20, helios?"helios_follow":"none", ""));
+        stages.add(new WeaponDefinition.Stage(Phase.FIRING, firingLength, cameraFor(Phase.FIRING), ""));
+        stages.add(new WeaponDefinition.Stage(Phase.ATMOSPHERIC_ENTRY, durationTicks/20, cameraFor(Phase.ATMOSPHERIC_ENTRY), ""));
         int impactTick = stages.stream().mapToInt(WeaponDefinition.Stage::ticks).sum();
-        stages.add(new WeaponDefinition.Stage(Phase.IMPACT, durationTicks/40, weapon+"_"+(helios?"impact":weapon.equals("singularity")?"implode":"final"), ""));
-        stages.add(new WeaponDefinition.Stage(Phase.DEVASTATION_WAVE_1, durationTicks/30, weapon+"_aftermath", ""));
-        stages.add(new WeaponDefinition.Stage(Phase.DEVASTATION_WAVE_2, durationTicks/30, weapon+"_aftermath", ""));
+        stages.add(new WeaponDefinition.Stage(Phase.IMPACT, durationTicks/40, cameraFor(Phase.IMPACT), ""));
+        stages.add(new WeaponDefinition.Stage(Phase.DEVASTATION_WAVE_1, durationTicks/30, cameraFor(Phase.DEVASTATION_WAVE_1), ""));
+        stages.add(new WeaponDefinition.Stage(Phase.DEVASTATION_WAVE_2, durationTicks/30, cameraFor(Phase.DEVASTATION_WAVE_2), ""));
         int remaining = Math.max(21, durationTicks-stages.stream().mapToInt(WeaponDefinition.Stage::ticks).sum());
         // Split unusually long aftermaths into legal bounded stages by rejecting overlong profiles at apply time.
-        stages.add(new WeaponDefinition.Stage(Phase.AFTERMATH, remaining-20, weapon+"_aftermath", ""));
+        stages.add(new WeaponDefinition.Stage(Phase.AFTERMATH, remaining-20, cameraFor(Phase.AFTERMATH), ""));
         stages.add(new WeaponDefinition.Stage(Phase.COOLDOWN, 20, "none", ""));
         var cues = new ArrayList<WeaponDefinition.Cue>();
         for (int i=0; i<subimpacts; i++) {
@@ -83,8 +157,10 @@ public record ScaleProfile(String weapon, ScaleTier tier, int radius, int depth,
         var old = base.impact();
         var impact = new WeaponDefinition.Impact(weapon.equals("singularity")?"ellipsoid":"basin", radius,depth,
                 weapon.equals("helios")?Math.min(.04,old.irregularity()):old.irregularity(),old.damage(),old.knockback(),old.scorch());
-        stages.replaceAll(stage->new WeaponDefinition.Stage(stage.phase(),stage.ticks(),stage.camera(),base.phases().stream()
-                .filter(original->original.phase()==stage.phase()).map(WeaponDefinition.Stage::sound).findFirst().orElse("")));
+        var colossalSounds = colossalSounds();
+        stages.replaceAll(stage->new WeaponDefinition.Stage(stage.phase(),stage.ticks(),stage.camera(),
+                colossalSounds.getOrDefault(stage.phase(),base.phases().stream()
+                .filter(original->original.phase()==stage.phase()).map(WeaponDefinition.Stage::sound).findFirst().orElse(""))));
         return new WeaponDefinition(base.id(),base.name(),base.behavior(),base.targeting(),stages,cues,impact,base.presentation(),base.cooldownTicks());
     }
     public WeaponDefinition apply(WeaponDefinition base,double multiplier) {
