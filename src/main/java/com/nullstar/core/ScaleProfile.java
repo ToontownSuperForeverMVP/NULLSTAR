@@ -87,4 +87,18 @@ public record ScaleProfile(String weapon, ScaleTier tier, int radius, int depth,
                 .filter(original->original.phase()==stage.phase()).map(WeaponDefinition.Stage::sound).findFirst().orElse("")));
         return new WeaponDefinition(base.id(),base.name(),base.behavior(),base.targeting(),stages,cues,impact,base.presentation(),base.cooldownTicks());
     }
+    public WeaponDefinition apply(WeaponDefinition base,double multiplier) {
+        if(tier==ScaleTier.STANDARD)return base;
+        var generated=apply(base);
+        var scaled=generated.scaled(weapon.equals("helios")&&tier==ScaleTier.APOCALYPSE?Math.max(1800.0/generated.duration(),multiplier):multiplier);
+        if(weapon.equals("helios")&&tier==ScaleTier.APOCALYPSE&&scaled.duration()<1800) {
+            // Per-stage integer rounding can land one or more ticks below the global 90-second floor.
+            var stages=new ArrayList<>(scaled.phases());int deficit=1800-scaled.duration();
+            for(int i=0;i<stages.size();i++)if(stages.get(i).phase()==Phase.AFTERMATH) {
+                var stage=stages.get(i);stages.set(i,new WeaponDefinition.Stage(stage.phase(),stage.ticks()+deficit,stage.camera(),stage.sound()));break;
+            }
+            scaled=new WeaponDefinition(scaled.id(),scaled.name(),scaled.behavior(),scaled.targeting(),stages,scaled.events(),scaled.impact(),scaled.presentation(),scaled.cooldownTicks());
+        }
+        return scaled;
+    }
 }

@@ -122,4 +122,12 @@ class ColossalEngineTest {
             }
         }
     }
+    @Test void apocalypseHeliosCannotRoundBelowNinetySeconds() throws Exception {
+        var profile=ScaleCatalog.defaults().get(1);var base=weapons().get("helios");
+        for(double multiplier:new double[]{.25,.333,.899,1,1.333,4}) {
+            var def=profile.apply(base,multiplier);assertTrue(def.duration()>=1800);
+            assertTrue(def.events().stream().allMatch(c->c.tick()<def.duration()));
+        }
+        assertEquals(1800,profile.apply(base,.25).duration());
+    }
 }

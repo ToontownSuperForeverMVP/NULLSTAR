@@ -104,9 +104,7 @@ public final class WeaponEngine {
         ServerConfig config=Nullstar.config(); UUID owner=player.getUUID();
         if(!WeaponCatalog.IDS.contains(weapon)){status(player,"Unknown weapon.");return false;}
         var base=Nullstar.catalog().get(weapon);var profile=Nullstar.scales().get(weapon,tier,base);
-        var definition=profile.apply(base);
-        if(tier!=ScaleTier.STANDARD)definition=definition.scaled(weapon.equals("helios")&&tier==ScaleTier.APOCALYPSE
-                ?Math.max(1800.0/profile.durationTicks(),config.cinematicDurationMultiplier):config.cinematicDurationMultiplier);
+        var definition=profile.apply(base,config.cinematicDurationMultiplier);
         if(!authorized(player)){status(player,"An operator is required to activate weapons, including previews.");return false;}
         boolean cinematic=preview || !config.terrainDestruction || tier!=ScaleTier.STANDARD && config.colossalCinematicOnly;
         if(tier==ScaleTier.APOCALYPSE && !cinematic && !config.apocalypseEnabled) {status(player,"Apocalypse destruction is disabled; use preview or enable apocalypseEnabled.");return false;}
