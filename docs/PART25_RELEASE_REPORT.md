@@ -12,9 +12,9 @@ loaded-only access, protection hooks, preview policy and cooldowns are unchanged
 | Branch | `codex/part25-colossal` |
 | Part 2.5A baseline | `1c8e250` ("enforce Helios ninety-second floor after stage rounding") + docs `77d1da0` |
 | Part 2.5B presentation | `6a32540` ("present all three attacks at colossal scale") — the revision every check in this report was run against |
-| Part 2.5B documentation/evidence | `4d189a2` ("record the Part 2.5B colossal release and its measurements") |
+| Part 2.5B documentation/evidence | `4d189a2` ("record the Part 2.5B colossal release and its measurements") plus the follow-up commit that carries this report |
 | Part 2 recovery point | `codex/pre-part25-20261009` retains Part 2 `c5ef353`; `codex/part-2.5a-complete` retains 2.5A |
-| Final handoff tag | `codex/part-2.5b-complete` = `4d189a2` |
+| Final handoff tag | `codex/part-2.5b-complete`, the documentation/evidence commit carrying this report (`git rev-parse codex/part-2.5b-complete`) |
 | Versions | Minecraft 26.3, Temurin 25.0.4+7, Fabric Loader 0.19.5, Fabric API 0.162.0+26.3, Loom 1.18.3, Gradle 9.7.1, JUnit 5.11.4 |
 | Test machine | AMD EPYC 9354, NVIDIA RTX 2000 Ada (driver 595.79), Windows 11, 854x480 test window, render distance 16 |
 | Worlds | disposable only, under `build/run`; no Prism saves, mods or config were touched |

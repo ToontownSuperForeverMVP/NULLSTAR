@@ -4,7 +4,7 @@
 
 October 9, 2026. Branch `codex/part25-colossal`. Part 2.5B was tested on `6a32540` ("present all three attacks at
 colossal scale"), which follows the Part 2.5A engineering commit `1c8e250` and its documentation commit `77d1da0`;
-the handoff tag `codex/part-2.5b-complete` is `4d189a2`, the Part 2.5B documentation/evidence commit. Recovery `codex/pre-part25-20261009`
+the handoff tag `codex/part-2.5b-complete` resolves to the documentation/evidence commit carrying this record, whose first commit is `4d189a2`. Recovery `codex/pre-part25-20261009`
 retains Part 2 `c5ef353`; `codex/part-2.5a-complete` retains the 2.5A stage. Versions are unchanged: Minecraft 26.3,
 Java/Temurin 25.0.4+7, Loader 0.19.5, Fabric API 0.162.0+26.3, Loom 1.18.3, Gradle 9.7.1 and JUnit 5.11.4. Every
 world is disposable under `build/run`; no Prism saves, mods or configuration were touched.
