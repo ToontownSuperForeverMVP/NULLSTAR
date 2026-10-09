@@ -20,6 +20,7 @@ class CosmicCameraTest {
         var pose=camera.sample(vanilla,31,20,90,1,state,owner,true,true,0,p->{fail("Detached camera queried a chunk");return false;},p->{fail("Detached camera probed terrain");return p;});
         assertEquals(vanilla,pose.position());assertEquals(31,pose.yaw(),.001);assertTrue(camera.detached(state.strikes().get(id)));
         camera.skip(state,owner);camera.sample(vanilla,31,20,90,2,state,owner,true,true,0,p->true);
+        assertTrue(camera.virtualScene(),"The release must still exclude the self-avatar while the camera is at eye position");
         assertNull(camera.sample(vanilla,31,20,90,15,state,owner,true,true,0,p->true));assertFalse(camera.applied());assertEquals(1,state.strikes().size());
         camera.reset();assertNull(camera.sample(vanilla,31,20,90,16,state,UUID.randomUUID(),true,true,0,p->true));
         assertNull(camera.sample(vanilla,31,20,90,17,state,owner,true,false,0,p->true));

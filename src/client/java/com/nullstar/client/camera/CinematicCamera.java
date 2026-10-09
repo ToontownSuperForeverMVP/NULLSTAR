@@ -26,6 +26,7 @@ public final class CinematicCamera {
     private double lastSample,releaseStart=-1;
     private boolean applied;
     private boolean virtualScene;
+    private boolean lastVirtualScene;
     public CinematicCamera() {
         register("orbital",ctx->{
             double angle=.4+ctx.strike().age(ctx.tick())*.008,r=ctx.strike().state().radius()*1.8+12;
@@ -44,7 +45,7 @@ public final class CinematicCamera {
     public boolean has(String id){return presets.containsKey(id);}
     public void skip(){skip(NullstarClient.STATE,Minecraft.getInstance().player==null?null:Minecraft.getInstance().player.getUUID());}
     public void skip(ClientStrikeState state,UUID owner){state.strikes().values().stream().filter(s->s.state().owner().equals(owner)).forEach(s->skipped.add(s.state().id()));}
-    public void reset(){last=null;camPos=null;camLook=null;skipped.clear();releaseStart=-1;applied=false;virtualScene=false;}
+    public void reset(){last=null;camPos=null;camLook=null;skipped.clear();releaseStart=-1;applied=false;virtualScene=false;lastVirtualScene=false;}
     public boolean applied(){return applied;}
     public boolean virtualScene(){return applied&&virtualScene;}
     /** Current blended roll (degrees) for the camera seam; zero when no cinematic pose is applied. */
@@ -103,13 +104,13 @@ public final class CinematicCamera {
             float lookPitch=(float)(-Math.toDegrees(Math.atan2(direction.y,Math.hypot(direction.x,direction.z))));
             last=new Pose(camPos.add(offset),lookYaw+(float)(noise(tick,3.1,2.2)*shake*1.6),lookPitch+(float)(noise(tick,2.7,1.9)*shake),
                     camFov+(float)(punch*7),camRoll+(float)(noise(tick,1.1,3.7)*shake*2.2));
-            applied=true;virtualScene=detached;return last;
+            applied=true;virtualScene=detached;lastVirtualScene=detached;return last;
         }
         if(last!=null) {
             if(releaseStart<0)releaseStart=tick;
             double t=(tick-releaseStart)/12;
-            if(t>=1){last=null;camPos=null;camLook=null;releaseStart=-1;return null;}
-            applied=true;return blend(last,new Pose(vanilla,yaw,pitch,fov),ease(t));
+            if(t>=1){last=null;camPos=null;camLook=null;releaseStart=-1;lastVirtualScene=false;return null;}
+            applied=true;virtualScene=lastVirtualScene;return blend(last,new Pose(vanilla,yaw,pitch,fov),ease(t));
         }
         return null;
     }
