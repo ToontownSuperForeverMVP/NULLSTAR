@@ -11,6 +11,8 @@ import java.util.UUID;
 /** Only WeaponEngine mutates active strike state, on the server thread. */
 public final class ActiveStrike {
     public final UUID id,owner;
+    /** Part 3: the owner has been told that unloaded regions are waiting to be excavated. */
+    public boolean deferralNotified;
     public final ResourceKey<Level> dimension;
     public final BlockPos target;
     public final WeaponDefinition definition;

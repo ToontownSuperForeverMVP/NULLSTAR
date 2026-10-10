@@ -20,10 +20,10 @@ import java.util.UUID;
 /** Global round-robin budget across dimensions. Stores keys/positions, never retained chunk references. */
 public final class DestructionManager {
     public static final TagKey<Block> PROTECTED=TagKey.create(Registries.BLOCK,Nullstar.id("protected_blocks"));
-    private static final class Coverage {long last=Long.MIN_VALUE;}
+    private static final class Coverage {long last=Long.MIN_VALUE;long deferredSince=-1;boolean configured;}
     private record Entry(UUID strike, UUID owner, ResourceKey<Level> dimension, BlockPos target,
                          String weapon, boolean scorch, DestructionJob job, int wave, boolean recovered,Coverage coverage,com.nullstar.core.ScaleTier tier) {}
-    private static final class Statistics { long total,scanned,changed,nanos,chunks,loadedChunks; int active; boolean planned; String cause="running"; }
+    private static final class Statistics { long total,scanned,changed,nanos,chunks,loadedChunks,abandonedTiles; int active; boolean planned; String cause="running"; }
     public record Progress(double fraction, long changed, int active) {}
     public record Diagnostics(UUID strike,long scanned,long total,long changed,int active,long chunks,long loadedChunks,
                               double milliseconds,int reserved,String cause) {}
@@ -72,7 +72,14 @@ public final class DestructionManager {
             var stats=statistics.get(entry.strike);
             if(stats.changed>=config.maximumChangedBlocks) {stats.scanned+=entry.job.scanned();stats.active--;cancel(entry.strike,"changed-block cap");failures.add(entry.strike);stalled=0;continue;}
             if(level==null){stats.scanned+=entry.job.scanned();stats.active--;cancel(entry.strike,"missing level");failures.add(entry.strike);stalled=0;continue;}
-            if(jobs.stream().anyMatch(e->e.strike.equals(entry.strike)&&e.wave<entry.wave)
+            // Part 3 deferral: configure once, and expire waiting regions after the operator's window.
+            if(!entry.coverage.configured){entry.coverage.configured=true;if(config.deferUnloadedRegions)entry.job.deferUnloaded();}
+            if(entry.job.mainPassDone()&&entry.job.deferredTiles()>0) {
+                if(entry.coverage.deferredSince<0)entry.coverage.deferredSince=server.getTickCount();
+                else if(server.getTickCount()-entry.coverage.deferredSince>config.deferredRegionTicks)stats.abandonedTiles+=entry.job.abandonDeferred();
+            }
+            // A lower wave that only waits for deferred regions no longer holds later waves back.
+            if(jobs.stream().anyMatch(e->e.strike.equals(entry.strike)&&e.wave<entry.wave&&!e.job.mainPassDone())
                     || entry.recovered && (server.getPlayerList().getPlayer(entry.owner)==null
                     || !server.getPlayerList().getPlayer(entry.owner).isAlive()
                     || !server.getPlayerList().getPlayer(entry.owner).level().dimension().equals(entry.dimension)
@@ -109,7 +116,8 @@ public final class DestructionManager {
                     long key=((long)cx<<32)^(cz&0xffffffffL);
                     if(key!=checkedChunk[0]){checkedChunk[0]=key;available[0]=level.getChunkSource().hasChunk(cx,cz);}
                     boolean loaded=available[0];
-                    if(key!=entry.coverage.last){entry.coverage.last=key;stats.chunks++;if(loaded)stats.loadedChunks++;}
+                    // Coverage describes the main pass; deferred-tile probes afterwards would inflate it.
+                    if(key!=entry.coverage.last&&!entry.job.mainPassDone()){entry.coverage.last=key;stats.chunks++;if(loaded)stats.loadedChunks++;}
                     return loaded;
                 });
             } catch(RuntimeException exception) {
@@ -131,7 +139,8 @@ public final class DestructionManager {
     public Progress progress(UUID strike) {
         var stats=statistics.get(strike);if (stats==null)return new Progress(0,0,0);
         long scanned=stats.scanned;
-        for (var entry:jobs) if(entry.strike.equals(strike)) scanned+=entry.job.scanned();
+        // Deferred regions are reported as not yet done, so the HUD never claims a crater that is still waiting.
+        for (var entry:jobs) if(entry.strike.equals(strike)) scanned+=Math.max(0,entry.job.scanned()-entry.job.deferredCells());
         return new Progress(stats.total==0?0:Math.min(1,scanned/(double)stats.total),stats.changed,stats.active);
     }
     public void cancel(UUID strike) {
@@ -154,6 +163,10 @@ public final class DestructionManager {
                 stats.nanos/1e6,reservations.getOrDefault(strike,0),stats.cause);
     }
     public java.util.Set<UUID> strikeIds(){return java.util.Set.copyOf(statistics.keySet());}
+    /** Part 3: deferred terrain tiles still waiting to load, and tiles abandoned after the deferral window. */
+    public int deferredTiles(UUID strike){int n=0;for(var entry:jobs)if(entry.strike.equals(strike))n+=entry.job.deferredTiles();return n;}
+    public long abandonedTiles(UUID strike){var stats=statistics.get(strike);return stats==null?0:stats.abandonedTiles;}
+    public long replayedCells(UUID strike){long n=0;for(var entry:jobs)if(entry.strike.equals(strike))n+=entry.job.replayed();return n;}
     public java.util.Set<UUID> ownerStrikes(UUID owner){return jobs.stream().filter(e->e.owner.equals(owner)).map(Entry::strike).collect(java.util.stream.Collectors.toUnmodifiableSet());}
     public java.util.Collection<Diagnostics> diagnostics(){var ids=new java.util.LinkedHashSet<>(history.keySet());ids.addAll(statistics.keySet());return ids.stream().map(this::diagnostics).toList();}
     private record SavedJob(UUID strike,UUID owner,String dimension,int x,int y,int z,String weapon,boolean scorch,int wave,com.nullstar.core.ScaleTier tier,DestructionJob.Checkpoint cursor) {}

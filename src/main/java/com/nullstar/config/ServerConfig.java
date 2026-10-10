@@ -27,6 +27,13 @@ public final class ServerConfig {
     public long maximumChangedBlocks = 100_000_000;
     public int maximumEntityRadius = 128;
     public int colossalObserverRange = 2048;
+    /**
+     * Part 3: terrain tiles that are unloaded when a crater job reaches them are remembered and excavated later when
+     * normal play loads them, instead of being skipped for good. Nothing is ever force-loaded.
+     */
+    public boolean deferUnloadedRegions = true;
+    /** How long (ticks) finished jobs keep waiting for deferred regions before abandoning them; 6000 = 5 minutes. */
+    public int deferredRegionTicks = 6000;
     public void validate() {
         maximumRadius = clamp(maximumRadius, 1, 48); maximumDepth = clamp(maximumDepth, 1, 48);
         blockOperationsPerTick = clamp(blockOperationsPerTick, 16, 8192);
@@ -41,6 +48,7 @@ public final class ServerConfig {
         maximumChangedBlocks=Math.max(1,Math.min(1_000_000_000L,maximumChangedBlocks));
         maximumEntityRadius=clamp(maximumEntityRadius,1,512);
         colossalObserverRange=clamp(colossalObserverRange,256,4096);
+        deferredRegionTicks=clamp(deferredRegionTicks,0,72000);
         cinematicDurationMultiplier = finite(cinematicDurationMultiplier, .25, 4, 1);
         cooldownMultiplier = finite(cooldownMultiplier, .1, 10, 1);
         soundVolumeMultiplier = finite(soundVolumeMultiplier, 0, 2, 1);

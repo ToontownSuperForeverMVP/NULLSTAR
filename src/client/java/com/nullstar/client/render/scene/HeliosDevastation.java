@@ -41,7 +41,8 @@ final class HeliosDevastation {
             case DEVASTATION_WAVE_1 -> .1+.2*p;
             case DEVASTATION_WAVE_2 -> .3+.2*p;
             case AFTERMATH -> .5+.5*p;
-            case COOLDOWN,COMPLETE -> 1;
+            case COOLDOWN -> 1;
+            // COMPLETE can linger while deferred terrain regions wait to load; the presentation is over by then.
             default -> -1;
         };
     }

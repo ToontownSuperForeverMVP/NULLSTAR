@@ -142,7 +142,9 @@ public final class WeaponEngine {
         }).sum());
         active.put(id,strike);targets.remove(owner);confirmations.remove(owner);selections.put(owner,weapon);
         gate.activate(owner,tick,(int)Math.round(definition.cooldownTicks()*config.cooldownMultiplier));
-        status(player,cinematic?"Preview launched: no damage or terrain changes.":"Strike authorized. Move clear of target.");
+        status(player,cinematic?"Preview launched: no damage or terrain changes."
+                :tier!=ScaleTier.STANDARD?"Strike authorized. Physical destruction ACTIVE: diameter "+strike.radius*2+", depth "+strike.depth+". Move clear of target."
+                :"Strike authorized. Move clear of target.");
         broadcast(((net.minecraft.server.level.ServerLevel)player.level()).getServer(),snapshot(strike,strike.timeline.at(0),false));
         return true;
     }
@@ -154,8 +156,11 @@ public final class WeaponEngine {
             ActiveStrike strike=iterator.next();
             try {
                 var level=server.getLevel(strike.dimension);var owner=server.getPlayerList().getPlayer(strike.owner);
+                // Part 3: once the timeline has finished and the strike only waits for deferred terrain regions, the
+                // target chunk may unload (the owner walking out over the basin is exactly how those regions load).
+                boolean waitingOnly=tick-strike.startTick>=strike.definition.duration()&&destruction.deferredTiles(strike.id)>0;
                 if(level==null || owner==null || !owner.isAlive() || !owner.level().dimension().equals(strike.dimension)
-                        || !level.getChunkSource().hasChunk(strike.target.getX()>>4,strike.target.getZ()>>4)) {
+                        || !waitingOnly&&!level.getChunkSource().hasChunk(strike.target.getX()>>4,strike.target.getZ()>>4)) {
                     strike.cancellationCause=level==null?"missing level":owner==null?"owner disconnected":!owner.isAlive()?"owner died"
                             :!owner.level().dimension().equals(strike.dimension)?"owner changed dimension":"target chunk unloaded";
                     finish(server,strike,true);iterator.remove();continue;
@@ -188,6 +193,13 @@ public final class WeaponEngine {
                     }
                 }
                 boolean done=state.phase()==Phase.COMPLETE && destruction.progress(strike.id).active()==0;
+                if(!done&&state.phase()==Phase.COMPLETE&&!strike.deferralNotified&&destruction.deferredTiles(strike.id)>0) {
+                    // Honest completion status: say exactly what is still waiting instead of claiming a finished crater.
+                    strike.deferralNotified=true;
+                    var waitingOwner=server.getPlayerList().getPlayer(strike.owner);
+                    if(waitingOwner!=null)status(waitingOwner,String.format("Crater %.0f%% excavated. %d unloaded terrain regions will be excavated as they load (up to %d s). /nullstar abort stops it.",
+                            destruction.progress(strike.id).fraction()*100,destruction.deferredTiles(strike.id),Nullstar.config().deferredRegionTicks/20));
+                }
                 if(done){finish(server,strike,false);iterator.remove();}
                 else if(advance.changed() || tick%20==0)broadcast(server,snapshot(strike,state,false));
             } catch(RuntimeException exception) {
