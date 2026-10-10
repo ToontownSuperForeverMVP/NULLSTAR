@@ -1,6 +1,6 @@
 <div align="center">
 
-![NULLSTAR â€” Cataclysm Engine](docs/branding/banner.png)
+![NULLSTAR — Cataclysm Engine](docs/branding/banner.png)
 
 ### The sky is the weapon.
 
@@ -12,11 +12,11 @@
 [![GPL v3.0](https://img.shields.io/badge/License-GPL--3.0--only-8e72df)](LICENSE)
 [![Build](https://github.com/ToontownSuperForeverMVP/NULLSTAR/actions/workflows/build.yml/badge.svg)](https://github.com/ToontownSuperForeverMVP/NULLSTAR/actions/workflows/build.yml)
 
-[Get started](#installation) Â· [Weapons](#the-arsenal) Â· [Colossal strikes](#colossal-strikes) Â· [Configuration](#server-configuration) Â· [Build & test](#building-from-source)
+[Get started](#installation) · [Weapons](#the-arsenal) · [Colossal strikes](#colossal-strikes) · [Configuration](#server-configuration) · [Build & test](#building-from-source)
 
 </div>
 
-NULLSTAR: **Cataclysm Engine** is an original Minecraft **26.3** Fabric mod that turns orbital destruction into a directed spectacle. Deploy a golden stellar collector, form a gravitational anomaly, or unfold a crystalline bombardment array. Watch machinery assemble, energy gather, and the sky answer your designationâ€”then walk through the crater it leaves behind.
+NULLSTAR: **Cataclysm Engine** is an original Minecraft **26.3** Fabric mod that turns orbital destruction into a directed spectacle. Deploy a golden stellar collector, form a gravitational anomaly, or unfold a crystalline bombardment array. Watch machinery assemble, energy gather, and the sky answer your designation—then walk through the crater it leaves behind.
 
 The spectacle has teeth. Targeting, authorization, cooldowns, damage, attraction, impact scheduling, and terrain excavation belong to the server. The client builds the machinery, cinematic camera, shaders, particles, soundscape, and holographic interface from that authoritative timeline. Cosmetic scale and physical destruction are independently controlled, so operators can preview enormous scenes without excavating the world.
 
@@ -74,9 +74,9 @@ Bundled defaults at multiplier 1 and nominal **20 TPS**. Range, radius, and dept
 
 | Weapon | Target range | Main radius / depth | Timeline | Cooldown from authorization |
 | --- | ---: | ---: | ---: | ---: |
-| Helios Annihilator | 128 | 20 / 13 | 300 ticks Â· 15 s | 600 ticks Â· 30 s |
-| Singularity Engine | 112 | 13 / 18 | 355 ticks Â· 17.75 s | 500 ticks Â· 25 s |
-| Glassfall Array | 128 | 16 / 10 | 395 ticks Â· 19.75 s | 700 ticks Â· 35 s |
+| Helios Annihilator | 128 | 20 / 13 | 300 ticks · 15 s | 600 ticks · 30 s |
+| Singularity Engine | 112 | 13 / 18 | 355 ticks · 17.75 s | 500 ticks · 25 s |
+| Glassfall Array | 128 | 16 / 10 | 395 ticks · 19.75 s | 700 ticks · 35 s |
 
 The cinematic may finish before terrain work does. Cooldown starts at authorization and is not reset by cancellation. A strike can remain registered while its excavation jobs finish. See [Weapon specifications](docs/WEAPON_SPECIFICATIONS.md) for historical STANDARD phase/cue detail; current colossal defaults are below.
 
@@ -154,7 +154,7 @@ The **Orbital Controller** is also in creative **Tools & Utilities**. Hold it in
 | **C** | Toggle cinematic camera effects |
 | **N** | Open presentation settings |
 
-Rebind keys in Minecraft's Controls menu. Mod Menu exposes the same settings through **Mods â†’ NULLSTAR â†’ Configure**.
+Rebind keys in Minecraft's Controls menu. Mod Menu exposes the same settings through **Mods → NULLSTAR → Configure**.
 
 The holographic HUD shows weapon selection, lock/range state, designation countdown, phase timeline, terrain progress, cooldown, and completion/abort feedback. A ground marker previews the selected weapon's targeting footprint. Use `/nullstar bounds` for authoritative policy-clipped colossal envelopes and individual impacts.
 
@@ -205,11 +205,11 @@ Use the [bundled JSON](src/main/resources/data/nullstar/weapons) as the weapon s
 | --- | ---: | --- |
 | `terrainDestruction` | `true` | Physical work; false makes strikes physically inert |
 | `operatorsOnly` | `true` | Operator activation, including previews |
-| `maximumRadius` / `maximumDepth` | `24` / `24` | STANDARD caps, each clamped to 1â€“48 |
-| `blockOperationsPerTick` | `1536` | Global candidates/tick, clamped to 16â€“8192 |
-| `maximumActiveStrikes` | `4` | Active events, clamped to 1â€“8 |
-| `maximumJobs` | `16` | Outstanding/reserved impacts, clamped to 1â€“32 |
-| `entityBudget` | `64` | Living entities processed per interaction, clamped to 1â€“128 |
+| `maximumRadius` / `maximumDepth` | `24` / `24` | STANDARD caps, each clamped to 1–48 |
+| `blockOperationsPerTick` | `1536` | Global candidates/tick, clamped to 16–8192 |
+| `maximumActiveStrikes` | `4` | Active events, clamped to 1–8 |
+| `maximumJobs` | `16` | Outstanding/reserved impacts, clamped to 1–32 |
+| `entityBudget` | `64` | Living entities processed per interaction, clamped to 1–128 |
 | `defaultScale` | `STANDARD` | Default scale |
 | `apocalypseEnabled` | `false` | Destructive Apocalypse opt-in |
 | `publicServerMode` | `true` | Public clipping for colossal geometry |
@@ -221,7 +221,7 @@ Use the [bundled JSON](src/main/resources/data/nullstar/weapons) as the weapon s
 | `maximumDevastationWaves` | `8` | Scheduled-wave bound |
 | `maximumChangedBlocks` | `100000000` | Change limit; validated maximum one billion |
 | `maximumEntityRadius` | `128` | Colossal entity-field cap; absolute maximum 512 |
-| `colossalObserverRange` | `2048` | Colossal state range; clamped to 256â€“4096 |
+| `colossalObserverRange` | `2048` | Colossal state range; clamped to 256–4096 |
 | `deferUnloadedRegions` | `true` | Remember unloaded tiles for later loaded-only excavation |
 | `deferredRegionTicks` | `6000` | Post-main-pass waiting window: five minutes at 20 TPS; maximum 72000 ticks |
 | `persistDestructionJobs` | `false` | Save committed terrain cursors for graceful recovery |
@@ -248,7 +248,7 @@ Client settings never change damage, authorization, or terrain caps. Changes app
 | --- | --- | --- |
 | Quality | MEDIUM | LOW/MEDIUM/ULTRA detail and cosmetic caps |
 | Particle intensity | 100% | Cosmetic particles/debris; zero disables them |
-| Native particle budget | 192/tick | LOW/fallback particle budget, adjustable 0â€“512 |
+| Native particle budget | 192/tick | LOW/fallback particle budget, adjustable 0–512 |
 | Cinematic camera | Enabled | Directed shots |
 | Camera shake | 0.35 | Rumble/impact intensity |
 | Reduced motion | Disabled | Keeps your view and suppresses shake |
@@ -272,7 +272,7 @@ The cosmic act is a view-local sequence rather than remote astronomical world ge
 
 These **historical automated in-game captures from Part 2** show the three weapon identities. They are not screenshots of the rebuilt Part 3 cosmic act. Additional dated captures/logs live in [docs/evidence](docs/evidence).
 
-| Helios Â· stellar discharge | Singularity Â· accretion | Glassfall Â· crystalline descent |
+| Helios · stellar discharge | Singularity · accretion | Glassfall · crystalline descent |
 | --- | --- | --- |
 | ![Golden Helios discharge](docs/evidence/part2/frames/helios_07_discharge.png) | ![Violet Singularity](docs/evidence/part2/frames/singularity_02_charged.png) | ![Cyan Glassfall descent](docs/evidence/part2/frames/glassfall_04_first_descent.png) |
 
@@ -390,7 +390,7 @@ Gameplay changes require build/JUnit/dedicated tests; presentation, input, and n
 
 ## License and credits
 
-Copyright Â© 2026 **ToontownSuperForeverMVP and NULLSTAR contributors**.
+Copyright © 2026 **ToontownSuperForeverMVP and NULLSTAR contributors**.
 
 Original NULLSTAR code, generated assets, and project documentation are licensed under **GNU GPL version 3 only** (`GPL-3.0-only`). See [LICENSE](LICENSE) for full terms and [NOTICE](NOTICE) for scope/provenance. Modified covered distributions must meet GPLv3's source and licensing requirements.
 
@@ -400,7 +400,7 @@ NULLSTAR is independent and is not an official Minecraft product or approved by 
 
 <div align="center">
 
-**NULLSTAR Â· CATACLYSM ENGINE**<br>
+**NULLSTAR · CATACLYSM ENGINE**<br>
 *The sky is the weapon.*
 
 </div>
