@@ -1,3 +1,6 @@
+// Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 package com.nullstar.client.camera;
 
 import com.nullstar.client.ClientStrikeState;
@@ -18,9 +21,14 @@ class CosmicCameraTest {
                 new BlockPos(100,80,100),500,96,42,false,0,0xffaa00,72,1,"cosmic_montage",false,metadata),0);
         Vec3 vanilla=new Vec3(12,85,18);
         var pose=camera.sample(vanilla,31,20,90,1,state,owner,true,true,0,p->{fail("Detached camera queried a chunk");return false;},p->{fail("Detached camera probed terrain");return p;});
-        assertEquals(vanilla,pose.position());assertEquals(31,pose.yaw(),.001);assertTrue(camera.detached(state.strikes().get(id)));
-        camera.skip(state,owner);camera.sample(vanilla,31,20,90,2,state,owner,true,true,0,p->true);
+        // Part 3: the screen-locked virtual act parks the real camera straight above the player, looking up, so no
+        // terrain can be in view; X/Z (and therefore what the client may reveal) never change.
+        assertEquals(vanilla.x,pose.position().x,1e-9);assertEquals(vanilla.z,pose.position().z,1e-9);
+        assertEquals(vanilla.y+CinematicCamera.PARK_HEIGHT,pose.position().y,1e-6);
+        assertEquals(31,pose.yaw(),.01);assertTrue(pose.pitch()<-85,"looks straight up: "+pose.pitch());assertTrue(camera.detached(state.strikes().get(id)));
+        camera.skip(state,owner);var release=camera.sample(vanilla,31,20,90,2,state,owner,true,true,0,p->true);
         assertTrue(camera.virtualScene(),"The release must still exclude the self-avatar while the camera is at eye position");
+        assertEquals(vanilla,release.position(),"Release starts at eye position, never from the parked height");
         assertNull(camera.sample(vanilla,31,20,90,15,state,owner,true,true,0,p->true));assertFalse(camera.applied());assertEquals(1,state.strikes().size());
         camera.reset();assertNull(camera.sample(vanilla,31,20,90,16,state,UUID.randomUUID(),true,true,0,p->true));
         assertNull(camera.sample(vanilla,31,20,90,17,state,owner,true,false,0,p->true));

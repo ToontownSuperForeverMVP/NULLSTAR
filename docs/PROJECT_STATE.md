@@ -1,4 +1,13 @@
-# Project state — Part 2.5B
+# Project state — current source / historical Part 2.5B baseline
+
+## Current publication
+
+The repository now includes Part 3 source: rebuilt cosmic shaders/scenes, long-form audio,
+Apocalypse Helios's 3,600-tick (180-second) default, unloaded-region terrain deferral,
+and a parked detached cosmic camera. The player is never teleported. Current overview,
+configuration and limitations are in [README](../README.md); publication checks are in
+[REPOSITORY_PUBLICATION.md](REPOSITORY_PUBLICATION.md). The sections below are the
+historical Part 2.5B record, not the current source's defaults or new runtime proof.
 
 ## Mod Menu integration
 

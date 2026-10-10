@@ -1,3 +1,6 @@
+# Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+# SPDX-License-Identifier: GPL-3.0-only
+
 """Generates every original NULLSTAR texture procedurally.
 
 Run from the repository root:  python -I tools/assets/generate_textures.py

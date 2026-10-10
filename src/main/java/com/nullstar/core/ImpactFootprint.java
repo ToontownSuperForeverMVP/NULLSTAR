@@ -1,3 +1,6 @@
+// Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 package com.nullstar.core;
 
 /** Clips both child crater radius and center displacement into an admitted physical footprint. */

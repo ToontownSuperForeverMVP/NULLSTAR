@@ -1,3 +1,6 @@
+// Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 package com.nullstar.test;
 
 import com.nullstar.Nullstar;
@@ -52,7 +55,9 @@ public final class ColossalClientGameTest implements FabricClientGameTest {
                     int middle=world.getServer().computeOnServer(server->{var def=Nullstar.engine().active().iterator().next().definition;int tick=0;for(var stage:def.phases()){if(stage.phase()==phase)return tick+stage.ticks()/3;tick+=stage.ticks();}throw new AssertionError("Missing cosmic phase");});
                     advance(world,middle);context.waitTicks(10);
                     check(context.computeOnClient(mc->NullstarClient.STATE.strikes().values().stream().anyMatch(s->s.state().phase()==phase&&s.state().scale().scene()!=CinematicScene.WORLD)),"Scene did not reconstruct: "+phase);
-                    check(context.computeOnClient(mc->NullstarClient.CAMERA.applied()&&mc.gameRenderer.mainCamera().position().distanceTo(mc.player.position())<12),"Detached shot escaped player space: "+phase);
+                    // Part 3 parks the real camera straight above the player during the virtual act; it must never move in X/Z.
+                    check(context.computeOnClient(mc->{var cam=mc.gameRenderer.mainCamera().position();var p=mc.player.position();
+                        return NullstarClient.CAMERA.applied()&&Math.hypot(cam.x-p.x,cam.z-p.z)<12;}),"Detached shot escaped player space: "+phase);
                     context.runOnClient(mc->mc.gui.hud.getChat().clearMessages(true));context.waitTick();
                     context.takeScreenshot(TestScreenshotOptions.of("part25_"+phase.name().toLowerCase(java.util.Locale.ROOT)).withDestinationDir(Path.of("build/evidence/part25")));
                 }

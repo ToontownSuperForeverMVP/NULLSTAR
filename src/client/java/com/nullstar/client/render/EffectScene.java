@@ -1,3 +1,6 @@
+// Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 package com.nullstar.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;

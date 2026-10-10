@@ -1,3 +1,5 @@
+# Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+# SPDX-License-Identifier: GPL-3.0-only
 param(
     [string]$Artifact = (Join-Path $PSScriptRoot '../build/libs/nullstar-1.0.0.jar'),
     [string]$Output = (Join-Path $PSScriptRoot '../docs/evidence/artifact-validation.json')
@@ -25,12 +27,15 @@ try {
         throw 'Production artifact validation failed'
     }
     if (@($metadata.entrypoints.main) -notcontains 'com.nullstar.Nullstar') { throw 'Wrong main entrypoint' }
+    if ($metadata.license -ne 'GPL-3.0-only') { throw 'Wrong production license' }
+    if ($null -eq $archive.GetEntry('LICENSE_nullstar') -or $null -eq $archive.GetEntry('NOTICE')) { throw 'Missing license or attribution notice' }
     if (@($metadata.entrypoints.modmenu) -notcontains 'com.nullstar.client.integration.NullstarModMenu') { throw 'Missing Mod Menu entrypoint' }
     if ($null -eq $archive.GetEntry('com/nullstar/client/integration/NullstarModMenu.class')) { throw 'Missing Mod Menu integration class' }
     if ($metadata.depends.PSObject.Properties.Name -contains 'modmenu') { throw 'Mod Menu must remain optional' }
     if (@($archive.Entries | Where-Object { $_.FullName -match '^com/terraformersmc/|^com/nullstar/test/|modmenu.*\.jar$' }).Count -ne 0) { throw 'Optional dependency or tests bundled in production artifact' }
     $result = [ordered]@{
         Version = $metadata.version
+        License = $metadata.license
         Entrypoint = @($metadata.entrypoints.main)
         Minecraft = $metadata.depends.minecraft
         TestClasses = $testEntries.Count

@@ -3,11 +3,17 @@
 	"id": "nullstar",
 	"version": "${version}",
 	"name": "NULLSTAR",
-	"description": "Server-authoritative orbital weapons, bounded terrain deformation, and cinematic foundations for Minecraft 26.3.",
+	"description": "Cataclysm Engine. The sky is the weapon. Three server-authoritative orbital weapons, cosmic cinematics, and persistent terrain devastation for Minecraft 26.3.",
 	"authors": [
+		"ToontownSuperForeverMVP",
 		"NULLSTAR contributors"
 	],
-	"license": "CC0-1.0",
+	"license": "GPL-3.0-only",
+	"contact": {
+		"homepage": "https://github.com/ToontownSuperForeverMVP/NULLSTAR",
+		"sources": "https://github.com/ToontownSuperForeverMVP/NULLSTAR",
+		"issues": "https://github.com/ToontownSuperForeverMVP/NULLSTAR/issues"
+	},
 	"icon": "assets/nullstar/icon.png",
 	"environment": "*",
 	"entrypoints": {

@@ -42,3 +42,22 @@ replay_*.log
 run*/
 artifacts/
 logs/
+
+# Local tools, caches, private configuration, and world backups
+.claude/
+.freebuff/
+.kotlin/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.local
+saves/
+backups/

@@ -1,0 +1,16 @@
+{
+  "Version": "1.0.0",
+  "License": "GPL-3.0-only",
+  "Entrypoint": [
+    "com.nullstar.Nullstar"
+  ],
+  "Minecraft": "=26.3",
+  "TestClasses": 0,
+  "Common": true,
+  "Client": true,
+  "OptionalModMenu": true,
+  "ClassMajor": 69,
+  "Sha256": "606816CBE81B9239F1A8762F6EF3D3960FC5B3CF51ED0CD42F375F5BE08D6D7C",
+  "Generator": "scripts/verify-artifact.ps1",
+  "Command": "pwsh -File scripts/verify-artifact.ps1"
+}

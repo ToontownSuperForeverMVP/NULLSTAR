@@ -1,5 +1,10 @@
 # Weapon specifications
 
+> The colossal sections below document Part 2.5A/B. Current Part 3 defaults include
+> Apocalypse Helios at **180 seconds** and optional loaded-only deferred-region replay.
+> See the [current README](../README.md) and [publication evidence](REPOSITORY_PUBLICATION.md).
+> Historical 100-second timings and permanent unloaded-cell skipping below are superseded.
+
 ## Part 2.5A scale profiles
 
 STANDARD preserves the timings/presentation specified below. `config/nullstar/scales.json` supplies validated TITANIC/APOCALYPSE profiles independent of standard weapon overrides. Private-world caps must allow the dimensions below; default public mode clips them and physical Apocalypse requires `apocalypseEnabled`. `/nullstar preview <weapon> apocalypse` is always physically inert under ordinary authorization.

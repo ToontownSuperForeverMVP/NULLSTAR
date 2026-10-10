@@ -1,3 +1,6 @@
+// Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 package com.nullstar.test;
 
 import com.nullstar.Nullstar;
@@ -39,7 +42,7 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         if(!selected("capture"))return;
         String selection=System.getProperty("nullstar.capture","helios,singularity,glassfall");
         // Each scene gets a fresh, identical diorama so earlier craters never invalidate later targets.
-        for(String scene:new String[]{"helios","singularity","glassfall","colossal","modes","stress","part3helios","part3singularity","part3glassfall"}) {
+        for(String scene:new String[]{"helios","singularity","glassfall","colossal","modes","stress","part3helios","part3singularity","part3glassfall","part3oit"}) {
             if(!selection.contains(scene))continue;
             boolean real=scene.startsWith("part3");
             // Part 3 scenes are judged over real, seeded overworld terrain; the historical scenes keep their diorama.
@@ -56,6 +59,12 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
                     case "part3helios" -> part3(context,world,"helios");
                     case "part3singularity" -> part3(context,world,"singularity");
                     case "part3glassfall" -> part3(context,world,"glassfall");
+                    case "part3oit" -> {
+                        // The Part 3 procedural pipelines under Improved Transparency (their OIT sets must hold up).
+                        context.runOnClient(mc->mc.options.improvedTransparency().set(true));
+                        part3(context,world,"helios","oit_","GALACTIC_VIEW@0.95;MOTHERSHIP_REVEAL@0.85;CHARGING@0.9;FIRING@0.3;DEVASTATION_WAVE_1@0.5;AFTERMATH@0.2");
+                        context.runOnClient(mc->mc.options.improvedTransparency().set(false));
+                    }
                     case "stress" -> stress(context,world);
                     default -> modes(context,world);
                 }
@@ -272,7 +281,8 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
      * the real generated phase lengths, its true overall age and back-dated authoritative impact cues, so every beat
      * renders exactly as a late observer would reconstruct it. Client-only: no server strike and no terrain change.
      */
-    private void part3(ClientGameTestContext context,TestSingleplayerContext world,String weapon) {
+    private void part3(ClientGameTestContext context,TestSingleplayerContext world,String weapon) {part3(context,world,weapon,"",null);}
+    private void part3(ClientGameTestContext context,TestSingleplayerContext world,String weapon,String prefix,String beats) {
         try{Files.createDirectories(PART3_OUT);}catch(Exception exception){throw new RuntimeException(exception);}
         // Target 100 blocks from the spawn on the real surface; the player stands on the ground facing it.
         BlockPos target=world.getServer().computeOnServer(server->{
@@ -288,7 +298,7 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         ScaleProfile profile=ScaleCatalog.defaults().stream().filter(p->p.weapon().equals(weapon)&&p.tier()==ScaleTier.APOCALYPSE).findFirst().orElseThrow();
         var def=profile.apply(Nullstar.catalog().get(weapon));
         String dimension=world.getServer().computeOnServer(server->world.getConnection().getServerLevel().dimension().identifier().toString());
-        String[] plan=System.getProperty("nullstar.part3beats."+weapon,defaultBeats(weapon)).split(";");
+        String[] plan=(beats!=null?beats:defaultBeats(weapon)).split(";");
         int impactTick=def.events().stream().filter(e->e.effect().equals("impact")&&e.radiusScale()>=1).mapToInt(e->e.tick()).findFirst().orElse(def.duration());
         for(int i=0;i<plan.length;i++) {
             String[] parts=plan[i].split("@");
@@ -297,7 +307,7 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
             for(var stage:def.phases()){if(stage.phase()==phase){length=stage.ticks();break;}start+=stage.ticks();}
             final int wait=8,phaseAge=(int)Math.max(0,Math.round(length*progress)-wait),age=start+phaseAge,len=length;
             final String camera=def.phases().stream().filter(st->st.phase()==phase).map(st->st.camera()).findFirst().orElse("none");
-            final String name=String.format("%s_%02d_%s_%02d",weapon,i,phase.name().toLowerCase(),(int)Math.round(progress*100));
+            final String name=prefix+String.format("%s_%02d_%s_%02d",weapon,i,phase.name().toLowerCase(),(int)Math.round(progress*100));
             context.runOnClient(mc->{
                 NullstarClient.STATE.clear();
                 long tick=NullstarClient.tickCount();

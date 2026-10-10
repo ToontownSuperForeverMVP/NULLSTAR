@@ -98,6 +98,8 @@ jar {
 	from("LICENSE") {
 		rename { "${it}_$projectName"}
 	}
+    from('NOTICE')
+    from('licenses') { into 'licenses' }
 }
 
 // configure the maven publication

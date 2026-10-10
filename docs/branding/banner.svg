@@ -1,0 +1,26 @@
+<!-- Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors. SPDX-License-Identifier: GPL-3.0-only -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+  <title id="title">NULLSTAR — Cataclysm Engine</title>
+  <desc id="desc">A golden orbital reticle and stellar lance with violet and cyan accents on a dark starfield. The sky is the weapon.</desc>
+  <defs>
+    <radialGradient id="space"><stop stop-color="#25203b"/><stop offset="1" stop-color="#090c14"/></radialGradient>
+    <linearGradient id="lance" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff3c8"/><stop offset="1" stop-color="#ff9b34" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="1280" height="360" rx="18" fill="url(#space)"/>
+  <path d="M0 290H1280 M0 310H1280 M80 360L200 290 M250 360L330 290 M1030 360L950 290 M1200 360L1080 290" stroke="#7380a5" stroke-opacity=".12"/>
+  <g fill="#c7d4ed" opacity=".6"><circle cx="72" cy="54" r="1.4"/><circle cx="355" cy="71" r="1"/><circle cx="1140" cy="51" r="1.4"/><circle cx="1010" cy="111" r="1"/><circle cx="1199" cy="231" r="1"/><circle cx="74" cy="218" r="1"/><circle cx="490" cy="38" r="1"/><circle cx="870" cy="52" r="1.2"/></g>
+  <g transform="translate(205 145)">
+    <ellipse rx="118" ry="38" fill="none" stroke="#f4c867" stroke-width="3"/>
+    <ellipse rx="87" ry="69" fill="none" stroke="#f4c867" stroke-opacity=".45" transform="rotate(-26)"/>
+    <ellipse rx="98" ry="54" fill="none" stroke="#a987ff" stroke-opacity=".7" transform="rotate(32)"/>
+    <path d="M-138 0H-100 M100 0H138 M0-96V-60 M0 60V97" stroke="#66dbed" stroke-width="2"/>
+    <path d="M-25-8L-10-33H10L25-8 14 13H-14Z" fill="#30334b" stroke="#f4c867" stroke-width="2"/>
+    <path d="M-8 8H8L20 170H-20Z" fill="url(#lance)" opacity=".65"/>
+    <circle r="11" fill="#fff4d5"/><circle r="24" fill="none" stroke="#f4c867" stroke-opacity=".55"/>
+  </g>
+  <text x="392" y="101" fill="#b8bbd1" font-family="Arial, Helvetica, sans-serif" font-size="15" letter-spacing="7">ORBITAL DESTRUCTION · MINECRAFT 26.3</text>
+  <text x="383" y="201" fill="#f7f2e5" font-family="Arial, Helvetica, sans-serif" font-size="100" font-weight="800" letter-spacing="9">NULLSTAR</text>
+  <text x="390" y="244" fill="#f4c867" font-family="Arial, Helvetica, sans-serif" font-size="24" letter-spacing="10">CATACLYSM ENGINE</text>
+  <path d="M392 270H1140" stroke="#73778e" stroke-opacity=".4"/>
+  <text x="392" y="307" fill="#ccd0df" font-family="Arial, Helvetica, sans-serif" font-size="23" letter-spacing="2">THE SKY IS THE WEAPON.</text>
+</svg>

@@ -1,3 +1,6 @@
+# Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+# SPDX-License-Identifier: GPL-3.0-only
+
 """Decodes every bundled OGG and checks format, peak headroom and loudness.
 
 Run from the repository root:  python -I tools/assets/validate_audio.py [report.json]

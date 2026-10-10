@@ -1,3 +1,6 @@
+// Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 package com.nullstar.core;
 
 /** Deterministic geometry with smooth angular noise and layered radial falloff; no world access. */

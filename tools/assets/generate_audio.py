@@ -1,3 +1,6 @@
+# Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+# SPDX-License-Identifier: GPL-3.0-only
+
 """Synthesizes every original NULLSTAR sound effect.
 
 Run from the repository root:  python -I tools/assets/generate_audio.py

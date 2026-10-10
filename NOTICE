@@ -1,0 +1,31 @@
+NULLSTAR: Cataclysm Engine
+Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+
+Original NULLSTAR code, generated assets, and documentation are licensed
+under the GNU General Public License, version 3 only.
+SPDX-License-Identifier: GPL-3.0-only
+See LICENSE for the complete terms.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details.
+
+Third-party and historical material
+-----------------------------------
+The repository began from a Fabric template supplied under CC0 1.0.
+The former license is retained in licenses/CC0-1.0.txt for pre-existing
+template material. Historical revisions bearing CC0 notices retain those
+notices; this publication does not revoke earlier grants.
+
+Gradle wrapper scripts and gradle/wrapper/gradle-wrapper.jar are Gradle
+components under Apache License 2.0. Existing notices are preserved.
+See licenses/Apache-2.0.txt and https://gradle.org/.
+
+Minecraft, Fabric Loader/API, Mod Menu, Python asset-tool dependencies,
+and GitHub Actions are external dependencies under their respective
+licenses/terms and are not relicensed as NULLSTAR code.
+
+Procedural textures and synthesized audio are original project outputs.
+No third-party art, recordings, or samples are used in those generated
+assets. Supplied icon/template files retain their original provenance.

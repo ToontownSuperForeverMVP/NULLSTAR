@@ -28,4 +28,7 @@ are unchanged. Every claim below is labelled with one of four categories:
 
 ## 2. Completed visual improvements
 
-<!-- filled from the final capture -->
+Current source and presentation are described in the [README](../README.md).
+The [GitHub publication record](REPOSITORY_PUBLICATION.md) contains fresh build,
+graphical-suite, audio, packaging and curated Part 3 capture evidence. This file
+retains the historical audit above; it is not a complete final acceptance report.

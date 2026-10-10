@@ -1,3 +1,6 @@
+// Copyright (C) 2026 ToontownSuperForeverMVP and NULLSTAR contributors
+// SPDX-License-Identifier: GPL-3.0-only
+
 package com.nullstar.client.camera;
 
 import com.nullstar.client.NullstarClient;
@@ -41,6 +44,8 @@ public final class CinematicCamera {
         });
         register("impact",ctx->new CameraPreset.Frame(ctx.target().add(ctx.strike().state().radius()*2+12,18,ctx.strike().state().radius()+15),ctx.target(),72));
     }
+    /** Height above the player where the real camera waits during the screen-locked virtual act. */
+    public static final double PARK_HEIGHT=1200;
     public void register(String id,CameraPreset preset){presets.put(id,preset);}
     public boolean has(String id){return presets.containsKey(id);}
     public void skip(){skip(NullstarClient.STATE,Minecraft.getInstance().player==null?null:Minecraft.getInstance().player.getUUID());}
@@ -83,9 +88,16 @@ public final class CinematicCamera {
                 // zoom pop). Only the opening of the ascent moves the real camera: it rises out of the world and
                 // tips down toward the terrain before the cloud punch-through hands over to the virtual climb.
                 double rise=com.nullstar.client.render.scene.CosmicMontageScene.worldRise(strike.state().phase(),strike.phaseProgress(tick));
-                Vec3 base=rise>=0?vanilla.add(0,190*rise*rise*(3-2*rise),0):vanilla;
-                float lookPitch=rise>=0?(float)(pitch+(72-pitch)*ease(rise)):pitch;
-                frame=new CameraPreset.Frame(base,base.add(forward(yaw,lookPitch).scale(16)),70);
+                if(rise>=0) {
+                    Vec3 base=vanilla.add(0,190*rise*rise*(3-2*rise),0);
+                    frame=new CameraPreset.Frame(base,base.add(forward(yaw,(float)(pitch+(72-pitch)*ease(rise))).scale(16)),70);
+                } else {
+                    // The virtual act is locked to the screen, so the real camera is parked straight above the player,
+                    // beyond any build height and looking up: no terrain, water, glass or weather can be in view in
+                    // any transparency mode. The player is never moved and X/Z never change.
+                    Vec3 park=vanilla.add(0,PARK_HEIGHT,0);
+                    frame=new CameraPreset.Frame(park,park.add(0,16,0).add(forward(yaw,0).scale(.05)),70);
+                }
             }
             else {
                 frame=presets.get(strike.state().camera()).sample(new CameraPreset.Context(strike,tick,target,strike.phaseProgress(tick)));
@@ -95,8 +107,11 @@ public final class CinematicCamera {
         if(frame!=null) {
             releaseStart=-1;
             Vec3 desiredPos=detached?frame.position():clear.apply(frame.position());
-            if(detached){camPos=frame.position();camLook=frame.lookAt();camRoll=0;}
-            if(last==null||camPos==null) {
+            if(detached){camPos=frame.position();camLook=frame.lookAt();camRoll=0;camFov=frame.fov();}
+            // Leaving the virtual act for a world shot is a deliberate cut (it ends on the entry flash): start the
+            // world framing in place instead of smoothing down from the parked height.
+            else if(lastVirtualScene){camPos=desiredPos;camLook=frame.lookAt();camFov=frame.fov();camRoll=frame.roll();}
+            if(!detached&&(last==null||camPos==null)) {
                 camPos=vanilla;camLook=vanilla.add(forward(yaw,pitch).scale(12));camFov=fov;camRoll=0;
             }
             double delta=Math.max(.01,Math.min(2,tick-lastSample));
@@ -115,6 +130,8 @@ public final class CinematicCamera {
             applied=true;virtualScene=detached;lastVirtualScene=detached;return last;
         }
         if(last!=null) {
+            // Leaving a virtual act: release from eye position, never from the parked height above the world.
+            if(releaseStart<0&&lastVirtualScene)last=new Pose(vanilla,yaw,pitch,last.fov(),0);
             if(releaseStart<0)releaseStart=tick;
             double t=(tick-releaseStart)/12;
             if(t>=1){last=null;camPos=null;camLook=null;releaseStart=-1;lastVirtualScene=false;return null;}
