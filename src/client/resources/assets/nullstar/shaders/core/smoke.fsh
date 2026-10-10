@@ -23,6 +23,11 @@ vec4 calculateFinalColor(vec4 color) {
     #else
     vec4 fogColor = FogColor;
     #endif
+    #ifdef NO_FOG
+    // Colossal ash and dust: kilometre-scale plumes must stay dark silhouettes on the horizon instead of fading
+    // into the sky colour (which turned whole aftermath frames white).
+    return color;
+    #endif
     return apply_fog(color, sphericalVertexDistance, cylindricalVertexDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, fogColor);
 }
 

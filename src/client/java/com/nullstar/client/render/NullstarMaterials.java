@@ -45,6 +45,9 @@ public final class NullstarMaterials {
     public static final Identifier GAS=Nullstar.id("textures/effect/gas.png");
     public static final Identifier LANCE=Nullstar.id("textures/effect/lance.png");
     public static final Identifier COSMIC_HULL=Nullstar.id("textures/machine/cosmic_hull.png");
+    /** Part 3: equirectangular world surface and cloud deck for the planetary act. */
+    public static final Identifier PLANET=Nullstar.id("textures/effect/planet.png");
+    public static final Identifier CLOUDS=Nullstar.id("textures/effect/clouds.png");
     public static final Identifier HELIOS_HULL=Nullstar.id("textures/machine/helios_hull.png");
     public static final Identifier GLASSFALL_HULL=Nullstar.id("textures/machine/glassfall_hull.png");
     public static final Identifier SINGULARITY_HULL=Nullstar.id("textures/machine/singularity_hull.png");
@@ -56,6 +59,12 @@ public final class NullstarMaterials {
     private static final Map<Energy,OitPipelineSet> ENERGY_OIT=new HashMap<>();
     private static RenderPipeline smoke,hull,debris;
     private static OitPipelineSet smokeOit;
+    /** Part 3 cosmic pipelines: the opaque procedural sky dome, the procedural additive energy materials and baked hulls. */
+    private static RenderPipeline cosmosSky,cosmosFx,bakedHull;
+    private static OitPipelineSet cosmosFxOit;
+    private static RenderType skyType,fxType;
+    private static RenderPipeline ash;
+    private static OitPipelineSet ashOit;
     private static Boolean available;
     private static boolean initialized;
 
@@ -93,6 +102,10 @@ public final class NullstarMaterials {
                 .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT)).build());
         smokeOit=OitPipelineSet.builder("nullstar_smoke",RenderPipeline.builder(smokeSnippet)).build();
         optional(smokeOit.depthBoundsPipeline());optional(smokeOit.transmittancePipeline());optional(smokeOit.accumulatePipeline());
+        ash=optional(RenderPipeline.builder(smokeSnippet).withLocation(Nullstar.id("pipeline/ash")).withShaderDefine("NO_FOG")
+                .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT)).build());
+        ashOit=OitPipelineSet.builder("nullstar_ash",RenderPipeline.builder(smokeSnippet).withShaderDefine("NO_FOG")).build();
+        optional(ashOit.depthBoundsPipeline());optional(ashOit.transmittancePipeline());optional(ashOit.accumulatePipeline());
         hullSnippet=RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
                 .withVertexShader(Nullstar.id("core/hull")).withFragmentShader(Nullstar.id("core/hull"))
                 .withBindGroupLayout(BindGroupLayouts.SAMPLER0)
@@ -104,6 +117,30 @@ public final class NullstarMaterials {
         hull=optional(RenderPipeline.builder(hullSnippet).withLocation(Nullstar.id("pipeline/hull")).withColorTargetState(ColorTargetState.DEFAULT).build());
         debris=optional(RenderPipeline.builder(hullSnippet).withLocation(Nullstar.id("pipeline/debris")).withShaderDefine("DEBRIS")
                 .withColorTargetState(ColorTargetState.DEFAULT).build());
+        bakedHull=optional(RenderPipeline.builder(hullSnippet).withLocation(Nullstar.id("pipeline/baked_hull")).withShaderDefine("BAKED")
+                .withColorTargetState(ColorTargetState.DEFAULT).build());
+        // The sky dome sits a fraction of a block from the eye and writes that depth, so it replaces every piece of the
+        // Minecraft world behind it (all terrain beyond ~0.6 blocks) while the compressed cosmic scene, nearer still,
+        // keeps winning the ordinary depth test whatever order the batches are drawn in.
+        cosmosSky=optional(RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
+                .withLocation(Nullstar.id("pipeline/cosmos_sky"))
+                .withVertexShader(Nullstar.id("core/cosmos_sky")).withFragmentShader(Nullstar.id("core/cosmos_sky"))
+                .withVertexBinding(0,DefaultVertexFormat.POSITION_TEX_COLOR_NORMAL)
+                .withPrimitiveTopology(PrimitiveTopology.QUADS)
+                .withCull(false)
+                .withDepthStencilState(DepthStencilState.DEFAULT)
+                .withColorTargetState(ColorTargetState.DEFAULT).build());
+        var fxSnippet=RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
+                .withVertexShader(Nullstar.id("core/cosmos_fx")).withFragmentShader(Nullstar.id("core/cosmos_fx"))
+                .withVertexBinding(0,DefaultVertexFormat.POSITION_TEX_COLOR_NORMAL)
+                .withPrimitiveTopology(PrimitiveTopology.QUADS)
+                .withCull(false)
+                .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL,false))
+                .buildSnippet();
+        cosmosFx=optional(RenderPipeline.builder(fxSnippet).withLocation(Nullstar.id("pipeline/cosmos_fx"))
+                .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING)).build());
+        cosmosFxOit=OitPipelineSet.builder("nullstar_cosmos_fx",RenderPipeline.builder(fxSnippet).withShaderDefine("OIT_ADDITIVE")).build();
+        optional(cosmosFxOit.depthBoundsPipeline());optional(cosmosFxOit.transmittancePipeline());optional(cosmosFxOit.accumulatePipeline());
     }
     private static RenderPipeline optional(RenderPipeline pipeline){ALL.add(pipeline);return RenderPipelines.registerOptional(pipeline);}
 
@@ -144,6 +181,30 @@ public final class NullstarMaterials {
         if(!customAvailable())return RenderTypes.entitySolid(texture);
         return TYPES.computeIfAbsent("hull/"+texture,key->RenderType.create("nullstar_hull",
                 RenderSetup.builder(hull).withTexture("Sampler0",texture).createRenderSetup()));
+    }
+    /** Fog-free smoke for colossal ash columns, plumes and pressure walls. */
+    public static RenderType ash(Identifier texture) {
+        if(!customAvailable())return RenderTypes.entityTranslucent(texture);
+        return TYPES.computeIfAbsent("ash/"+texture,key->RenderType.create("nullstar_ash",
+                RenderSetup.builder(ash).setOitPipelines(ashOit).withTexture("Sampler0",texture,linearRepeat()).sortOnUpload().createRenderSetup()));
+    }
+    /** Procedural cosmos dome. Without custom shaders the dome falls back to a dark textured shell. */
+    public static RenderType cosmosSky() {
+        if(!customAvailable())return RenderTypes.entitySolid(GAS);
+        if(skyType==null)skyType=RenderType.create("nullstar_cosmos_sky",RenderSetup.builder(cosmosSky).createRenderSetup());
+        return skyType;
+    }
+    /** Procedural additive energy (galaxy, photosphere, corona, beam, nebula, atmosphere, shock, flare). */
+    public static RenderType cosmosFx() {
+        if(!customAvailable())return RenderTypes.lightning();
+        if(fxType==null)fxType=RenderType.create("nullstar_cosmos_fx",RenderSetup.builder(cosmosFx).setOitPipelines(cosmosFxOit).sortOnUpload().createRenderSetup());
+        return fxType;
+    }
+    /** Hull plating lit by the virtual scene's own light rig (baked into vertex colour) instead of the world sun. */
+    public static RenderType bakedHull(Identifier texture) {
+        if(!customAvailable())return RenderTypes.entitySolid(texture);
+        return TYPES.computeIfAbsent("baked/"+texture,key->RenderType.create("nullstar_baked_hull",
+                RenderSetup.builder(bakedHull).withTexture("Sampler0",texture).createRenderSetup()));
     }
     public static RenderType debris(Identifier texture) {
         if(!customAvailable())return RenderTypes.entitySolid(texture);

@@ -63,14 +63,14 @@ public final class ColossalClientGameTest implements FabricClientGameTest {
                 context.getInput().pressKey(options->java.util.Arrays.stream(options.keyMappings).filter(k->k.getName().equals("key.nullstar.skip")).findFirst().orElseThrow());
                 context.waitTicks(20);check(context.computeOnClient(mc->!NullstarClient.CAMERA.applied()),"Cosmic skip failed to restore gameplay");
                 world.getServer().runOnServer(server->check(!Nullstar.engine().active().isEmpty()&&Nullstar.engine().destruction().queued()==0,"Skip cancelled server event or preview queued terrain"));
-                advance(world,2050);context.waitTicks(20);
+                advance(world,3650);context.waitTicks(20);
                 world.getServer().runOnServer(server->check(Nullstar.engine().active().isEmpty()&&world.getConnection().getServerLevel().getBlockState(TARGET).is(net.minecraft.world.level.block.Blocks.STONE),"Full colossal preview changed terrain"));
                 world.getServer().runCommand("execute as @p at @s run nullstar fire helios apocalypse 0 80 0");
-                context.waitFor(mc->!NullstarClient.STATE.strikes().isEmpty(),100);advance(world,1800);
+                context.waitFor(mc->!NullstarClient.STATE.strikes().isEmpty(),100);advance(world,2600);
                 check(context.computeOnClient(mc->NullstarClient.STATE.strikes().values().stream().anyMatch(s->s.state().scale().committed())),"Damage commitment missing from state");
                 context.getInput().pressKey(options->java.util.Arrays.stream(options.keyMappings).filter(k->k.getName().equals("key.nullstar.skip")).findFirst().orElseThrow());
                 context.waitTicks(20);world.getServer().runOnServer(server->check(!Nullstar.engine().active().isEmpty(),"Skip cancelled committed devastation"));
-                advance(world,2000);
+                advance(world,1200);
                 world.getServer().runOnServer(server->{for(int i=0;i<1500&&!Nullstar.engine().active().isEmpty();i++)Nullstar.engine().tick(server);
                     check(Nullstar.engine().active().isEmpty()&&world.getConnection().getServerLevel().getBlockState(TARGET).isAir(),"Small controlled colossal crater did not finish");
                     Nullstar.LOGGER.info("PART25 graphical: cosmic scenes, late reconstruction, native skip and controlled diameter-64 real crater passed");

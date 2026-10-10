@@ -98,7 +98,7 @@ class ColossalPresentationTest {
         var apocalypse=ScaleCatalog.defaults().stream()
                 .filter(p->p.weapon().equals("helios")&&p.tier()==ScaleTier.APOCALYPSE).findFirst().orElseThrow();
         var def=apocalypse.apply(weapons().get("helios"));
-        assertEquals(2000,def.duration());
+        assertEquals(3600,def.duration());
         assertEquals("cosmic_montage",camera(def,Phase.CHARGING));
         assertEquals("cosmic_montage",camera(def,Phase.ORBITAL_ALIGNMENT));
         assertEquals("cosmic_montage",camera(def,Phase.FIRING));

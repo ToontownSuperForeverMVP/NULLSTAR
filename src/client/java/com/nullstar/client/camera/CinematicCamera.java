@@ -78,7 +78,15 @@ public final class CinematicCamera {
         if(enabled&&strike!=null) {
             Vec3 target=Vec3.atCenterOf(strike.state().target());
             detached=strike.state().scale().scene()!=com.nullstar.core.CinematicScene.WORLD && strike.state().camera().equals("cosmic_montage");
-            if(detached)frame=new CameraPreset.Frame(vanilla,vanilla.add(forward(yaw,pitch).scale(16)),(float)(65-25*ease(strike.phaseProgress(tick))));
+            if(detached) {
+                // The cosmic act frames itself with its own virtual lens, so the real FOV holds steady (no per-phase
+                // zoom pop). Only the opening of the ascent moves the real camera: it rises out of the world and
+                // tips down toward the terrain before the cloud punch-through hands over to the virtual climb.
+                double rise=com.nullstar.client.render.scene.CosmicMontageScene.worldRise(strike.state().phase(),strike.phaseProgress(tick));
+                Vec3 base=rise>=0?vanilla.add(0,190*rise*rise*(3-2*rise),0):vanilla;
+                float lookPitch=rise>=0?(float)(pitch+(72-pitch)*ease(rise)):pitch;
+                frame=new CameraPreset.Frame(base,base.add(forward(yaw,lookPitch).scale(16)),70);
+            }
             else {
                 frame=presets.get(strike.state().camera()).sample(new CameraPreset.Context(strike,tick,target,strike.phaseProgress(tick)));
                 if(frame!=null&&!(valid(frame.position())&&valid(frame.lookAt())&&loaded.test(frame.position())))frame=null;
@@ -86,8 +94,8 @@ public final class CinematicCamera {
         }
         if(frame!=null) {
             releaseStart=-1;
-            Vec3 desiredPos=detached?vanilla:clear.apply(frame.position());
-            if(detached){camPos=vanilla;camLook=frame.lookAt();camRoll=0;}
+            Vec3 desiredPos=detached?frame.position():clear.apply(frame.position());
+            if(detached){camPos=frame.position();camLook=frame.lookAt();camRoll=0;}
             if(last==null||camPos==null) {
                 camPos=vanilla;camLook=vanilla.add(forward(yaw,pitch).scale(12));camFov=fov;camRoll=0;
             }

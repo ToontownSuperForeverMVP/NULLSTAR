@@ -109,9 +109,7 @@ public final class EffectScene implements PresentationLayers.Layer {
                 if(scene==null)continue;
                 StrikeView view=view(strike,now,player);
                 if(view.owned()&&mc.gui.screen()==null&&NullstarClient.config().cinematicCamera&&!NullstarClient.config().reducedMotion&&NullstarClient.CAMERA.detached(strike)) {
-                    var forward=camera.orientation.transform(new org.joml.Vector3f(0,0,-1));
-                    canvas.origin(camera.pos.add(forward.x*32,forward.y*32,forward.z*32));
-                    montage.render(view,canvas,config.quality);strikes++;continue;
+                    montage.render(view,canvas,config.quality,camera.pos);strikes++;continue;
                 }
                 // Generous bounds: colossal machinery hangs far above its target, so the box must cover the
                 // emitter altitude, the lance and the shock reach instead of only the local crater.

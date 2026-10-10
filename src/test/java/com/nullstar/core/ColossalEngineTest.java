@@ -25,7 +25,7 @@ class ColossalEngineTest {
     }
     @Test void heliosHasThousandDiameterAndNinetySecondCosmicTimeline() throws Exception {
         var profile=ScaleCatalog.defaults().get(1);var def=profile.apply(weapons().get("helios"));
-        assertEquals(500,def.impact().radius());assertEquals(2000,def.duration());assertTrue(def.phases().size()>=20);
+        assertEquals(500,def.impact().radius());assertEquals(3600,def.duration());assertTrue(def.phases().size()>=20);
         assertTrue(def.phases().stream().anyMatch(s->s.phase()==Phase.COSMIC_BOUNDARY_VIEW));
         var timeline=new Timeline(def);int start=0;
         for(var stage:def.phases()) {

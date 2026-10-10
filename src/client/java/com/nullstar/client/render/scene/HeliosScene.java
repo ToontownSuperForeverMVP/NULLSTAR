@@ -35,6 +35,7 @@ public final class HeliosScene implements WeaponScene {
     private static Mesh petal,cap,nozzle,irisBlade,ringA,ringB,segment,spoke,pod,keel,crownShroud;
     private static final Mesh[] VANES=new Mesh[VANE_LENGTH.length];
     private final Matrix4f root=new Matrix4f(),m=new Matrix4f(),frame=new Matrix4f();
+    private final HeliosDevastation devastation=new HeliosDevastation();
     /** Resolved once per frame so the rig, the beam and the camera statics agree on the same magnitudes. */
     private float structure=1,beam=1.7f,shock=60,secondary=20;
     private float altitude=72;
@@ -154,8 +155,17 @@ public final class HeliosScene implements WeaponScene {
             drawCore(v,c,q,r,t,cy,yaw);
         }
         drawGround(v,c,q,r,t);
-        drawBeam(v,c,q,r,t,cy);
-        drawImpact(v,c,q,t);
+        if(HeliosDevastation.active(v)) {
+            // Part 3 colossal path: the lance from orbit and a phase-relative regional devastation sequence.
+            double lance=v.in(Phase.FIRING)||v.in(Phase.ATMOSPHERIC_ENTRY)?1:v.in(Phase.IMPACT)?1-range(v.progress(),.35,1):0;
+            float head=beamHead(v);
+            devastation.lance(v,c,q,t,(float)emitterY(v),head,beam,lance);
+            if(v.in(Phase.ATMOSPHERIC_ENTRY))devastation.cloudPunch(v,c,q,t,head,beam);
+            devastation.impact(v,c,q,t);
+        } else {
+            drawBeam(v,c,q,r,t,cy);
+            drawImpact(v,c,q,t);
+        }
         if(v.before(Phase.CHARGING)||v.in(Phase.CHARGING))drawMarker(v,c,q,t);
     }
 

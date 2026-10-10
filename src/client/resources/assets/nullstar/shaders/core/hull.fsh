@@ -20,6 +20,15 @@ layout(location = 0) out vec4 fragColor;
 // heat level for DEBRIS. Texture alpha below one marks emissive pixels.
 void main() {
     vec4 tex = texture(Sampler0, texCoord0);
+#ifdef BAKED
+    // Cosmic bodies: the scene bakes key, fill, point and rim light into vertex RGB (0.5 = unlit albedo) and the
+    // emissive seam level into alpha. No world sun and no fog, because the virtual scene is not in the world.
+    float seam = 1.0 - tex.a;
+    float glowPulse = 0.9 + 0.1 * sin(GameTime * 1200.0 * 4.0 + texCoord0.y * 30.0);
+    vec3 baked = tex.rgb * vertexColor.rgb * 2.0 + tex.rgb * seam * vertexColor.a * 4.5 * glowPulse;
+    fragColor = vec4(baked, 1.0);
+    return;
+#endif
     vec3 n = normalize(worldNormal + vec3(0.0, 1.0e-4, 0.0));
     vec3 v = normalize(viewVector + vec3(1.0e-4));
     vec3 sun = normalize(vec3(0.38, 0.82, 0.42));

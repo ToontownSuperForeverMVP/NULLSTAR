@@ -381,6 +381,65 @@ def mod_icon():
     save("../icon.png", np.dstack([img, np.full((s, s), 255.0)]))
 
 
+# ---------------------------------------------------------------- Part 3 planetary act
+def planet():
+    """Equirectangular overworld seen from orbit: oceans, biomes, ice caps and a faint voxel grain.
+
+    Uses its own generator so the Part 2/2.5 textures stay byte-identical. Alpha below 255 marks the
+    sparse warm night-side settlement lights that the baked hull shader treats as emissive."""
+    rng = np.random.default_rng(0x504C4E54)
+    h, w = 512, 1024
+    lat = (np.arange(h)[:, None] / (h - 1) - .5) * 2 * np.ones((1, w))
+    continents = fbm(h, w, 3, 6, 7, rng, .55)
+    detail = fbm(h, w, 12, 24, 5, rng, .5)
+    moisture = fbm(h, w, 5, 10, 5, rng, .55)
+    elevation = normalize(continents * .78 + detail * .22)
+    land = elevation > .52
+    rgb = np.zeros((h, w, 3))
+    depth = np.clip((.52 - elevation) / .52, 0, 1)
+    deep, shallow = np.array([12, 34, 78]), np.array([36, 98, 150])
+    rgb[:] = shallow[None, None, :] * (1 - depth[..., None]) + deep[None, None, :] * depth[..., None]
+    height = np.clip((elevation - .52) / .48, 0, 1)
+    dry = moisture < .45
+    grass, forest = np.array([86, 132, 52]), np.array([44, 92, 38])
+    desert, mesa = np.array([212, 192, 128]), np.array([168, 96, 58])
+    rock, snow = np.array([118, 112, 104]), np.array([236, 242, 248])
+    green = grass[None, None, :] * (1 - moisture[..., None]) + forest[None, None, :] * moisture[..., None]
+    arid = np.where((detail > .55)[..., None], mesa[None, None, :], desert[None, None, :])
+    landrgb = np.where(dry[..., None] & (np.abs(lat) < .55)[..., None], arid, green)
+    landrgb = landrgb * (1 - np.clip(height - .55, 0, 1)[..., None] * 1.6) + rock[None, None, :] * np.clip(height - .55, 0, 1)[..., None] * 1.6
+    beach = (elevation > .52) & (elevation < .535)
+    landrgb[beach] = desert * .95
+    rgb = np.where(land[..., None], landrgb, rgb)
+    ice = np.abs(lat) > .87 - detail * .07
+    rgb[ice] = snow * (.9 + .1 * detail[ice][:, None])
+    # Voxel grain: quantise land colour to 4-pixel cells so the world still reads as Minecraft from orbit.
+    q = 4
+    coarse = rgb.reshape(h // q, q, w // q, q, 3).mean(axis=(1, 3))
+    blocky = np.repeat(np.repeat(coarse, q, axis=0), q, axis=1)
+    rgb = np.where(land[..., None] & ~ice[..., None], blocky, rgb)
+    rgb *= (.92 + .16 * detail)[..., None]
+    alpha = np.full((h, w), 255.0)
+    lights = land & ~ice & (rng.random((h, w)) > .9965) & (elevation < .7)
+    rgb[lights] = [255, 196, 110]
+    alpha[lights] = 110
+    save("effect/planet.png", np.dstack([rgb, alpha]))
+
+
+def clouds():
+    """Tileable cloud deck with cyclonic swirls; alpha is coverage."""
+    rng = np.random.default_rng(0x434C4F55)
+    h, w = 512, 1024
+    base = fbm(h, w, 4, 8, 7, rng, .58)
+    bands = .5 + .5 * np.sin((np.arange(h)[:, None] / h) * math.pi * 7) * np.ones((1, w))
+    swirl = fbm(h, w, 8, 16, 5, rng, .5)
+    cover = normalize(base * .7 + swirl * .3) * (.75 + .25 * bands)
+    alpha = np.clip((cover - .5) / .3, 0, 1) ** 1.3 * 235
+    shade = 200 + 55 * normalize(swirl)
+    rgb = np.dstack([shade, shade, np.minimum(255, shade + 6)])
+    save("effect/clouds.png", np.dstack([rgb, alpha]))
+
+
 if __name__ == "__main__":
     if not os.path.isdir(os.path.join(ROOT, "src")):
         sys.exit("run from the NULLSTAR repository")
@@ -391,3 +450,5 @@ if __name__ == "__main__":
     hull("singularity_hull", (26, 22, 32), (90, 60, 130), (196, 110, 255), 26, "line", 37)
     hull("cosmic_hull", (46, 44, 50), (150, 126, 84), (255, 214, 140), 34, "line", 53)
     controller(); icons(); mod_icon()
+    # Part 3 textures use private generators and are appended so earlier outputs stay byte-identical.
+    planet(); clouds()

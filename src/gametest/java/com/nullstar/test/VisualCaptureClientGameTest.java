@@ -39,16 +39,23 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         if(!selected("capture"))return;
         String selection=System.getProperty("nullstar.capture","helios,singularity,glassfall");
         // Each scene gets a fresh, identical diorama so earlier craters never invalidate later targets.
-        for(String scene:new String[]{"helios","singularity","glassfall","colossal","modes","stress"}) {
+        for(String scene:new String[]{"helios","singularity","glassfall","colossal","modes","stress","part3helios","part3singularity","part3glassfall"}) {
             if(!selection.contains(scene))continue;
-            try(TestSingleplayerContext world=context.worldBuilder().adjustSettings(settings->settings.setAllowCommands(true)).create()) {
+            boolean real=scene.startsWith("part3");
+            // Part 3 scenes are judged over real, seeded overworld terrain; the historical scenes keep their diorama.
+            var builder=real?context.worldBuilder().setUseConsistentSettings(false).adjustSettings(settings->{settings.setAllowCommands(true);settings.setSeed("nullstar-part3");})
+                    :context.worldBuilder().adjustSettings(settings->settings.setAllowCommands(true));
+            try(TestSingleplayerContext world=builder.create()) {
                 current=world;
-                prepare(context,world);
+                if(real)prepareReal(context,world);else prepare(context,world);
                 switch(scene) {
                     case "helios" -> {shot(context,"00_diorama");helios(context,world);}
                     case "singularity" -> singularity(context,world);
                     case "glassfall" -> glassfall(context,world);
                     case "colossal" -> colossal(context,world);
+                    case "part3helios" -> part3(context,world,"helios");
+                    case "part3singularity" -> part3(context,world,"singularity");
+                    case "part3glassfall" -> part3(context,world,"glassfall");
                     case "stress" -> stress(context,world);
                     default -> modes(context,world);
                 }
@@ -72,6 +79,17 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
         context.waitTicks(40);world.getConnection().waitForChunksRender();
     }
 
+    private static void prepareReal(ClientGameTestContext context,TestSingleplayerContext world) {
+        // A normal player render distance, so colossal shots are judged against what a real client actually shows.
+        world.getConnection().waitForChunksDownload();
+        context.runOnClient(mc->mc.options.renderDistance().set(12));
+        world.getServer().runCommand("gamemode creative @p");
+        world.getServer().runCommand("time set noon");
+        world.getServer().runCommand("weather clear");
+        world.getServer().runOnServer(server->Nullstar.config().cooldownMultiplier=.1);
+        // A wider area streams in over time; waiting for every chunk to render can exceed the harness timeout.
+        context.waitTicks(200);
+    }
     private static void fill(TestSingleplayerContext world,int x0,int y0,int z0,int x1,int y1,int z1,String block) {
         for(int y=y0;y<=y1;y++)world.getServer().runCommand("fill "+x0+" "+y+" "+z0+" "+x1+" "+y+" "+z1+" "+block);
     }
@@ -243,6 +261,76 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
             shot(context,"colossal_"+beat.name(),COLOSSAL_OUT);
         }
         context.runOnClient(mc->NullstarClient.STATE.clear());
+    }
+
+    /** Part 3 evidence lives beside, never over, the historical capture sets. */
+    private static final Path PART3_OUT=Path.of("build/evidence/part3");
+    /**
+     * Part 3 reconstruction capture. One synthetic APOCALYPSE strike per beat is injected into the client cache with
+     * the real generated phase lengths, its true overall age and back-dated authoritative impact cues, so every beat
+     * renders exactly as a late observer would reconstruct it. Client-only: no server strike and no terrain change.
+     */
+    private void part3(ClientGameTestContext context,TestSingleplayerContext world,String weapon) {
+        try{Files.createDirectories(PART3_OUT);}catch(Exception exception){throw new RuntimeException(exception);}
+        // Target 100 blocks from the spawn on the real surface; the player stands on the ground facing it.
+        BlockPos target=world.getServer().computeOnServer(server->{
+            var level=world.getConnection().getServerLevel();var player=world.getConnection().getServerPlayer();
+            int x=(int)Math.floor(player.getX())+100,z=(int)Math.floor(player.getZ());
+            level.getChunk(x>>4,z>>4);
+            return new BlockPos(x,level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,x,z),z);
+        });
+        world.getServer().runCommand("execute as @p at @s run tp @s ~ ~ ~ facing "+target.getX()+" "+(target.getY()+20)+" "+target.getZ());
+        context.runOnClient(mc->{var c=NullstarClient.config();c.quality=ClientConfig.Quality.ULTRA;
+            c.particleIntensity=1;c.cinematicCamera=true;c.reducedMotion=false;c.reducedFlashing=false;});
+        context.waitTicks(120);
+        ScaleProfile profile=ScaleCatalog.defaults().stream().filter(p->p.weapon().equals(weapon)&&p.tier()==ScaleTier.APOCALYPSE).findFirst().orElseThrow();
+        var def=profile.apply(Nullstar.catalog().get(weapon));
+        String dimension=world.getServer().computeOnServer(server->world.getConnection().getServerLevel().dimension().identifier().toString());
+        String[] plan=System.getProperty("nullstar.part3beats."+weapon,defaultBeats(weapon)).split(";");
+        int impactTick=def.events().stream().filter(e->e.effect().equals("impact")&&e.radiusScale()>=1).mapToInt(e->e.tick()).findFirst().orElse(def.duration());
+        for(int i=0;i<plan.length;i++) {
+            String[] parts=plan[i].split("@");
+            Phase phase=Phase.valueOf(parts[0]);double progress=Double.parseDouble(parts[1]);
+            int start=0,length=1;
+            for(var stage:def.phases()){if(stage.phase()==phase){length=stage.ticks();break;}start+=stage.ticks();}
+            final int wait=8,phaseAge=(int)Math.max(0,Math.round(length*progress)-wait),age=start+phaseAge,len=length;
+            final String camera=def.phases().stream().filter(st->st.phase()==phase).map(st->st.camera()).findFirst().orElse("none");
+            final String name=String.format("%s_%02d_%s_%02d",weapon,i,phase.name().toLowerCase(),(int)Math.round(progress*100));
+            context.runOnClient(mc->{
+                NullstarClient.STATE.clear();
+                long tick=NullstarClient.tickCount();
+                java.util.UUID id=java.util.UUID.randomUUID(),owner=mc.player.getUUID();
+                var metadata=new ColossalMetadata(profile.tier(),CinematicScene.forPhase(phase,weapon,profile.tier()),profile.cinematicScale(),profile.structureScale(),
+                        profile.beamWidth(),profile.shockwaveRadius(),profile.secondaryRadius(),profile.blastRadius(),profile.entityRadius(),
+                        profile.script(),profile.anchor(),profile.alignmentNodes(),profile.subimpacts(),profile.radius(),profile.waves(),0,def.duration(),false);
+                NullstarClient.STATE.snapshot(new StatePayload(id,owner,dimension,weapon,def.name(),phase,age,phaseAge,len,tick,target,
+                        profile.radius(),profile.depth(),7L,false,age<impactTick?0:Math.min(.95,(age-impactTick)/(double)(def.duration()-impactTick)),def.presentation().color(),def.presentation().orbitalHeight(),1,camera,false,metadata),tick);
+                int cue=0;
+                for(var event:def.events()) {
+                    if(event.tick()>age)break;
+                    var pos=target.offset((int)Math.round(event.x()),0,(int)Math.round(event.z()));
+                    NullstarClient.STATE.cue(new com.nullstar.network.VisualPayload(id,cue++,event.effect(),pos,
+                            (int)Math.max(1,Math.round(profile.radius()*event.radiusScale())),event.effect().equals("impact")?40:30),tick-(age-event.tick()));
+                }
+            });
+            context.waitTicks(wait);
+            shot(context,name,PART3_OUT);
+        }
+        context.runOnClient(mc->NullstarClient.STATE.clear());
+    }
+    static String defaultBeats(String weapon) {
+        return switch(weapon) {
+            case "helios" -> "ASCENT@0.25;ASCENT@0.45;ASCENT@0.6;ASCENT@0.95;EXOATMOSPHERIC_TRANSITION@0.6;PLANETARY_VIEW@0.1;PLANETARY_VIEW@0.55;PLANETARY_VIEW@0.95;"
+                    +"SOLAR_SYSTEM_VIEW@0.1;SOLAR_SYSTEM_VIEW@0.55;SOLAR_SYSTEM_VIEW@0.95;GALACTIC_VIEW@0.1;GALACTIC_VIEW@0.5;GALACTIC_VIEW@0.95;"
+                    +"COSMIC_BOUNDARY_VIEW@0.2;COSMIC_BOUNDARY_VIEW@0.55;COSMIC_BOUNDARY_VIEW@0.8;COSMIC_BOUNDARY_VIEW@0.95;"
+                    +"MOTHERSHIP_REVEAL@0.2;MOTHERSHIP_REVEAL@0.85;DEPLOYMENT@0.25;DEPLOYMENT@0.55;DEPLOYMENT@0.9;CHARGING@0.35;CHARGING@0.9;"
+                    +"ORBITAL_ALIGNMENT@0.4;ORBITAL_ALIGNMENT@0.8;FIRING@0.15;FIRING@0.3;FIRING@0.5;FIRING@0.75;FIRING@0.95;"
+                    +"ATMOSPHERIC_ENTRY@0.5;IMPACT@0.3;DEVASTATION_WAVE_1@0.5;DEVASTATION_WAVE_2@0.5;AFTERMATH@0.2;AFTERMATH@0.8";
+            case "singularity" -> "ACQUIRING@0.5;CHARGING@0.3;CHARGING@0.8;ORBITAL_ALIGNMENT@0.5;FIRING@0.3;FIRING@0.8;IMPACT@0.2;IMPACT@0.7;"
+                    +"DEVASTATION_WAVE_1@0.5;DEVASTATION_WAVE_2@0.5;AFTERMATH@0.3;AFTERMATH@0.9";
+            default -> "ACQUIRING@0.5;CHARGING@0.4;CHARGING@0.9;ORBITAL_ALIGNMENT@0.5;FIRING@0.2;FIRING@0.5;FIRING@0.85;ATMOSPHERIC_ENTRY@0.5;"
+                    +"IMPACT@0.2;IMPACT@0.7;DEVASTATION_WAVE_1@0.5;DEVASTATION_WAVE_2@0.5;AFTERMATH@0.3;AFTERMATH@0.9";
+        };
     }
 
     private static void waitStrike(ClientGameTestContext context) {

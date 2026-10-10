@@ -117,12 +117,8 @@ public record ScaleProfile(String weapon, ScaleTier tier, int radius, int depth,
         if (tier == ScaleTier.STANDARD) return base;
         var stages = new ArrayList<WeaponDefinition.Stage>();
         boolean helios = weapon.equals("helios");
-        if (helios) {
-            Phase[] preparation = {Phase.ACQUIRING, Phase.TARGET_CONFIRMATION, Phase.PRELUDE, Phase.ASCENT,
-                    Phase.EXOATMOSPHERIC_TRANSITION, Phase.PLANETARY_VIEW, Phase.SOLAR_SYSTEM_VIEW,
-                    Phase.GALACTIC_VIEW, Phase.COSMIC_BOUNDARY_VIEW, Phase.MOTHERSHIP_REVEAL, Phase.DEPLOYMENT};
-            for (Phase phase : preparation) stages.add(new WeaponDefinition.Stage(phase, durationTicks/22, cameraFor(phase), ""));
-        } else stages.add(new WeaponDefinition.Stage(Phase.ACQUIRING, durationTicks/12, cameraFor(Phase.ACQUIRING), ""));
+        if (helios) return heliosStages(base);
+        stages.add(new WeaponDefinition.Stage(Phase.ACQUIRING, durationTicks/12, cameraFor(Phase.ACQUIRING), ""));
         // The colossal Helios holds the detached cosmic act through charge, alignment and discharge: the stellar
         // lance is fired in the star-mothership framing and only cuts back to the world for the descent.
         stages.add(new WeaponDefinition.Stage(Phase.CHARGING, durationTicks/8, cameraFor(Phase.CHARGING), ""));
@@ -162,6 +158,49 @@ public record ScaleProfile(String weapon, ScaleTier tier, int radius, int depth,
                 colossalSounds.getOrDefault(stage.phase(),base.phases().stream()
                 .filter(original->original.phase()==stage.phase()).map(WeaponDefinition.Stage::sound).findFirst().orElse(""))));
         return new WeaponDefinition(base.id(),base.name(),base.behavior(),base.targeting(),stages,cues,impact,base.presentation(),base.cooldownTicks());
+    }
+    /**
+     * Part 3 Helios pacing, as per-mille-of-3600 weights so every operator duration keeps the same dramatic shape:
+     * dread (15 s at 180 s), the outward voyage (37 s), reveal and deployment (30 s), containment and charge (26 s),
+     * discharge and descent (17 s), impact and both devastation passes (26 s), and an aftermath that receives
+     * everything left (about 28 s). The previous uniform split left a two-second aftermath.
+     */
+    static final Object[][] HELIOS_PACING = {
+            {Phase.ACQUIRING, 100}, {Phase.TARGET_CONFIRMATION, 100}, {Phase.PRELUDE, 100},
+            {Phase.ASCENT, 140}, {Phase.EXOATMOSPHERIC_TRANSITION, 80}, {Phase.PLANETARY_VIEW, 140},
+            {Phase.SOLAR_SYSTEM_VIEW, 120}, {Phase.GALACTIC_VIEW, 140}, {Phase.COSMIC_BOUNDARY_VIEW, 120},
+            {Phase.MOTHERSHIP_REVEAL, 240}, {Phase.DEPLOYMENT, 360}, {Phase.CHARGING, 360}, {Phase.ORBITAL_ALIGNMENT, 160},
+            {Phase.FIRING, 200}, {Phase.ATMOSPHERIC_ENTRY, 140}, {Phase.IMPACT, 120},
+            {Phase.DEVASTATION_WAVE_1, 200}, {Phase.DEVASTATION_WAVE_2, 200}};
+    private WeaponDefinition heliosStages(WeaponDefinition base) {
+        var stages = new ArrayList<WeaponDefinition.Stage>();
+        int impactTick = 0, impactLength = 0, waveLength = 0;
+        for (Object[] entry : HELIOS_PACING) {
+            Phase phase = (Phase) entry[0];
+            int ticks = Math.max(1, (int) Math.round(durationTicks * (Integer) entry[1] / 3600.0));
+            if (phase == Phase.IMPACT) { impactTick = stages.stream().mapToInt(WeaponDefinition.Stage::ticks).sum(); impactLength = ticks; }
+            if (phase == Phase.DEVASTATION_WAVE_1) waveLength = ticks;
+            stages.add(new WeaponDefinition.Stage(phase, ticks, cameraFor(phase), ""));
+        }
+        int remaining = Math.max(21, durationTicks - stages.stream().mapToInt(WeaponDefinition.Stage::ticks).sum());
+        stages.add(new WeaponDefinition.Stage(Phase.AFTERMATH, remaining - 20, cameraFor(Phase.AFTERMATH), ""));
+        stages.add(new WeaponDefinition.Stage(Phase.COOLDOWN, 20, "none", ""));
+        var cues = new ArrayList<WeaponDefinition.Cue>();
+        cues.add(new WeaponDefinition.Cue(impactTick, "impact", 0, 0, 1));
+        // Each annular devastation pass starts with its own wave stage.
+        for (int i = 0; i < rings.size(); i++) {
+            Ring ring = rings.get(i);
+            cues.add(new WeaponDefinition.Cue(impactTick + impactLength + 1 + i * waveLength, "impact", 0, 0,
+                    ring.outerScale(), ring.innerScale(), ring.depthScale(), "ring", i + 1));
+        }
+        cues.sort(java.util.Comparator.comparingInt(WeaponDefinition.Cue::tick));
+        var old = base.impact();
+        var impact = new WeaponDefinition.Impact("basin", radius, depth, Math.min(.04, old.irregularity()), old.damage(), old.knockback(), old.scorch());
+        var colossalSounds = colossalSounds();
+        stages.replaceAll(stage -> new WeaponDefinition.Stage(stage.phase(), stage.ticks(), stage.camera(),
+                colossalSounds.getOrDefault(stage.phase(), base.phases().stream()
+                        .filter(original -> original.phase() == stage.phase()).map(WeaponDefinition.Stage::sound).findFirst().orElse(""))));
+        return new WeaponDefinition(base.id(), base.name(), base.behavior(), base.targeting(), stages, cues, impact, base.presentation(), base.cooldownTicks());
     }
     public WeaponDefinition apply(WeaponDefinition base,double multiplier) {
         if(tier==ScaleTier.STANDARD)return base;

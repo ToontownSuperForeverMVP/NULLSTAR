@@ -145,33 +145,36 @@ public final class CameraScripts {
             Vec3 pos=machine.add(Math.cos(a+.9+.5*p)*radius,-5+3*p,Math.sin(a+.9+.5*p)*radius);
             return new CameraPreset.Frame(pos,machine.add(0,-4,0),56,(float)(-3*Math.sin(p*Math.PI)),(float)(.12+.3*p));
         }));
-        camera.register("helios_pursuit",shot((v,a)->{ // beam pursuit down the descent column
-            double p=v.progress();
-            double headY=HeliosScene.beamHead(v);
-            double side=Math.min(18+v.radius()*.5,180);
-            Vec3 head=v.target().add(0,headY,0);
-            Vec3 pos=head.add(Math.cos(a+1.45)*side,5+v.radius()*.2,Math.sin(a+1.45)*side);
-            Vec3 look=lerp(head.add(0,Math.max(8,headY*.3),0),v.target().add(0,1,0),smooth(range(p,.6,1)));
-            return new CameraPreset.Frame(pos,look,(float)(70+10*p),(float)(6*Math.sin(p*Math.PI)),(float)(.4+.5*p));
+        // Colossal Helios world shots. A 1,000-block basin is far wider than any loaded area, so every shot stays on
+        // the player's side of ground zero inside a bounded framing radius and lets the fireball, the fronts and the
+        // horizon plumes (drawn fog-free) carry the true scale instead of pulling the camera into unloaded terrain.
+        camera.register("helios_pursuit",shot((v,a)->{ // low beside ground zero, looking up the lance as it falls from orbit
+            double p=v.progress(),headY=HeliosScene.beamHead(v),r=frameRadius(v);
+            Vec3 pos=around(v,a+.3,r*.8+20,24+14*p);
+            Vec3 look=lerp(v.target().add(0,Math.max(40,headY),0),v.target().add(0,6,0),smooth(range(p,.5,1)));
+            return new CameraPreset.Frame(pos,look,(float)(80-6*p),(float)(3*Math.sin(p*Math.PI)),(float)(.25+.55*p));
         }));
-        camera.register("helios_annihilation",shot((v,a)->{ // the machine and the blast in one frame
-            Vec3 pos=around(v,a+1.9,v.radius()*3.2+30,v.radius()*.5+30);
-            return new CameraPreset.Frame(pos,v.target().add(0,v.radius()*.3,0),80,0,.35f);
+        camera.register("helios_annihilation",shot((v,a)->{ // contact and the fireball swelling toward the lens
+            double p=smooth(v.progress()),r=frameRadius(v);
+            Vec3 pos=around(v,a+.3,r+30,36);
+            return new CameraPreset.Frame(pos,v.target().add(0,30+r*.5*p,0),86,0,.7f);
         }));
-        camera.register("helios_pressure",shot((v,a)->{ // ground-hugging pressure wall sweeping past
-            double p=smooth(v.progress());
-            Vec3 pos=around(v,a+1.9,v.radius()*2.2+16,14+v.radius()*.22+p*v.radius()*.3);
-            return new CameraPreset.Frame(pos,v.target().add(0,v.radius()*.1,0),(float)(78+6*p),0,(float)(.3+.4*p));
+        camera.register("helios_pressure",shot((v,a)->{ // lifting clear as the pressure wall rolls out beneath
+            double p=smooth(v.progress()),r=frameRadius(v);
+            Vec3 pos=around(v,a+.3+.2*p,r+30+60*p,36+r*.45*p);
+            return new CameraPreset.Frame(pos,v.target().add(0,r*.45,0),(float)(86-4*p),0,(float)(.5*(1-p)+.1));
         }));
-        camera.register("helios_crater",shot((v,a)->{ // basin overview with the rim as the scale reference
-            double p=smooth(v.progress());
-            Vec3 pos=around(v,a+2.3,140+70*p,70+v.radius()*.16+p*40);
-            return new CameraPreset.Frame(pos,v.target().add(0,-v.depth()*.25,0),(float)(82-12*p),0,.1f);
+        camera.register("helios_crater",shot((v,a)->{ // high over the second pass: column rising, eruptions on the horizon
+            double p=smooth(v.progress()),r=frameRadius(v);
+            // Low enough that the real ground stays inside a normal render distance.
+            Vec3 pos=around(v,a+.5+.25*p,r+40,r*.55+50+10*p);
+            return new CameraPreset.Frame(pos,v.target().add(0,r*.7*(1-p)+r*.25,0),80,0,.1f);
         }));
-        camera.register("helios_sweep",shot((v,a)->{ // long aftermath sweep over the devastated region
-            double p=smooth(v.progress());
-            Vec3 pos=around(v,a+2.3+1.1*p,160+80*p,80+p*40);
-            return new CameraPreset.Frame(pos,v.target().add(0,-v.depth()*.4*p,0),(float)(84-14*p),(float)(2*Math.sin(p*4)),0);
+        camera.register("helios_sweep",shot((v,a)->{ // long aftermath sweep: from the ash cap down into the real basin
+            double p=smooth(v.progress()),r=frameRadius(v);
+            Vec3 pos=around(v,a+.75+.7*p,r+50,r*.5+60+30*p);
+            Vec3 look=v.target().add(0,lerp(r*.9,-v.depth()*.45,smooth(range(p,.25,.9))),0);
+            return new CameraPreset.Frame(pos,look,(float)(82-10*p),(float)(2*Math.sin(p*4)),0);
         }));
         camera.register("singularity_sky",shot((v,a)->{ // the anomaly occupying the whole sky
             double p=v.progress();
@@ -263,4 +266,7 @@ public final class CameraScripts {
         return v.target().add(Math.cos(angle)*bounded,height,Math.sin(angle)*bounded);
     }
     static Vec3 lerp(Vec3 a,Vec3 b,double t){return a.lerp(b,Math.max(0,Math.min(1,t)));}
+    static double lerp(double a,double b,double t){t=Math.max(0,Math.min(1,t));return a+(b-a)*t;}
+    /** Bounded framing radius for colossal shots: the strike radius, capped to what a loaded area can show. */
+    static double frameRadius(StrikeView v){return Math.min(v.radius(),150);}
 }

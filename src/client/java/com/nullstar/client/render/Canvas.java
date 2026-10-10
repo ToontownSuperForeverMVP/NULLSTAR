@@ -19,6 +19,13 @@ public final class Canvas {
     private final Matrix3f normalMatrix=new Matrix3f();
     private final Vector3f p=new Vector3f(),n=new Vector3f();
     private double glow=1;
+    /** Real camera basis kept while a virtual frame temporarily swaps the billboard basis. */
+    private float realRx,realRy,realRz,realUx,realUy,realUz,realBx,realBy,realBz;
+    // ---- Part 3 virtual frame: authored camera -> real view basis -> radial depth compression.
+    private boolean virtual;
+    private float vrx,vry,vrz,vux,vuy,vuz,vbx,vby,vbz,zoom=1,vex,vey,vez;
+    /** Compressed radius (blocks) and half-distance (virtual units) of the radial depth mapping. */
+    public static final float VIRTUAL_RADIUS=.6f,VIRTUAL_HALF=90f;
 
     public Canvas(){for(Layer layer:Layer.values())sinks[layer.ordinal()]=new VertexSink(layer.budget);}
     VertexSink sink(Layer layer){return sinks[layer.ordinal()];}
@@ -26,9 +33,156 @@ public final class Canvas {
     void begin(Vec3 camera,Quaternionf orientation,double glowIntensity) {
         for(var sink:sinks)sink.clear();
         cx=camera.x;cy=camera.y;cz=camera.z;glow=glowIntensity;
-        Vector3f right=orientation.transform(new Vector3f(1,0,0)),up=orientation.transform(new Vector3f(0,1,0));
+        Vector3f right=orientation.transform(new Vector3f(1,0,0)),up=orientation.transform(new Vector3f(0,1,0)),back=orientation.transform(new Vector3f(0,0,1));
         rx=right.x;ry=right.y;rz=right.z;ux=up.x;uy=up.y;uz=up.z;
+        realRx=rx;realRy=ry;realRz=rz;realUx=ux;realUy=uy;realUz=uz;realBx=back.x;realBy=back.y;realBz=back.z;
+        virtual=false;
     }
+
+    // ------------------------------------------------------------------ virtual frame (Part 3 cosmic act)
+    /**
+     * Routes every following primitive through an authored virtual camera. Scene coordinates are virtual-world
+     * units; the camera sits at the eye looking along the forward axis. Each vertex is expressed in the virtual
+     * camera frame, magnified by {@code lens} (independent of the player's FOV), re-expressed in the real camera
+     * basis and finally pulled toward the eye by the monotonic radial mapping {@code d -> R*d/(d+K)}. That mapping
+     * preserves every screen direction and every occlusion order, so the picture is exactly what the virtual camera
+     * sees, while the whole scene fits inside {@link #VIRTUAL_RADIUS} blocks of the eye: in front of the near-depth
+     * sky dome and therefore in front of any Minecraft terrain.
+     */
+    public void beginVirtual(float eyeX,float eyeY,float eyeZ,float fx,float fy,float fz,float upX,float upY,float upZ,float lens) {
+        float fl=(float)Math.sqrt(fx*fx+fy*fy+fz*fz);fx/=fl;fy/=fl;fz/=fl;
+        float r0=fy*upZ-fz*upY,r1=fz*upX-fx*upZ,r2=fx*upY-fy*upX,rl=(float)Math.sqrt(r0*r0+r1*r1+r2*r2);
+        if(rl<1e-6f){r0=1;r1=0;r2=0;rl=1;}
+        r0/=rl;r1/=rl;r2/=rl;
+        vrx=r0;vry=r1;vrz=r2;
+        vux=r1*fz-r2*fy;vuy=r2*fx-r0*fz;vuz=r0*fy-r1*fx;
+        vbx=-fx;vby=-fy;vbz=-fz;
+        zoom=Math.max(.05f,lens);
+        virtual=true;quadFill=0;
+        vex=eyeX;vey=eyeY;vez=eyeZ;
+        rx=vrx;ry=vry;rz=vrz;ux=vux;uy=vuy;uz=vuz;
+        ox=-eyeX;oy=-eyeY;oz=-eyeZ;
+    }
+    /** Restores the real camera basis after a virtual act. */
+    public void endVirtual() {
+        virtual=false;rx=realRx;ry=realRy;rz=realRz;ux=realUx;uy=realUy;uz=realUz;
+    }
+    public boolean isVirtual(){return virtual;}
+    /** Virtual camera position (virtual-world units). */
+    public float eyeX(){return vex;}
+    public float eyeY(){return vey;}
+    public float eyeZ(){return vez;}
+    /** View direction of the current frame (virtual forward inside a virtual frame, else the real camera's). */
+    public float forwardX(){return virtual?-vbx:-realBx;}
+    public float forwardY(){return virtual?-vby:-realBy;}
+    public float forwardZ(){return virtual?-vbz:-realBz;}
+    /** Sets the local origin in virtual-world units (only meaningful inside a virtual frame). */
+    public void virtualOrigin(float x,float y,float z){ox=x-vex;oy=y-vey;oz=z-vez;}
+    private final float[] mapped=new float[6];
+    /** Maps a camera-relative virtual position and normal into the compressed real frame (result in {@link #mapped}). */
+    private void map(float x,float y,float z,float nx,float ny,float nz) {
+        float qx=(x*vrx+y*vry+z*vrz)*zoom,qy=(x*vux+y*vuy+z*vuz)*zoom,qz=x*vbx+y*vby+z*vbz;
+        float d=(float)Math.sqrt(qx*qx+qy*qy+qz*qz);
+        float k=VIRTUAL_RADIUS/(d+VIRTUAL_HALF);
+        qx*=k;qy*=k;qz*=k;
+        mapped[0]=realRx*qx+realUx*qy+realBx*qz;
+        mapped[1]=realRy*qx+realUy*qy+realBy*qz;
+        mapped[2]=realRz*qx+realUz*qy+realBz*qz;
+        float mx=nx*vrx+ny*vry+nz*vrz,my=nx*vux+ny*vuy+nz*vuz,mz=nx*vbx+ny*vby+nz*vbz;
+        mapped[3]=realRx*mx+realUx*my+realBx*mz;
+        mapped[4]=realRy*mx+realUy*my+realBy*mz;
+        mapped[5]=realRz*mx+realUz*my+realBz*mz;
+    }
+    /**
+     * Procedural cosmos dome around the virtual camera. The normal carries the unrotated virtual direction for the
+     * sky shader; u is the journey coordinate, v the scene time and the colour holds the sky controls.
+     */
+    public void skyDome(int segA,int segP,float journey,float seconds,int controls) {
+        var sink=sink(Layer.COSMIC_SKY);
+        if(!virtual||!sink.reserve(segA*segP*4))return;
+        float far=1.0e6f;
+        for(int i=0;i<segA;i++)for(int j=0;j<segP;j++) {
+            double a0=Math.PI*2*i/segA,a1=Math.PI*2*(i+1)/segA,p0=Math.PI*j/segP,p1=Math.PI*(j+1)/segP;
+            domeVertex(sink,a0,p0,far,journey,seconds,controls);domeVertex(sink,a0,p1,far,journey,seconds,controls);
+            domeVertex(sink,a1,p1,far,journey,seconds,controls);domeVertex(sink,a1,p0,far,journey,seconds,controls);
+        }
+    }
+    private void domeVertex(VertexSink sink,double azimuth,double polar,float far,float journey,float seconds,int controls) {
+        float dx=(float)(Math.sin(polar)*Math.cos(azimuth)),dy=(float)Math.cos(polar),dz=(float)(Math.sin(polar)*Math.sin(azimuth));
+        map(dx*far,dy*far,dz*far,0,1,0);
+        // The dome's flat facets sag inside its vertices; place the vertices beyond the compression asymptote so
+        // even the facet centres stay behind the farthest compressed content (otherwise distant galaxies vanish in
+        // a lattice of facet-shaped holes).
+        float scale=VIRTUAL_RADIUS*1.035f/(float)Math.sqrt(mapped[0]*mapped[0]+mapped[1]*mapped[1]+mapped[2]*mapped[2]);
+        sink.put(mapped[0]*scale,mapped[1]*scale,mapped[2]*scale,journey,seconds,controls,dx,dy,dz);
+    }
+
+    /** Material control channels for {@link Layer#COSMIC_FX}/{@link Layer#WORLD_FX}: see cosmos_fx.fsh. */
+    public static final int FX_GALAXY=0,FX_STAR=1,FX_CORONA=2,FX_BEAM=3,FX_NEBULA=4,FX_ATMOSPHERE=5,FX_SHOCK=6,FX_FLARE=7;
+    public static float fxU(double control){return 4f*Math.round(Math.max(0,Math.min(1,control))*32);}
+    public static float fxV(int mode){return 128f*mode;}
+    /** Procedural camera-facing sprite in local [-1,1] coordinates for one of the procedural materials. */
+    public void fxSprite(Layer layer,int mode,double control,float x,float y,float z,float halfWidth,float halfHeight,float rotation,int argb) {
+        float u=fxU(control),v=fxV(mode);
+        billboard(layer,x,y,z,halfWidth,halfHeight,rotation,argb,u-1,v-1,u+1,v+1);
+    }
+    /** Procedural flat sheet (galaxy discs, nebula slabs) spanned by two half-axes from its centre. */
+    public void fxSheet(Layer layer,int mode,double control,float x,float y,float z,float ax,float ay,float az,float bx,float by,float bz,int argb) {
+        float u=fxU(control),v=fxV(mode);
+        quad(layer,x-ax-bx,y-ay-by,z-az-bz,x+ax-bx,y+ay-by,z+az-bz,x+ax+bx,y+ay+by,z+az+bz,x-ax+bx,y-ay+by,z-az+bz,
+                u-1,v-1,u+1,v+1,argb,argb,argb,argb,0,0,0);
+    }
+
+    /** Light rig for baked cosmic bodies; every position is relative to the current local origin's camera frame. */
+    public static final class Light {
+        public float kx,ky,kz,kr,kg,kb;          // key light (directional, pointing toward the light)
+        public float px,py,pz,pr,pg,pb,range=1;  // point light (the contained star), camera-relative
+        public float ar,ag,ab;                   // ambient
+        public float rr,rg,rb;                   // view rim
+        public Light key(float x,float y,float z,int rgb,float power){float l=(float)Math.sqrt(x*x+y*y+z*z);kx=x/l;ky=y/l;kz=z/l;kr=r(rgb)*power;kg=g(rgb)*power;kb=b(rgb)*power;return this;}
+        public Light point(float x,float y,float z,int rgb,float power,float reach){px=x;py=y;pz=z;pr=r(rgb)*power;pg=g(rgb)*power;pb=b(rgb)*power;range=Math.max(1e-3f,reach);return this;}
+        public Light ambient(int rgb,float power){ar=r(rgb)*power;ag=g(rgb)*power;ab=b(rgb)*power;return this;}
+        public Light rim(int rgb,float power){rr=r(rgb)*power;rg=g(rgb)*power;rb=b(rgb)*power;return this;}
+        static float r(int rgb){return ((rgb>>16)&255)/255f;}
+        static float g(int rgb){return ((rgb>>8)&255)/255f;}
+        static float b(int rgb){return (rgb&255)/255f;}
+    }
+    /** BAKED: hull plating (light*albedo/2, emissive level in alpha). SCATTER/CLOUD: lit tint with the level as alpha. */
+    public enum Shading { BAKED, SCATTER, PLANET }
+    private final float[] lit=new float[3];
+    private float lastDiffuse;
+    private void shade(Light light,float x,float y,float z,float nx,float ny,float nz) {
+        float diffuse=Math.max(0,nx*light.kx+ny*light.ky+nz*light.kz);
+        lastDiffuse=nx*light.kx+ny*light.ky+nz*light.kz;
+        float lx=light.px-x,ly=light.py-y,lz=light.pz-z,dist=(float)Math.sqrt(lx*lx+ly*ly+lz*lz)+1e-4f;
+        float q=dist/light.range,falloff=1/(1+q*q);
+        // A little wrap keeps starlit hulls bathed in light instead of cut out at the terminator.
+        float point=(Math.max(0,(nx*lx+ny*ly+nz*lz)/dist)*.85f+.15f)*falloff;
+        float vd=(float)Math.sqrt(x*x+y*y+z*z)+1e-4f;
+        float facing=Math.max(0,-(nx*x+ny*y+nz*z)/vd),rim=(1-facing)*(1-facing)*(1-facing);
+        lit[0]=light.ar+light.kr*diffuse+light.pr*point+light.rr*rim;
+        lit[1]=light.ag+light.kg*diffuse+light.pg*point+light.rg*rim;
+        lit[2]=light.ab+light.kb*diffuse+light.pb*point+light.rb*rim;
+    }
+    /** Draws a mesh with per-vertex lighting from a {@link Light} rig baked into the colour channel. */
+    public void litMesh(Layer layer,Mesh mesh,Matrix4f transform,Light light,Shading shading,int albedo,double level,float du,float dv) {
+        if(!sink(layer).reserve(mesh.vertices))return;
+        transform.normal(normalMatrix);
+        float[] d=mesh.data;
+        float ar=Light.r(albedo),ag=Light.g(albedo),ab=Light.b(albedo),scale=shading==Shading.SCATTER?1f:.5f;
+        int levelBits=(int)Math.round(Math.max(0,Math.min(1,level))*255)<<24;
+        for(int i=0,k=0;k<mesh.vertices;k++,i+=8) {
+            transform.transformPosition(p.set(d[i],d[i+1],d[i+2]));normalMatrix.transform(n.set(d[i+5],d[i+6],d[i+7]));
+            float len=n.length();if(len>1e-6f)n.div(len);
+            shade(light,p.x+ox,p.y+oy,p.z+oz,n.x,n.y,n.z);
+            int bits=levelBits;
+            // PLANET: emissive night-side settlements fade in across the terminator.
+            if(shading==Shading.PLANET){float night=Math.max(0,Math.min(1,(-lastDiffuse+.05f)*4));bits=(int)Math.round(night*level*255)<<24;}
+            int argb=bits|(c255(lit[0]*ar*scale)<<16)|(c255(lit[1]*ag*scale)<<8)|c255(lit[2]*ab*scale);
+            vertex(layer,p.x,p.y,p.z,d[i+3]+du,d[i+4]+dv,argb,n.x,n.y,n.z);
+        }
+    }
+    private static int c255(float v){return Math.max(0,Math.min(255,Math.round(v*255)));}
     /** Sets the local origin in world coordinates. */
     public void origin(Vec3 world){origin(world.x,world.y,world.z);}
     public void origin(double x,double y,double z){ox=(float)(x-cx);oy=(float)(y-cy);oz=(float)(z-cz);}
@@ -50,13 +204,62 @@ public final class Canvas {
         return (r<<16)|(g<<8)|bl;
     }
     private int energy(Layer layer,int argb) {
-        if(layer.opaque()||layer==Layer.SMOKE||layer==Layer.VOID||glow==1)return argb;
+        if(layer.opaque()||layer==Layer.SMOKE||layer==Layer.ASH||layer==Layer.VOID||layer==Layer.COSMIC_CLOUD||glow==1)return argb;
         return argb(((argb>>>24)/255.0)*glow,argb);
     }
 
     // ------------------------------------------------------------------ primitives
     private void vertex(Layer layer,float x,float y,float z,float u,float v,int argb,float nx,float ny,float nz) {
+        if(virtual) {
+            // Virtual quads are buffered whole: a primitive that is large relative to its distance from the eye is
+            // subdivided before the non-linear radial mapping, so huge sheets and kilometre-long beams stay flat and
+            // straight instead of bending or clipping where they pass the lens.
+            float[] q=quadBuffer[quadFill++];
+            int col=energy(layer,argb);
+            q[0]=x+ox;q[1]=y+oy;q[2]=z+oz;q[3]=u;q[4]=v;q[5]=col>>>16;q[9]=col&0xffff;q[6]=nx;q[7]=ny;q[8]=nz;
+            if(quadFill==4){quadFill=0;virtualQuad(sink(layer),quadBuffer[0],quadBuffer[1],quadBuffer[2],quadBuffer[3],0);}
+            return;
+        }
         sink(layer).put(x+ox,y+oy,z+oz,u,v,energy(layer,argb),nx,ny,nz);
+    }
+    /** x y z u v colourHi nx ny nz colourLo: colour halves are stored as exact small integers. */
+    private final float[][] quadBuffer=new float[4][10];
+    private int quadFill;
+    private static final int MAX_SPLIT=6;
+    private void virtualQuad(VertexSink sink,float[] a,float[] b,float[] c,float[] d,int depth) {
+        if(depth<MAX_SPLIT) {
+            float near=Math.min(Math.min(len(a),len(b)),Math.min(len(c),len(d)));
+            float limit=.3f*(near+VIRTUAL_HALF);
+            boolean u=Math.max(dist(a,b),dist(c,d))>limit,v=Math.max(dist(b,c),dist(d,a))>limit;
+            // Split only across the long direction(s): a long thin beam is cut along its length, never around it.
+            if(u&&v&&depth<MAX_SPLIT-2) {
+                float[] ab=mid(a,b),bc=mid(b,c),cd=mid(c,d),da=mid(d,a),m=mid(ab,cd);
+                virtualQuad(sink,a,ab,m,da,depth+2);virtualQuad(sink,ab,b,bc,m,depth+2);
+                virtualQuad(sink,m,bc,c,cd,depth+2);virtualQuad(sink,da,m,cd,d,depth+2);
+                return;
+            }
+            if(u){float[] ab=mid(a,b),cd=mid(c,d);virtualQuad(sink,a,ab,cd,d,depth+1);virtualQuad(sink,ab,b,c,cd,depth+1);return;}
+            if(v){float[] bc=mid(b,c),da=mid(d,a);virtualQuad(sink,a,b,bc,da,depth+1);virtualQuad(sink,da,bc,c,d,depth+1);return;}
+        }
+        // Always reserve per emitted quad: an earlier split in the same primitive may have used up the original
+        // up-front reservation, and reserve() is what grows the staging arrays.
+        if(!sink.reserve(4))return;
+        emitMapped(sink,a);emitMapped(sink,b);emitMapped(sink,c);emitMapped(sink,d);
+    }
+    private void emitMapped(VertexSink sink,float[] q) {
+        map(q[0],q[1],q[2],q[6],q[7],q[8]);
+        sink.put(mapped[0],mapped[1],mapped[2],q[3],q[4],((int)q[5]<<16)|(int)q[9],mapped[3],mapped[4],mapped[5]);
+    }
+    private static float dist(float[] a,float[] b){float x=a[0]-b[0],y=a[1]-b[1],z=a[2]-b[2];return (float)Math.sqrt(x*x+y*y+z*z);}
+    private static float len(float[] a){return (float)Math.sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);}
+    /** Midpoint of two buffered vertices; colour channels are averaged per byte. */
+    private static float[] mid(float[] a,float[] b) {
+        float[] r=new float[10];
+        for(int i=0;i<9;i++)if(i!=5)r[i]=(a[i]+b[i])*.5f;
+        int ca=((int)a[5]<<16)|(int)a[9],cb=((int)b[5]<<16)|(int)b[9],c=0;
+        for(int s=0;s<32;s+=8)c|=((((ca>>>s)&255)+((cb>>>s)&255))/2)<<s;
+        r[5]=c>>>16;r[9]=c&0xffff;
+        return r;
     }
     public void quad(Layer layer,float ax,float ay,float az,float bx,float by,float bz,float cx,float cy,float cz,float dx,float dy,float dz,
                      float u0,float v0,float u1,float v1,int ca,int cb,int cc,int cd,float nx,float ny,float nz) {
@@ -84,6 +287,11 @@ public final class Canvas {
     public void smoke(float x,float y,float z,float size,float rotation,int argb,int frame) {
         float u=(frame&1)*.5f,v=((frame>>1)&1)*.5f;
         billboard(Layer.SMOKE,x,y,z,size,size,rotation,argb,u,v,u+.5f,v+.5f);
+    }
+    /** Fog-free ash sheet frame (same 2x2 atlas) for colossal plumes. */
+    public void ash(float x,float y,float z,float halfWidth,float halfHeight,float rotation,int argb,int frame) {
+        float u=(frame&1)*.5f,v=((frame>>1)&1)*.5f;
+        billboard(Layer.ASH,x,y,z,halfWidth,halfHeight,rotation,argb,u,v,u+.5f,v+.5f);
     }
     /** Camera-facing segment, widened perpendicular to both its axis and the view direction. */
     public void streak(Layer layer,float ax,float ay,float az,float bx,float by,float bz,float wa,float wb,int ca,int cb,float u0,float v0,float u1,float v1) {

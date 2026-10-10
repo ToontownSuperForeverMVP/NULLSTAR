@@ -14,16 +14,30 @@ import static com.nullstar.client.render.NullstarMaterials.*;
  * the world-space budgets of a concurrent strike.
  */
 public enum Layer {
+    /**
+     * Part 3 procedural cosmos dome. First in draw order: it overwrites colour and depth of everything drawn before
+     * it (the Minecraft world), and every cosmic layer after it depth-tests against its near depth.
+     */
+    COSMIC_SKY(4096,NullstarMaterials::cosmosSky),
     HULL_HELIOS(16384,()->hull(HELIOS_HULL)),
     HULL_GLASSFALL(16384,()->hull(GLASSFALL_HULL)),
     HULL_SINGULARITY(4096,()->hull(SINGULARITY_HULL)),
     DEBRIS(8192,()->debris(RUBBLE)),
     /** Monumental machinery: the star-harvesting mothership, its rings and the orbital bombardment platform. */
     COSMIC_HULL(32768,()->hull(NullstarMaterials.COSMIC_HULL)),
+    /** Part 3 cosmic bodies lit by the virtual scene: the mothership, planets and moons. */
+    COSMIC_BODY(65536,()->bakedHull(NullstarMaterials.COSMIC_HULL)),
+    COSMIC_PLANET(8192,()->bakedHull(NullstarMaterials.PLANET)),
+    /** Rocky moons and planets: regolith-like rubble plating under the scene's light rig. */
+    COSMIC_ROCK(8192,()->bakedHull(RUBBLE)),
     VOID(1024,()->smoke(NullstarMaterials.VOID)),
     SMOKE(8192,()->smoke(NullstarMaterials.SMOKE)),
+    /** Part 3 colossal ash: fog-free smoke so regional plumes and pressure walls read as silhouettes at any range. */
+    ASH(16384,()->ash(NullstarMaterials.SMOKE)),
     /** Alpha-blended dark backdrop that pushes the local world out of the cosmic frame. */
     COSMIC_DARK(8192,()->smoke(GAS)),
+    /** Cloud deck over the planetary body, lit per vertex. */
+    COSMIC_CLOUD(8192,()->smoke(NullstarMaterials.CLOUDS)),
     CORE_PLASMA(16384,()->energy(Energy.CORE,PLASMA)),
     CORE_FLOW(16384,()->energy(Energy.CORE,FLOW)),
     RIM_PLASMA(8192,()->energy(Energy.RIM,PLASMA)),
@@ -46,11 +60,16 @@ public enum Layer {
     COSMIC_LANCE(24576,()->energy(Energy.CORE,LANCE)),
     COSMIC_LANCE_RIM(16384,()->energy(Energy.RIM,LANCE)),
     /** Atmosphere and energy shells around planetary bodies. */
-    COSMIC_SHELL(12288,()->energy(Energy.RIM,GAS));
+    COSMIC_SHELL(12288,()->energy(Energy.RIM,GAS)),
+    /** Part 3 procedural energy: one program for galaxy discs, photospheres, coronae, beams, nebulae and shocks. */
+    COSMIC_FX(65536,NullstarMaterials::cosmosFx),
+    /** The same procedural energy materials used in world space by the colossal world scenes. */
+    WORLD_FX(32768,NullstarMaterials::cosmosFx);
 
     /** Hard vertex cap per frame for this material across all active strikes. */
     public final int budget;
     final Supplier<RenderType> type;
     Layer(int budget,Supplier<RenderType> type){this.budget=budget;this.type=type;}
-    public boolean opaque(){return this==HULL_HELIOS||this==HULL_GLASSFALL||this==HULL_SINGULARITY||this==DEBRIS||this==COSMIC_HULL;}
+    public boolean opaque(){return this==COSMIC_SKY||this==HULL_HELIOS||this==HULL_GLASSFALL||this==HULL_SINGULARITY||this==DEBRIS
+            ||this==COSMIC_HULL||this==COSMIC_BODY||this==COSMIC_PLANET||this==COSMIC_ROCK;}
 }
