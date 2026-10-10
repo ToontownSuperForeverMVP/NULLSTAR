@@ -367,5 +367,195 @@
       }
     ],
     "subtitle": "subtitles.nullstar.ui.select"
+  },
+  "cosmic.rise": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/rise",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.rise"
+  },
+  "cosmic.voyage": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/voyage",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.voyage"
+  },
+  "cosmic.galaxy": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/galaxy",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.galaxy"
+  },
+  "cosmic.boundary": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/boundary",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.boundary"
+  },
+  "cosmic.presence": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/presence",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.presence"
+  },
+  "cosmic.unfold": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/unfold",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.unfold"
+  },
+  "cosmic.crucible": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/crucible",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.crucible"
+  },
+  "cosmic.lock": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/lock",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.lock"
+  },
+  "cosmic.lance": {
+    "sounds": [
+      {
+        "name": "nullstar:cosmic/lance",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.cosmic.lance"
+  },
+  "helios.fall": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/fall",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.fall"
+  },
+  "helios.pressure": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/pressure",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.pressure"
+  },
+  "helios.eruptions": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/eruptions",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.eruptions"
+  },
+  "helios.ruin": {
+    "sounds": [
+      {
+        "name": "nullstar:helios/ruin",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.helios.ruin"
+  },
+  "singularity.gravity": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/gravity",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.gravity"
+  },
+  "singularity.resonance": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/resonance",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.resonance"
+  },
+  "singularity.compression": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/compression",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.compression"
+  },
+  "singularity.sink": {
+    "sounds": [
+      {
+        "name": "nullstar:singularity/sink",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.singularity.sink"
+  },
+  "glassfall.platform": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/platform",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.platform"
+  },
+  "glassfall.shardfield": {
+    "sounds": [
+      {
+        "name": "nullstar:glassfall/shardfield",
+        "attenuation_distance": 96,
+        "stream": true
+      }
+    ],
+    "subtitle": "subtitles.nullstar.glassfall.shardfield"
   }
 }

@@ -81,6 +81,8 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
 
     private static void prepareReal(ClientGameTestContext context,TestSingleplayerContext world) {
         // A normal player render distance, so colossal shots are judged against what a real client actually shows.
+        // Download at a small radius (the harness waits for every chunk), then widen to a normal play distance.
+        context.runOnClient(mc->mc.options.renderDistance().set(4));
         world.getConnection().waitForChunksDownload();
         context.runOnClient(mc->mc.options.renderDistance().set(12));
         world.getServer().runCommand("gamemode creative @p");
@@ -316,7 +318,7 @@ public final class VisualCaptureClientGameTest implements FabricClientGameTest {
             context.waitTicks(wait);
             shot(context,name,PART3_OUT);
         }
-        context.runOnClient(mc->NullstarClient.STATE.clear());
+        context.runOnClient(mc->{NullstarClient.STATE.clear();mc.options.renderDistance().set(4);});
     }
     static String defaultBeats(String weapon) {
         return switch(weapon) {

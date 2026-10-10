@@ -78,26 +78,35 @@ public record ScaleProfile(String weapon, ScaleTier tier, int radius, int depth,
         boolean apocalypse = tier==ScaleTier.APOCALYPSE;
         switch (weapon) {
             case "helios" -> {
-                map.put(Phase.ASCENT, "nullstar:cosmic.ascend");
-                map.put(Phase.EXOATMOSPHERIC_TRANSITION, "nullstar:cosmic.ascend");
-                map.put(Phase.PLANETARY_VIEW, "nullstar:cosmic.reveal");
-                map.put(Phase.SOLAR_SYSTEM_VIEW, "nullstar:cosmic.reveal");
-                map.put(Phase.GALACTIC_VIEW, "nullstar:cosmic.vast");
-                map.put(Phase.COSMIC_BOUNDARY_VIEW, "nullstar:cosmic.vast");
-                map.put(Phase.MOTHERSHIP_REVEAL, "nullstar:cosmic.mothership");
-                map.put(Phase.DEPLOYMENT, "nullstar:cosmic.deploy");
-                map.put(Phase.CHARGING, "nullstar:cosmic.charge");
-                map.put(Phase.ORBITAL_ALIGNMENT, "nullstar:cosmic.align");
-                map.put(Phase.FIRING, "nullstar:cosmic.fire");
+                // Part 3: one long-form bed per phase group; continuation phases stay silent so beds never overlap.
+                map.put(Phase.ASCENT, "nullstar:cosmic.rise");
+                map.put(Phase.EXOATMOSPHERIC_TRANSITION, "");
+                map.put(Phase.PLANETARY_VIEW, "nullstar:cosmic.voyage");
+                map.put(Phase.SOLAR_SYSTEM_VIEW, "");
+                map.put(Phase.GALACTIC_VIEW, "nullstar:cosmic.galaxy");
+                map.put(Phase.COSMIC_BOUNDARY_VIEW, "nullstar:cosmic.boundary");
+                map.put(Phase.MOTHERSHIP_REVEAL, "nullstar:cosmic.presence");
+                map.put(Phase.DEPLOYMENT, "nullstar:cosmic.unfold");
+                map.put(Phase.CHARGING, "nullstar:cosmic.crucible");
+                map.put(Phase.ORBITAL_ALIGNMENT, "nullstar:cosmic.lock");
+                map.put(Phase.FIRING, "nullstar:cosmic.lance");
+                map.put(Phase.ATMOSPHERIC_ENTRY, "nullstar:helios.fall");
                 map.put(Phase.IMPACT, "nullstar:cosmic.invoke");
-                if (apocalypse) map.put(Phase.AFTERMATH, "nullstar:cosmic.invoke");
+                map.put(Phase.DEVASTATION_WAVE_1, "nullstar:helios.pressure");
+                map.put(Phase.DEVASTATION_WAVE_2, "nullstar:helios.eruptions");
+                map.put(Phase.AFTERMATH, apocalypse ? "nullstar:helios.ruin" : "nullstar:helios.aftermath");
             }
             case "singularity" -> {
-                map.put(Phase.FIRING, "nullstar:singularity.vacuum");
+                map.put(Phase.CHARGING, "nullstar:singularity.gravity");
+                map.put(Phase.ORBITAL_ALIGNMENT, "nullstar:singularity.resonance");
+                map.put(Phase.FIRING, "nullstar:singularity.compression");
+                map.put(Phase.AFTERMATH, "nullstar:singularity.sink");
                 map.put(Phase.IMPACT, "nullstar:singularity.release");
             }
             case "glassfall" -> {
+                map.put(Phase.CHARGING, "nullstar:glassfall.platform");
                 map.put(Phase.ORBITAL_ALIGNMENT, "nullstar:glassfall.lattice_charge");
+                map.put(Phase.AFTERMATH, "nullstar:glassfall.shardfield");
                 map.put(Phase.IMPACT, "nullstar:glassfall.dome");
             }
             default -> { }

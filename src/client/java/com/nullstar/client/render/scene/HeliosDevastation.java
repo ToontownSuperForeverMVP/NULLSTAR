@@ -170,6 +170,17 @@ final class HeliosDevastation {
             c.annulus(Layer.WORLD_FX,0,1.2f,0,0,1,0,r*.9f,r,Fx.segments(q,96),argb(.6*(1-pd),0xffb070),argb(.6*(1-pd),0xffb070),1,Canvas.fxU(.5+.2*i),
                     Canvas.fxV(Canvas.FX_SHOCK),Canvas.fxV(Canvas.FX_SHOCK)+1);
         }
+        // 5b. A low, dark dust horizon where the outer passes ground out, so the eruptions stand on something even
+        //     where the real terrain is beyond render distance.
+        double band=smooth(range(d,.3,.42))*(1-.55*smooth(range(d,.6,1)));
+        if(band>0) {
+            int n=q.level==2?56:q.level==1?36:20;
+            float rr=ringB*.94f,h=radius*.05f,w=(float)(Math.PI*2*rr/n*.7);
+            for(int i=0;i<n;i++) {
+                double a=i*Math.PI*2/n+v.hash(12800+i)*.04;
+                c.ash((float)Math.cos(a)*rr,h*.6f,(float)Math.sin(a)*rr,Math.max(w,h*1.4f),h,(float)(v.hash(12900+i)*6),argb(.6*band,Canvas.lerpRgb(ASH_DARK,DUST,.3f)),i&3);
+            }
+        }
         // 6. The ash column and its spreading cap, underlit by the cooling fireball, clearing at the very end.
         double col=smooth(range(d,.16,.34));
         if(col>0) {

@@ -34,6 +34,10 @@ public enum Layer {
     SMOKE(8192,()->smoke(NullstarMaterials.SMOKE)),
     /** Part 3 colossal ash: fog-free smoke so regional plumes and pressure walls read as silhouettes at any range. */
     ASH(16384,()->ash(NullstarMaterials.SMOKE)),
+    /** Fog-free light-eating darkness around the colossal anomaly (alpha-blended void falloff). */
+    VOID_DEEP(4096,()->ash(NullstarMaterials.VOID)),
+    /** Fog-free alpha-blended crystal glass: Glassfall's colossal shards and pressure dome keep body in daylight. */
+    CRYSTAL_GLASS(16384,()->ash(NullstarMaterials.CRYSTAL)),
     /** Alpha-blended dark backdrop that pushes the local world out of the cosmic frame. */
     COSMIC_DARK(8192,()->smoke(GAS)),
     /** Cloud deck over the planetary body, lit per vertex. */

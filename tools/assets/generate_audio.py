@@ -122,7 +122,11 @@ def write(name, x, **kw):
     path = os.path.join(OUT, name + ".ogg")
     os.makedirs(os.path.dirname(path), exist_ok=True)
     data = master(x, **kw).astype(np.float32)
-    sf.write(path, data, SR, format="OGG", subtype="VORBIS")
+    # Block-wise writing: a single huge write overflows the native stack inside libsndfile's Vorbis encoder for
+    # the Part 3 long-form beds. The decoded samples are identical either way.
+    with sf.SoundFile(path, "w", SR, 1, format="OGG", subtype="VORBIS") as out:
+        for i in range(0, len(data), SR):
+            out.write(data[i:i + SR])
     print("wrote", os.path.relpath(path, ROOT), "%.2fs" % (len(data) / SR))
 
 
@@ -535,7 +539,192 @@ def interface():
     write("ui/select", reverb(x, .4, .1))
 
 
+# ------------------------------------------------------------------ PART 3: long-form beds for the extended timelines
+def drone(dur, base, k_curve, partials=((1, 1), (2, .4), (3, .18)), wobble=.0):
+    """Slowly evolving harmonic drone; the pitch path follows base * k_curve(t / dur)."""
+    t = t_axis(dur)
+    out = np.zeros_like(t)
+    for ratio, amp in partials:
+        f = base * ratio * k_curve(t / dur) * (1 + wobble * np.sin(2 * math.pi * (.07 + .03 * ratio) * t))
+        out += amp * np.sin(2 * math.pi * np.cumsum(f) / SR + RNG.uniform(0, 6.28))
+    return out
+
+
+def wind(dur, lo, hi, gust=.3):
+    t = t_axis(dur)
+    g = 1 + gust * np.sin(2 * math.pi * .13 * t) + gust * .6 * np.sin(2 * math.pi * .31 * t + 1)
+    return band(noise(dur), lo, hi) * g
+
+
+def pad(x, dur):
+    """Zero-pads or trims a clip to an exact duration."""
+    n = int(dur * SR)
+    return np.concatenate([x, np.zeros(max(0, n - len(x)))])[:n]
+
+
+def part3_beds():
+    """Phase-length beds for the Part 3 timelines (180 s Helios, 90 s Singularity, 100 s Glassfall). Accent times are
+    the fractions the renderer uses, so sound and picture land together at the default operator durations."""
+    flat = lambda u: 1 + 0 * u
+    # Helios: ascent and the punch through the cloud deck (ASCENT 7 s + EXOATMOSPHERIC 4 s, punch at 3.5 s).
+    d = 11.5; t = t_axis(d); k = t / d
+    x = wind(d, 120, 2400, .25) * np.clip(1 - np.abs(k - .3) / .3, 0, 1) ** 1.5 * .9
+    x += band(noise(d), 1500, 9000) * np.exp(-((t - 3.5) / .35) ** 2) * 1.4
+    place(x, sweep(180, 40, 2.2, .5) * decay(2.2, .7, .01) * 1.1, 3.4)
+    x += drone(d, 55, lambda u: 1 + .5 * u, wobble=.004) * np.clip((k - .3) / .25, 0, 1) * env(d, .01, 2.0) * .55
+    x += band(noise(d), 4000, 11000) * np.clip((k - .45) / .4, 0, 1) * .07
+    write("cosmic/rise", reverb(x, 5.0, .45, .05), drive=1.3, fade_out=1.2)
+
+    # Helios: planet and solar system (7 s + 6 s): warm and vast, the sun swelling at the second act.
+    d = 13.5; t = t_axis(d)
+    x = drone(d, 41.2, lambda u: 1 + .02 * np.sin(u * 6), ((1, 1), (1.5, .45), (2, .5), (3, .2), (4, .1)), .003) * env(d, 2.5, 2.5) * .8
+    x += drone(d, 164.8, flat, ((1, .4), (1.25, .25), (1.5, .3)), .004) * env(d, 4, 3) * np.clip((t - 6.5) / 2.5, 0, 1) * .35
+    x += band(noise(d), 2500, 9000) * env(d, 3, 3) * .05
+    place(x, band(noise(4.0), 200, 3000) * env(4.0, 1.6, 2.2) * .3, 6.6)
+    write("cosmic/voyage", reverb(x, 7.0, .55, .08), drive=1.2, fade_out=1.5)
+
+    # Helios: leaving the Milky Way (7 s): shimmering, widening, colder.
+    d = 7.5; t = t_axis(d)
+    x = drone(d, 110, lambda u: 1 - .05 * u, ((1, .5), (1.498, .4), (2.003, .3), (2.997, .2), (4.01, .12)), .006) * env(d, 1.5, 2) * .6
+    x += drone(d, 27.5, flat, ((1, 1), (2, .3)), .002) * env(d, 2, 2) * .7
+    x += band(noise(d), 5000, 12000) * (.5 + .5 * np.sin(2 * math.pi * 3.1 * t)) * env(d, 2, 2) * .05
+    write("cosmic/galaxy", reverb(x, 8.0, .6, .1), drive=1.15, fade_out=1.4)
+
+    # Helios: the observable boundary (6 s): retreat, the turn, the dive and the pass-through at 93 percent.
+    d = 6.5; t = t_axis(d)
+    x = drone(d, 33, lambda u: 1 + 1.2 * np.clip((u - .62) / .3, 0, 1) ** 2, ((1, 1), (2, .4)), .002) * env(d, 1.2, .2) * .8
+    x += band(noise(d), 300, 6000) * np.clip((t - 3.7) / 1.9, 0, 1) ** 2.5 * (t < 5.6) * 1.1
+    place(x, band(noise(1.4), 100, 14000) * decay(1.4, .18, .003) * 2.2, 5.58)
+    place(x, sweep(120, 22, 1.0, .4) * decay(1.0, .5) * 1.4, 5.6)
+    write("cosmic/boundary", reverb(x, 6.0, .5, .04), drive=1.8, fade_out=.6)
+
+    # Helios: mothership presence (12 s): monumental and ancient, star-hum through the hull.
+    d = 12.5; t = t_axis(d)
+    x = drone(d, 29.1, lambda u: 1 + .08 * u, ((1, 1), (1.5, .35), (2, .45), (2.5, .15)), .002) * env(d, 3, 2) * 1.0
+    x += drone(d, 220, flat, ((1, .2), (1.005, .2))) * (.5 + .5 * np.sin(2 * math.pi * .4 * t)) * env(d, 5, 3) * .12
+    for i, at in enumerate((1.2, 3.4, 5.9, 8.1, 10.6)):
+        place(x, metal_hit(2.6, 31 - i * 1.5, 1.4, .6) * (.55 + .05 * i), at)
+    write("cosmic/presence", reverb(x, 7.5, .55, .09), drive=1.4, fade_out=1.4)
+
+    # Helios: deployment (18 s): armour 0-22 %, petals 14-62 %, rings 40-72 %, alignment 58-86 %, pylons 70-100 %.
+    d = 18.5; t = t_axis(d); k = t / 18.0
+    x = band(noise(d), 25, 160) * env(d, 1, 2) * .55
+    for i in range(6):
+        at = .3 + i * .55
+        place(x, band(sweep(90, 260, .9, 1, "saw"), 60, 1600) * env(.9, .1, .3) * .25, at)
+        place(x, metal_hit(1.4, 70 - i * 3, .5, .8) * .5, at + .8)
+    x += band(sweep(40, 110, d, 1.2, "saw"), 30, 900) * np.clip(1 - np.abs(k - .38) / .26, 0, 1) * .35
+    x += band(noise(d), 200, 1400) * (.5 + .5 * np.sin(2 * math.pi * .9 * t)) * np.clip(1 - np.abs(k - .56) / .17, 0, 1) * .3
+    for i, at in enumerate((10.8, 12.0, 13.1, 14.3, 15.4)):
+        place(x, metal_hit(1.8, 52 - i * 2.5, .7, .85) * .85, at)
+    x += band(sweep(300, 900, d, 1, "saw"), 200, 2400) * np.clip((k - .7) / .3, 0, 1) * .12
+    place(x, tone(30, 2.2, ((1, 1), (2, .3))) * decay(2.2, .7, .01) * 1.4, 17.6)
+    write("cosmic/unfold", reverb(x, 5.0, .45, .05), drive=1.7, fade_out=.8)
+
+    # Helios: the crucible (18 s): the star wrung out, containment clamps between 45 and 90 percent.
+    d = 18.5; t = t_axis(d); k = np.clip(t / 18.0, 0, 1)
+    x = drone(d, 36, lambda u: 1 + 1.6 * u ** 2, ((1, 1), (2, .5), (3, .25)), .004) * env(d, 2, .6) * 1.0
+    x += band(noise(d), 60, 1800) * (k ** 1.6) * (1 + .4 * np.sin(2 * math.pi * (2 + 6 * k) * t)) * .7
+    x += band(noise(d), 2500, 10000) * (k ** 3) * .2
+    for i, at in enumerate((8.1, 10.0, 11.8, 13.5, 15.0, 16.2)):
+        place(x, metal_hit(1.6, 40 + i * 2, .6, .9) * 1.0, at)
+        place(x, tone(26, 1.0) * decay(1.0, .35, .005) * 1.2, at)
+    write("cosmic/crucible", reverb(x, 5.5, .45, .05), drive=2.0, fade_out=.6)
+
+    # Helios: alignment (8 s): the iris grinds open, the barrel locks at 62-70 percent, then the held breath.
+    d = 8.5; t = t_axis(d)
+    x = np.zeros(int(d * SR))
+    place(x, band(sweep(70, 140, 4.0, 1, "saw"), 50, 1200) * env(4.0, .4, .6) * .45, .8)
+    place(x, metal_hit(2.4, 34, 1.0, .9) * 1.6, 5.0)
+    place(x, tone(22, 2.4, ((1, 1), (2, .2))) * decay(2.4, .9, .004) * 1.8, 5.0)
+    x += tone(1760, d) * np.clip((t - 6.0) / 1.5, 0, 1) * .02
+    write("cosmic/lock", reverb(x, 5.0, .45, .04), drive=1.8, fade_out=.3)
+
+    # Helios: the lance (10 s): breath held until 12 percent, discharge, roar, the ride and the atmospheric blow.
+    d = 10.5
+    x = np.zeros(int(d * SR))
+    seg = 9.3; tt = t_axis(seg)
+    ride = band(noise(seg), 80, 5000) * (np.exp(-tt / 2.6) * 1.6 + .5 * np.clip((tt - 3.0) / 5.5, 0, 1) ** 2)
+    ride += sweep(240, 22, seg, .25) * decay(seg, 1.4, .002) * 2.4
+    ride += band(noise(seg), 200, 16000) * decay(seg, .05) * 2.8
+    ride += sweep(4200, 700, seg, .6) * env(seg, .02, 3) * .16
+    place(x, ride, 1.2)
+    place(x, band(noise(1.0), 60, 9000) * decay(1.0, .25, .003) * 1.8, 9.6)
+    write("cosmic/lance", reverb(x, 6.0, .45, .03), drive=2.4, fade_out=.5)
+
+    # Helios: the fall through the atmosphere (7 s), tearing the cloud deck at 3 s.
+    d = 7.5; t = t_axis(d); k = t / d
+    x = band(noise(d), 50, 3000) * (.3 + 1.1 * k ** 1.4) + sweep(900, 140, d, 1.2) * env(d, .5, .4) * .2
+    place(x, band(noise(1.6), 300, 6000) * env(1.6, .2, 1.0) * .9, 3.0)
+    x += drone(d, 31, lambda u: 1 - .3 * u, ((1, 1), (2, .3))) * k * .9
+    write("helios/fall", reverb(x, 4.0, .4, .03), drive=2.0, fade_out=.3)
+
+    # Helios: the pressure wall (10 s): approaching, passing near 4 s, rolling away.
+    d = 10.5; t = t_axis(d)
+    near = np.exp(-((t - 4.0) / 1.6) ** 2)
+    x = band(noise(d), 25, 1600) * (.4 + 1.4 * near) + crackle(d, 140, 400, 4000, .01) * (.2 + near)
+    x += band(noise(d), 18, 90) * np.exp(-np.clip(t - 4, 0, None) / 4) * 1.4
+    write("helios/pressure", reverb(x, 5.0, .45, .04), drive=1.9, fade_out=1.0)
+
+    # Helios: the annular eruption passes (10 s): distant booms walking around the horizon.
+    d = 10.5
+    x = band(noise(d), 20, 140) * env(d, 1, 3) * .8
+    for i in range(11):
+        at = .4 + i * .85 + RNG.uniform(-.2, .2)
+        place(x, (band(noise(2.6), 30, 900) * decay(2.6, .5, .01) + sweep(70, 25, 2.6, .5) * decay(2.6, .6)) * (.5 + .5 * RNG.uniform()), at)
+    write("helios/eruptions", reverb(x, 7.0, .55, .08), drive=1.6, fade_out=1.2)
+
+    # Helios: the ruin (28 s): wind across the basin, fires, settling rubble, distant aftershocks, then a clearing.
+    d = 28.0; t = t_axis(d); k = t / d
+    x = wind(d, 80, 1800, .35) * (.6 - .3 * k) + crackle(d, 60, 800, 6000, .006) * (.5 - .35 * k)
+    x += band(noise(d), 18, 70) * (.6 - .4 * k)
+    for at in (3.5, 9.0, 15.5, 22.0):
+        place(x, band(noise(3.5), 20, 400) * decay(3.5, .9, .05) * .9, at)
+    x += drone(d, 55, flat, ((1, .3), (1.5, .2), (2, .15)), .003) * np.clip((k - .6) / .3, 0, 1) * .4
+    write("helios/ruin", reverb(x, 6.0, .5, .08), drive=1.25, fade_out=3.0)
+
+    # Singularity: gravity (11 s), resonance (8 s), compression with its hush (11 s) and the sink (30 s).
+    d = 11.5; t = t_axis(d); k = t / d
+    x = drone(d, 24, lambda u: 1 - .25 * u, ((1, 1), (1.41, .4), (2, .35), (2.83, .15)), .01) * env(d, 2.5, .8) * 1.1
+    x += band(noise(d), 30, 300) * (.3 + .7 * k) * (1 + .5 * np.sin(2 * math.pi * (.5 + 2 * k) * t)) * .6
+    write("singularity/gravity", reverb(x, 6.0, .5, .06), drive=1.8, fade_out=.8)
+    d = 8.0
+    x = drone(d, 55, lambda u: 1 + .1 * u, ((1, .8), (1.012, .8), (2, .3), (2.03, .3))) * env(d, 1, 1) * .8
+    x += drone(d, 330, lambda u: 1 - .2 * u, ((1, .15), (1.06, .15)), .02) * env(d, 2, 1) * .5
+    write("singularity/resonance", reverb(x, 5.0, .5, .05), drive=1.6, fade_out=.8)
+    d = 11.5; t = t_axis(d); k = np.clip(t / 11.25, 0, 1)
+    hush = np.clip(1 - np.clip((k - .5) / .08, 0, 1) + np.clip((k - .72) / .04, 0, 1), 0, 1)
+    x = drone(d, 30, lambda u: 1 + 2.2 * u ** 2, ((1, 1), (2, .4), (3, .2)), .008) * hush * .9
+    x += band(noise(d), 80, 3000) * (k ** 2) * hush * .6
+    x += band(sweep(60, 900, d, 2.0, "saw"), 40, 4000) * np.clip((k - .74) / .26, 0, 1) ** 2 * .5
+    x += tone(2093, d) * np.clip(1 - hush, 0, 1) * .015
+    write("singularity/compression", reverb(x, 5.0, .45, .04), drive=1.9, fade_out=.1)
+    d = 30.0; t = t_axis(d); k = t / d
+    x = drone(d, 22, lambda u: 1 - .15 * u, ((1, 1), (1.5, .3), (2, .3)), .006) * np.exp(-t / 14) * 1.0
+    x += crackle(d, 40, 300, 3000, .02) * (.6 - .5 * k) + wind(d, 60, 900, .4) * .35
+    for at in (2.0, 6.5, 12.0, 19.0):
+        place(x, tone(41, 4.0, ((1, 1), (2.7, .3))) * decay(4.0, 1.2, .02) * .5, at)
+    write("singularity/sink", reverb(x, 7.0, .55, .08), drive=1.3, fade_out=3.0)
+
+    # Glassfall: the platform waking (12.5 s) and the shard field (30 s).
+    d = 13.0; t = t_axis(d); k = t / d
+    x = drone(d, 36.7, lambda u: 1 + .1 * u, ((1, 1), (2, .4), (3, .2)), .003) * env(d, 2, 1) * .8
+    for i in range(9):
+        place(x, bell(440 * (1.5 ** (i % 4)) / 2, 3.0, 1.2, .6) * .08, .8 + i * 1.3)
+        place(x, metal_hit(1.2, 60 + i * 4, .4, .8) * .4, 1.0 + i * 1.3)
+    x += band(noise(d), 3000, 10000) * (k ** 2) * .06
+    write("glassfall/platform", reverb(x, 5.0, .5, .05), drive=1.6, fade_out=.8)
+    d = 30.0; t = t_axis(d)
+    x = wind(d, 200, 3000, .3) * .3
+    for i in range(46):
+        at = RNG.uniform(.2, d - 3.5)
+        place(x, bell(RNG.uniform(900, 3200), 3.0, RNG.uniform(.4, 1.4), .5) * RNG.uniform(.03, .1) * (1 - at / d * .7), at)
+    x += drone(d, 73.4, flat, ((1, .4), (1.5, .3), (2, .2)), .002) * np.exp(-t / 16) * .5
+    write("glassfall/shardfield", reverb(x, 7.0, .6, .08), drive=1.2, fade_out=3.0)
+
+
 # The generator shares one seeded RNG stream, so the Part 2 set is generated first and in its original order:
-# the new cosmic/colossal sounds are appended afterwards and cannot disturb any validated existing asset.
+# the new cosmic/colossal sounds, then the Part 3 beds, are appended and cannot disturb any validated existing asset.
 if __name__ == "__main__":
     helios(); singularity(); glassfall(); interface(); cosmic(); colossal_releases()
+    part3_beds()

@@ -19,6 +19,11 @@ public final class NullstarSounds {
         "cosmic.ascend","cosmic.reveal","cosmic.vast","cosmic.mothership","cosmic.deploy","cosmic.charge",
         "cosmic.align","cosmic.fire","cosmic.invoke",
         "singularity.vacuum","singularity.release","glassfall.lattice_charge","glassfall.dome",
+        // Part 3 long-form beds sized to the extended colossal phases.
+        "cosmic.rise","cosmic.voyage","cosmic.galaxy","cosmic.boundary","cosmic.presence","cosmic.unfold","cosmic.crucible",
+        "cosmic.lock","cosmic.lance","helios.fall","helios.pressure","helios.eruptions","helios.ruin",
+        "singularity.gravity","singularity.resonance","singularity.compression","singularity.sink",
+        "glassfall.platform","glassfall.shardfield",
         "ui.lock","ui.select"
     };
     private NullstarSounds() {}

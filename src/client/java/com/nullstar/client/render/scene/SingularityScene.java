@@ -34,6 +34,7 @@ public final class SingularityScene implements WeaponScene {
     static final float CORE_Y=4;
     private final Map<UUID,Integer> groundTint=new HashMap<>();
     private final Matrix4f m=new Matrix4f();
+    private final SingularityCollapse collapse=new SingularityCollapse();
     private static final Mesh SHARD=new Mesh.Builder().uvScale(.5f).crystal(.5f,.9f,1.2f,5,.6f).build();
     private static final Mesh SLAB=new Mesh.Builder().uvScale(.4f).box(-.6f,-.16f,-.9f,.6f,.16f,.9f).build();
 
@@ -43,11 +44,13 @@ public final class SingularityScene implements WeaponScene {
      * collapse hangs its body far up in the sky where it reads against the horizon.
      */
     public static float coreY(StrikeView v) {
+        // Part 3: a colossal anomaly hangs low enough (about 170 blocks for APOCALYPSE) that a camera inside the
+        // loaded area sees it fill the sky above the real horizon instead of a speck far overhead.
         double c=PresentationScale.colossal(v);
-        return (float)(CORE_Y+(PresentationScale.altitude(v)-CORE_Y)*c);
+        return (float)(CORE_Y+(60+110*c-CORE_Y)*c);
     }
-    /** Horizon/disk base multiplier: 1 STANDARD, ~2.4 TITANIC, ~3.6 APOCALYPSE. */
-    static float body(StrikeView v){return (float)(1+2.6*PresentationScale.colossal(v));}
+    /** Horizon/disk base multiplier: 1 STANDARD, ~14 TITANIC, 25 APOCALYPSE (an event horizon ~65 blocks across). */
+    static float body(StrikeView v){return (float)(1+24*PresentationScale.colossal(v));}
     /** Outer orbital structure multiplier: 1 STANDARD, ~3.8 TITANIC, ~6 APOCALYPSE. */
     static float sprawl(StrikeView v){return (float)(1+5*PresentationScale.colossal(v));}
     static boolean colossal(StrikeView v){return PresentationScale.colossal(v)>0;}
@@ -57,6 +60,8 @@ public final class SingularityScene implements WeaponScene {
         float base;
         if(v.in(Phase.ACQUIRING))base=(float)(.15+.35*v.progress());
         else if(v.in(Phase.CHARGING))base=(float)(.5+1.7*smoother(v.progress()));
+        // Colossal profiles insert an alignment stage between the charge and the collapse: hold the charged horizon.
+        else if(v.in(Phase.ORBITAL_ALIGNMENT))base=2.2f;
         else if(v.atOrAfter(Phase.FIRING)&&v.before(Phase.IMPACT)) {
             double p=collapse(v);
             base=(float)((2.2+.4*smooth(range(p,0,.6)))*(1-.86*smoother(range(p,.74,1))));
@@ -78,6 +83,11 @@ public final class SingularityScene implements WeaponScene {
     @Override public void render(StrikeView v,Canvas c,ClientConfig.Quality q) {
         double t=v.age();
         if(!v.atOrAfter(Phase.IMPACT))drawAnomaly(v,c,q,t);
+        if(colossal(v)) {
+            // Part 3: a distinct gravitational collapse and sink-basin aftermath (never Helios in violet).
+            collapse.render(v,c,q,t,groundTint.getOrDefault(v.state().id(),0x7a7068));
+            return;
+        }
         drawImplosion(v,c,q,t);
         if(v.atOrAfter(Phase.AFTERMATH)&&v.before(Phase.COMPLETE))drawAftermath(v,c,q,t);
     }
@@ -97,9 +107,9 @@ public final class SingularityScene implements WeaponScene {
         // 1. Opaque event horizon: occludes the far side of the disk because it writes depth.
         c.sphere(Layer.DEBRIS,0,cy,0,rc,0x00000000,0,0,true);
         c.billboard(Layer.VOID,0,cy,0,rc*1.22f,0,argb(.85,0x000000));
-        if(NullstarClient.config().screenDistortion&&q.level>=1)c.billboard(Layer.VOID,0,cy,0,rc*(3.6f+(float)form)*(1+.6f*(bd-1)),0,argb(.22*dim,0x08000f));
+        if(NullstarClient.config().screenDistortion&&q.level>=1&&!big)c.billboard(Layer.VOID,0,cy,0,rc*(3.6f+(float)form)*(1+.6f*(bd-1)),0,argb(.22*dim,0x08000f));
         // 2. Accretion disk with Keplerian shear and Doppler-brightened approaching side.
-        drawDisk(c,v,q,t,rc,cy,nx,ny,nz,dim*(.4+.6*form),sp);
+        drawDisk(c,v,q,t,rc,cy,nx,ny,nz,dim*(.4+.6*form),big?rc*.45f:sp);
         // 3. Gravitationally lensed image of the disk's far side, bent over and under the horizon.
         drawLensedArcs(c,v,q,t,rc,cy,dim*(.3+.7*form));
         // 4. Uneven luminous boundary (photon ring) and refractive shells.
@@ -111,7 +121,13 @@ public final class SingularityScene implements WeaponScene {
         }
         c.billboard(Layer.GLOW,0,cy,0,rc*5,0,argb(.25*dim*(.5+.5*form),DEEP));
         // 5. Accretion rings: three tilted, unevenly rotating dashed rings that shake apart before the collapse.
-        drawAccretionRings(v,c,q,t,cy,rc,dim*(.5+.5*form),inst,big,sp);
+        drawAccretionRings(v,c,q,t,cy,rc,dim*(.5+.5*form),inst,big,big?1:sp);
+        // Part 3: the anomaly eats daylight. A fog-free falloff darkens the sky around it so the horizon, the disk
+        // and the lensed arcs read against a bruised sky instead of washing out in full sun.
+        if(big) {
+            c.billboard(Layer.VOID_DEEP,0,cy,0,rc*(4.2f+2f*(float)form),(float)(t*.002),argb(.36*dim*(.35+.65*form),0x05000a));
+            c.billboard(Layer.VOID_DEEP,0,cy,0,rc*(8f+3f*(float)form),(float)(-t*.0013),argb(.18*dim*(.3+.7*form),0x0a0414));
+        }
         // 6. Colossal accretion architecture: a slow precessing outer torus plus broad tilted ring systems that
         //    make the anomaly the largest object on the horizon.
         if(big)drawOuterStructures(v,c,q,t,cy,rc,form,inst,contraction,hold,dim);
@@ -154,7 +170,7 @@ public final class SingularityScene implements WeaponScene {
         if(collapsing(v))drawAttraction(v,c,q,t,rc,contraction,big);
         // 11. The hush: the anomaly swallows its own light and implodes a dark shell inward.
         if(hold>.05) {
-            float hr=(float)(rc*(3.2f+2.4f*sp)*(1-.55*hold));
+            float hr=(float)(rc*(3.2f+2.4f*(big?1:sp))*(1-.55*hold));
             c.sphere(Layer.RIM_PLASMA,0,cy,0,hr,argb(.1*hold,0x120018),(float)(-t*.02),0,false);
             c.billboard(Layer.VOID,0,cy,0,hr*1.35f,0,argb(.55*hold,0x000000));
         }

@@ -107,9 +107,19 @@ class ColossalPresentationTest {
         assertEquals("helios_pressure",camera(def,Phase.DEVASTATION_WAVE_1));
         assertEquals("helios_crater",camera(def,Phase.DEVASTATION_WAVE_2));
         assertEquals("helios_sweep",camera(def,Phase.AFTERMATH));
-        assertEquals("nullstar:cosmic.charge",sound(def,Phase.CHARGING));
-        assertEquals("nullstar:cosmic.fire",sound(def,Phase.FIRING));
+        // Part 3 long-form beds: one per phase group, continuation phases silent, every bed a registered event.
+        assertEquals("nullstar:cosmic.crucible",sound(def,Phase.CHARGING));
+        assertEquals("nullstar:cosmic.lance",sound(def,Phase.FIRING));
         assertEquals("nullstar:cosmic.invoke",sound(def,Phase.IMPACT));
+        assertEquals("nullstar:helios.ruin",sound(def,Phase.AFTERMATH));
+        assertEquals("",sound(def,Phase.SOLAR_SYSTEM_VIEW));
+        var registered=java.util.Set.of(com.nullstar.NullstarSounds.IDS);
+        for(var w:java.util.List.of("helios","singularity","glassfall"))
+            for(var tier:java.util.List.of(ScaleTier.TITANIC,ScaleTier.APOCALYPSE)) {
+                var profile=ScaleCatalog.defaults().stream().filter(p->p.weapon().equals(w)&&p.tier()==tier).findFirst().orElseThrow();
+                for(var stage:profile.apply(weapons().get(w)).phases())
+                    if(!stage.sound().isEmpty())assertTrue(registered.contains(stage.sound().replace("nullstar:","")),stage.sound());
+            }
         // STANDARD keeps the bundled authoring untouched.
         var standard=weapons().get("helios");
         assertEquals("helios_discharge",camera(standard,Phase.FIRING));

@@ -204,7 +204,7 @@ public final class Canvas {
         return (r<<16)|(g<<8)|bl;
     }
     private int energy(Layer layer,int argb) {
-        if(layer.opaque()||layer==Layer.SMOKE||layer==Layer.ASH||layer==Layer.VOID||layer==Layer.COSMIC_CLOUD||glow==1)return argb;
+        if(layer.opaque()||layer==Layer.SMOKE||layer==Layer.ASH||layer==Layer.VOID_DEEP||layer==Layer.CRYSTAL_GLASS||layer==Layer.VOID||layer==Layer.COSMIC_CLOUD||glow==1)return argb;
         return argb(((argb>>>24)/255.0)*glow,argb);
     }
 

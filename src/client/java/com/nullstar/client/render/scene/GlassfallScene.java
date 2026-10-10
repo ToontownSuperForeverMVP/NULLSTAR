@@ -40,6 +40,7 @@ public final class GlassfallScene implements WeaponScene {
     private static final float MOUNT_RADIUS=8.5f,HELD_DEPTH=-5.5f;
     private final Matrix4f root=new Matrix4f(),m=new Matrix4f();
     private final Vector3f tmp=new Vector3f();
+    private final GlassfallBarrage barrage=new GlassfallBarrage();
 
     private static void build() {
         if(hub!=null)return;
@@ -105,7 +106,10 @@ public final class GlassfallScene implements WeaponScene {
     public static float latticeY(StrikeView v) {
         double descend=smoother(range(v.through(Phase.CHARGING),0,.6));
         double ascend=smoother(range(v.through(Phase.AFTERMATH),.2,1));
-        return (float)(PresentationScale.altitude(v)+(1-descend)*30+ascend*44);
+        // Part 3: a colossal platform hangs near 200 blocks so a camera inside the loaded area can frame it whole.
+        double c=PresentationScale.colossal(v);
+        double base=c>0?150+50*c:PresentationScale.altitude(v);
+        return (float)(base+(1-descend)*30+ascend*44);
     }
     /** Rail mount (origin-relative) for projectile index i. Colossal platforms grow their mount radius. */
     static Vector3f railMount(StrikeView v,float[][] offsets,int i,float y) {
@@ -175,7 +179,9 @@ public final class GlassfallScene implements WeaponScene {
         boolean visible=!v.before(Phase.CHARGING)&&!v.atOrAfter(Phase.COOLDOWN)&&!v.atOrAfter(Phase.COMPLETE);
         if(visible)drawLattice(v,c,q,t,ly,offsets);
         drawProjectiles(v,c,q,t,ly,offsets);
-        drawImpacts(v,c,q,t);
+        // Part 3: colossal strikes use the crystalline barrage, finale dome and shard-field aftermath.
+        if(PresentationScale.colossal(v)>0)barrage.render(v,c,q,t);
+        else drawImpacts(v,c,q,t);
         if(v.in(Phase.ACQUIRING)||v.in(Phase.CHARGING)) {
             double appear=v.in(Phase.ACQUIRING)?v.progress():1-v.progress()*.7;
             // Colossal profiles mark their real devastation footprint, not just the primary crater.
