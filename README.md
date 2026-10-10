@@ -14,6 +14,8 @@
 
 [Get started](#installation) · [Weapons](#the-arsenal) · [Colossal strikes](#colossal-strikes) · [Configuration](#server-configuration) · [Build & test](#building-from-source)
 
+[**Download NULLSTAR v1.0.0**](https://github.com/ToontownSuperForeverMVP/NULLSTAR/releases/tag/v1.0.0)
+
 </div>
 
 NULLSTAR: **Cataclysm Engine** is an original Minecraft **26.3** Fabric mod that turns orbital destruction into a directed spectacle. Deploy a golden stellar collector, form a gravitational anomaly, or unfold a crystalline bombardment array. Watch machinery assemble, energy gather, and the sky answer your designation—then walk through the crater it leaves behind.
@@ -129,7 +131,7 @@ Install NULLSTAR and Fabric API on **both client and server**. Dedicated servers
 ## Installation
 
 1. Create a **Minecraft 26.3 Fabric** instance using Java 25 and the dependencies above.
-2. Build from source below, or obtain a production JAR from a successful [GitHub Actions build](https://github.com/ToontownSuperForeverMVP/NULLSTAR/actions). Workflow artifacts are build outputs, not a separate stable-release guarantee.
+2. Download **[nullstar-1.0.0.jar](https://github.com/ToontownSuperForeverMVP/NULLSTAR/releases/download/v1.0.0/nullstar-1.0.0.jar)** from the **[NULLSTAR v1.0.0 release](https://github.com/ToontownSuperForeverMVP/NULLSTAR/releases/tag/v1.0.0)**. Developer builds are also available from source or successful [GitHub Actions builds](https://github.com/ToontownSuperForeverMVP/NULLSTAR/actions).
 3. Put **`nullstar-1.0.0.jar`** and matching Fabric API in the instance's `mods` directory. Install the same mod on your multiplayer server.
 4. Optionally add Mod Menu 21.0.0 to the client.
 5. Launch. Configuration is created under `config/nullstar` on first initialization.

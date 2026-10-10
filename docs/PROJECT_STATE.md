@@ -2,6 +2,12 @@
 
 ## Current publication
 
+**NULLSTAR v1.0.0** is published at
+<https://github.com/ToontownSuperForeverMVP/NULLSTAR/releases/tag/v1.0.0>.
+The release tag points to `574b26e8bf25e28de6d83261126d95b750a1b162`;
+the attached production/source JARs come from that commit's successful CI build.
+See [RELEASE_V1.0.0.md](RELEASE_V1.0.0.md) for artifact provenance and verification.
+
 The repository now includes Part 3 source: rebuilt cosmic shaders/scenes, long-form audio,
 Apocalypse Helios's 3,600-tick (180-second) default, unloaded-region terrain deferral,
 and a parked detached cosmic camera. The player is never teleported. Current overview,
