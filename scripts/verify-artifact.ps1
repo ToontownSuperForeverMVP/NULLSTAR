@@ -25,6 +25,10 @@ try {
         throw 'Production artifact validation failed'
     }
     if (@($metadata.entrypoints.main) -notcontains 'com.nullstar.Nullstar') { throw 'Wrong main entrypoint' }
+    if (@($metadata.entrypoints.modmenu) -notcontains 'com.nullstar.client.integration.NullstarModMenu') { throw 'Missing Mod Menu entrypoint' }
+    if ($null -eq $archive.GetEntry('com/nullstar/client/integration/NullstarModMenu.class')) { throw 'Missing Mod Menu integration class' }
+    if ($metadata.depends.PSObject.Properties.Name -contains 'modmenu') { throw 'Mod Menu must remain optional' }
+    if (@($archive.Entries | Where-Object { $_.FullName -match '^com/terraformersmc/|^com/nullstar/test/|modmenu.*\.jar$' }).Count -ne 0) { throw 'Optional dependency or tests bundled in production artifact' }
     $result = [ordered]@{
         Version = $metadata.version
         Entrypoint = @($metadata.entrypoints.main)
@@ -32,6 +36,7 @@ try {
         TestClasses = $testEntries.Count
         Common = $true
         Client = $true
+        OptionalModMenu = $true
         ClassMajor = $major
         Sha256 = (Get-FileHash -LiteralPath $artifactPath -Algorithm SHA256).Hash
         Generator = 'scripts/verify-artifact.ps1'

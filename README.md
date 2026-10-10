@@ -16,6 +16,8 @@ C:\Users\Shadow\AppData\Roaming\PrismLauncher\instances\26.3\minecraft\mods
 
 The release remains in this repository; the build/tests do not modify Prism's instance or its saves. Use a disposable creative world for destructive testing.
 
+Optional: install [Mod Menu](https://modrinth.com/mod/modmenu) **21.0.0 for Minecraft 26.3** on the client. Open **Mods → NULLSTAR → Configure** from the title screen or pause menu to customize all local graphics, camera, audio and accessibility settings, including the native particle budget and Reset defaults. Changes apply immediately and save when closing with Done or Escape. Mod Menu is not bundled or required; **N** still opens the same settings screen in-game without it. Server/operator configuration stays in the server JSON files.
+
 ## Play
 
 Enable cheats/operator permissions, then run `/nullstar give`. The controller is also in **Tools & Utilities** in creative inventory.
@@ -25,7 +27,7 @@ Enable cheats/operator permissions, then run `/nullstar give`. The controller is
 - **Use/G again**: authorize the confirmed strike. Move clear of the target in survival.
 - **K**: skip your cinematic view while the strike continues.
 - **C**: toggle cinematic camera effects.
-- **N**: open NULLSTAR visual settings (quality, particles, camera, shake, reduced motion/flashing, distortion, glow, cinematic audio, letterbox).
+- **N**: open NULLSTAR visual settings (quality, particles, native particle budget, camera, shake, reduced motion/flashing, distortion, glow, cinematic audio, letterbox, reset defaults).
 
 Keybinds are editable in Minecraft's Controls settings.
 
@@ -73,6 +75,8 @@ STANDARD server defaults: terrain destruction on, operators only, radius/depth c
 
 Client defaults: quality MEDIUM, particle intensity 100%, cinematic camera enabled, shake 0.35, reduced motion off, reduced flashing **on**, screen distortion on, glow 100%, cinematic audio 100%, letterbox on, native particle budget 192/tick (used by the LOW preset and the fallback). Reduced motion keeps the player's own view while all effects still play; reduced flashing replaces bright flashes with a soft tint; particle intensity 0 removes cosmetic particles and debris. Settings save from the N screen or the camera toggle; none of them reach the server or change destruction limits.
 
+The development client includes Mod Menu by default. Use `./gradlew runClientGameTest -Ptests=settings` to check the integration, or add `-PwithoutModMenu` to verify standalone settings without the optional mod. The default client test suite also includes `settings`.
+
 Destruction skips block entities, unbreakable/protected blocks, unloaded chunks, build limits and borders. Vanilla interaction protection is respected. Claim integrations must register `ProtectionHooks`; specific third-party claim bridges are not bundled.
 
 ## Build and verify
@@ -89,7 +93,7 @@ pwsh -File scripts/verify-artifact.ps1
 .\gradlew.bat runServer
 ```
 
-On other systems use `./gradlew` and set `JAVA_HOME` appropriately. Build runs JUnit and dedicated server GameTests. Client GameTests create disposable worlds and run four suites: regression (all weapons, restored view, preview, cancellation, dimension change, save/reopen), a real dedicated-server connection (networked strike, disconnect cancellation, clean reconnect), visual capture (authored story beats, accessibility/quality modes and a four-strike presentation stress test), and colossal (normalized scenes, late state, committed-damage skip, controlled terrain and actual unfinished-job restart recovery). Select suites with `-Ptests=regression,dedicated,capture,colossal` and capture scenes with `-Pcapture=helios,singularity,glassfall,modes,stress`; quote comma-separated arguments in PowerShell. Captures are written under `build/run/clientGameTest/build/evidence` and copied into `docs/evidence` before release cleanup.
+On other systems use `./gradlew` and set `JAVA_HOME` appropriately. Build runs JUnit and dedicated server GameTests. Client GameTests create disposable worlds and run five suites: settings (optional Mod Menu factory, preferences, persistence and navigation), regression (all weapons, restored view, preview, cancellation, dimension change, save/reopen), a real dedicated-server connection (networked strike, disconnect cancellation, clean reconnect), visual capture (authored story beats, accessibility/quality modes and a four-strike presentation stress test), and colossal (normalized scenes, late state, committed-damage skip, controlled terrain and actual unfinished-job restart recovery). Select suites with `-Ptests=settings,regression,dedicated,capture,colossal` and capture scenes with `-Pcapture=helios,singularity,glassfall,modes,stress`; quote comma-separated arguments in PowerShell. Captures are written under `build/run/clientGameTest/build/evidence` and copied into `docs/evidence` before release cleanup.
 
 Original assets are reproducible: `python -I tools/assets/generate_textures.py`, `python -I tools/assets/generate_audio.py` and `python -I tools/assets/validate_audio.py` (numpy, Pillow, soundfile). Loom's test configuration enables Minecraft's EULA for these automated test servers; standard development `runServer` uses its own `run/eula.txt`.
 

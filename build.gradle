@@ -4,6 +4,7 @@ plugins {
 }
 
 repositories {
+	maven { url = 'https://maven.terraformersmc.com/releases/' }
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
@@ -33,6 +34,10 @@ fabricApi {
 }
 
 dependencies {
+    clientCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    if (!providers.gradleProperty('withoutModMenu').isPresent()) {
+        clientRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    }
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
@@ -46,9 +51,9 @@ dependencies {
 
 tasks.withType(Test).configureEach { useJUnitPlatform() }
 
-// Client suite selection: -Ptests=regression,dedicated,capture,colossal (default all); -Pcapture=helios,modes selects capture scenes.
+// Client suite selection: -Ptests=settings,regression,dedicated,capture,colossal (default all); -Pcapture=helios,modes selects capture scenes.
 // 'colossal' captures the Part 2.5B colossal presentation and its renderer measurements; 'stress' the concurrent bound.
-def clientTests = providers.gradleProperty('tests').getOrElse(providers.gradleProperty('captureOnly').isPresent() ? 'capture' : 'regression,dedicated,capture,colossal')
+def clientTests = providers.gradleProperty('tests').getOrElse(providers.gradleProperty('captureOnly').isPresent() ? 'capture' : 'settings,regression,dedicated,capture,colossal')
 def captureSelection = providers.gradleProperty('capture').getOrElse('helios,singularity,glassfall,colossal,modes,stress')
 tasks.matching { it.name == 'runClientGameTest' }.configureEach {
     jvmArgs "-Dnullstar.capture=${captureSelection}", "-Dnullstar.tests=${clientTests}"

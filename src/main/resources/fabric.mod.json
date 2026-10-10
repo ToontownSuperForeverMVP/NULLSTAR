@@ -12,7 +12,8 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": ["com.nullstar.Nullstar"],
-		"client": ["com.nullstar.client.NullstarClient"]
+		"client": ["com.nullstar.client.NullstarClient"],
+		"modmenu": ["com.nullstar.client.integration.NullstarModMenu"]
 	},
 	"mixins": [
 		{
@@ -20,6 +21,9 @@
 			"environment": "client"
 		}
 	],
+	"suggests": {
+		"modmenu": ">=21.0.0"
+	},
 	"depends": {
 		"fabricloader": ">=0.19.5",
 		"minecraft": "=26.3",

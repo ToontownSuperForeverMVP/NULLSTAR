@@ -6,6 +6,6 @@
   "environment": "*",
   "entrypoints": {
     "fabric-gametest": ["com.nullstar.test.DestructionGameTest", "com.nullstar.test.ColossalGameTest"],
-    "fabric-client-gametest": ["com.nullstar.test.StrikeClientGameTest", "com.nullstar.test.DedicatedServerClientGameTest", "com.nullstar.test.VisualCaptureClientGameTest", "com.nullstar.test.ColossalClientGameTest"]
+    "fabric-client-gametest": ["com.nullstar.test.SettingsClientGameTest", "com.nullstar.test.StrikeClientGameTest", "com.nullstar.test.DedicatedServerClientGameTest", "com.nullstar.test.VisualCaptureClientGameTest", "com.nullstar.test.ColossalClientGameTest"]
   }
 }

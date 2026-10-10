@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -20,7 +21,7 @@ public final class NullstarSettingsScreen extends Screen {
 
     @Override protected void init() {
         ClientConfig c=NullstarClient.config();
-        int w=150,left=width/2-w-4,right=width/2+4,y=height/6,row=24;
+        int w=Math.min(150,(width-24)/2),left=width/2-w-4,right=width/2+4,y=top(),row=24;
         addRenderableWidget(CycleButton.<ClientConfig.Quality>builder(q->Component.literal(q.name()),c.quality)
                 .withValues(ClientConfig.Quality.values()).create(left,y,w,20,Component.translatable("nullstar.settings.quality"),(b,v)->c.quality=v));
         addRenderableWidget(slider(right,y,w,"nullstar.settings.particles",c.particleIntensity/2,v->c.particleIntensity=v*2,v->Math.round(v*200)+"%"));
@@ -32,8 +33,20 @@ public final class NullstarSettingsScreen extends Screen {
         addRenderableWidget(slider(right,y+row*3,w,"nullstar.settings.glow",c.glowIntensity/1.5,v->c.glowIntensity=v*1.5,v->Math.round(v*150)+"%"));
         addRenderableWidget(slider(left,y+row*4,w,"nullstar.settings.audio",c.cinematicAudio,v->c.cinematicAudio=v,v->Math.round(v*100)+"%"));
         addRenderableWidget(CycleButton.onOffBuilder(c.letterbox).create(right,y+row*4,w,20,Component.translatable("nullstar.settings.letterbox"),(b,v)->c.letterbox=v));
-        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE,b->onClose()).bounds(width/2-100,y+row*6,200,20).build());
+        var budget=addRenderableWidget(slider(left,y+row*5,w,"nullstar.settings.native_particles",c.particleBudget/512.0,
+                v->c.particleBudget=(int)Math.round(v*512),v->Integer.toString((int)Math.round(v*512))));
+        budget.setTooltip(Tooltip.create(Component.translatable("nullstar.settings.native_particles.tooltip")));
+        addRenderableWidget(Button.builder(Component.translatable("nullstar.settings.reset"),b->{
+            ClientConfig defaults=new ClientConfig();
+            c.cinematicCamera=defaults.cinematicCamera;c.reducedMotion=defaults.reducedMotion;c.reducedFlashing=defaults.reducedFlashing;
+            c.particleBudget=defaults.particleBudget;c.cameraShakeIntensity=defaults.cameraShakeIntensity;c.quality=defaults.quality;
+            c.particleIntensity=defaults.particleIntensity;c.screenDistortion=defaults.screenDistortion;c.glowIntensity=defaults.glowIntensity;
+            c.cinematicAudio=defaults.cinematicAudio;c.letterbox=defaults.letterbox;
+            rebuildWidgets();
+        }).bounds(right,y+row*5,w,20).build());
+        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE,b->onClose()).bounds(width/2-100,y+row*7,200,20).build());
     }
+    private int top(){return Math.max(28,(height-220)/2);}
     private static AbstractSliderButton slider(int x,int y,int w,String key,double initial,DoubleConsumer apply,DoubleFunction<String> label) {
         return new AbstractSliderButton(x,y,w,20,Component.empty(),Math.max(0,Math.min(1,initial))) {
             {updateMessage();}
@@ -43,8 +56,8 @@ public final class NullstarSettingsScreen extends Screen {
     }
     @Override public void extractRenderState(GuiGraphicsExtractor graphics,int mouseX,int mouseY,float a) {
         super.extractRenderState(graphics,mouseX,mouseY,a);
-        graphics.centeredText(font,title,width/2,height/6-18,0xffe8f8ff);
-        graphics.centeredText(font,Component.literal("Client presentation only - server destruction limits are unaffected."),width/2,height/6+24*5+4,0xff8a96a4);
+        graphics.centeredText(font,title,width/2,top()-18,0xffe8f8ff);
+        graphics.centeredText(font,Component.translatable("nullstar.settings.client_only"),width/2,top()+24*6+4,0xff8a96a4);
     }
     @Override public void onClose() {
         ClientConfig c=NullstarClient.config();c.validate();

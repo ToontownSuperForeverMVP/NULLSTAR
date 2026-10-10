@@ -1,5 +1,7 @@
 # Part 2.5B handoff — extreme presentation
 
+Optional Mod Menu integration is documented in [MOD_MENU_SUPPORT.md](MOD_MENU_SUPPORT.md). Keep its entrypoint client-only and its dependency optional; both the Mod Menu button and N use the same settings screen. The client test suite now includes `settings`; `-PwithoutModMenu` tests the standalone path.
+
 Part 2.5A implements the colossal engineering layer on top of the preserved Part 2 release. Branch `codex/part25-colossal`; recovery `codex/pre-part25-20261009`. Read `PART25_ENGINEERING_REPORT.md`, `PROJECT_STATE.md`, `VALIDATION.md`, `ACCEPTANCE.md` and `AGENTS.md` first. The old `HANDOFF_TO_OPUS.md` remains historical.
 
 ## Implemented and stable

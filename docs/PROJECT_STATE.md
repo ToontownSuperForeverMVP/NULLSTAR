@@ -1,5 +1,9 @@
 # Project state — Part 2.5B
 
+## Mod Menu integration
+
+Optional Mod Menu 21.0.0 support exposes all eleven client preferences through the existing settings screen, including a new native particle budget control and Reset defaults. The N shortcut remains available without Mod Menu. Integration, installation and validation details are in [MOD_MENU_SUPPORT.md](MOD_MENU_SUPPORT.md). Server authority and operator configuration are unchanged.
+
 The colossal presentation pass is implemented on `codex/part25-colossal`, preserving the Part 2.5A engineering layer and the Part 2 presentation. All three weapons now present at genuinely colossal scale, and colossal Helios plays a full world-to-cosmos cinematic: atmospheric ascent, planet, solar system, galaxy, observable-universe boundary, an enormous star-harvesting mothership that deploys, contains a star and fires a colossal stellar lance back down at the world, followed by a planetary-scale devastation sequence and a long crater aftermath. TITANIC and APOCALYPSE events scale the machinery, the emitter altitude, the lance, the pressure waves and the aftermath, while STANDARD resolves to exactly the Part 2 magnitudes.
 
 Server authority, `_v2` wire schemas, destruction budgets, loaded-only access, protection hooks, preview policy, cooldowns and the three validated timelines are unchanged. The only server-side change is one metadata resolution: `CinematicScene.forPhase(phase, weapon, tier)`, so a colossal Helios holds the detached cosmic act through its charge, alignment and discharge. Audio adds nine cosmic events and four colossal releases. Evidence and exact boundaries are in `VALIDATION.md`, `ACCEPTANCE.md` and `PART25_RELEASE_REPORT.md`; `ARCHITECTURE.md` describes the presentation layer.

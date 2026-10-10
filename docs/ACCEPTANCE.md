@@ -1,5 +1,9 @@
 # Acceptance
 
+## Mod Menu integration acceptance
+
+PASS: optional Mod Menu 21.0.0 registered configuration factory; exposure of all eleven local preferences; camera and native particle budget edits; save/reset; parent navigation and Escape; client startup/settings without Mod Menu; clean build (61 JUnit, 10 dedicated GameTests); existing regression and dedicated-server client suites with Mod Menu installed; production packaging without bundled Mod Menu or tests. Real settings screenshots and limits are recorded in [MOD_MENU_SUPPORT.md](MOD_MENU_SUPPORT.md). Server/operator settings remain authoritative.
+
 ## Part 2.5B colossal presentation acceptance
 
 `PASS` = implemented and verified by the named automated check; `PASS (visual)` = implemented and inspected in

@@ -1,5 +1,11 @@
 # Validation
 
+## Mod Menu integration validation
+
+October 9, 2026: `clean build` passed **61 JUnit tests and 10 dedicated GameTests**. Client suites `settings,regression,dedicated` passed with Mod Menu **21.0.0** installed; final settings-only runs passed with it installed and with `-PwithoutModMenu`. Settings, save/reset, parent navigation and Escape were checked in the real client. Details, commands and limits: [MOD_MENU_SUPPORT.md](MOD_MENU_SUPPORT.md). Logs and two settings captures: `docs/evidence/modmenu`.
+
+`scripts/verify-artifact.ps1` passed: the Java 25 production JAR has the optional Mod Menu entrypoint, no embedded Mod Menu dependency and no test classes. Artifact `build/libs/nullstar-1.0.0.jar`; SHA-256 `AFD48DCEBEC6F80DD07531873BF0E3E069EDE4508A54250FC45186CDF72751EC`. No Prism data changed. Colossal/capture suites were not rerun for this settings-only integration; their prior evidence remains historical.
+
 ## Part 2.5B release validation
 
 October 9, 2026. Branch `codex/part25-colossal`. Part 2.5B was tested on `6a32540` ("present all three attacks at
